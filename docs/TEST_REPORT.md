@@ -132,9 +132,14 @@ with a smoke test of the image.
 
 Run 1 (`0d8a2f8`): server tests ✅, Docker build + smoke ✅, browser failures as described
 above. Run 2 (`e7f6d95`): server ✅, tools ✅, Docker ✅, Chromium ✅, WebKit ✅, Firefox ❌
-(no GL driver in headless mode, see above). Later runs: see the Actions tab.
+(no GL driver in headless mode, see above).
+Run 3 (`432f0ca`): Firefox headed under Xvfb reports `WebGL2 OK — llvmpipe`; **23 pass,
+1 skipped, 1 failed**: the AudioContext stayed `suspended` because the runner has no audio
+output device. The app retries `resume()` on every gesture; the next commit gives the CI job a
+virtual PulseAudio sink. Later runs: see the Actions tab.
 
-**Firefox is therefore not yet verified** by an automated run that reaches the game.
+Firefox therefore plays full matches (bots, two-browser online, rooms, reconnect) in CI;
+only audio start-up was unverified in run 3, because of the missing audio device.
 
 ## 7. Known gaps
 

@@ -83,6 +83,13 @@ jobs:
         run: |
           npm ci && npx playwright install --with-deps ${{ matrix.browser }}
           sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libegl-mesa0
+      - name: Virtual audio device (Firefox keeps AudioContext suspended without an output)
+        if: matrix.browser == 'firefox'
+        run: |
+          sudo apt-get install -y --no-install-recommends pulseaudio
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=ci_null
+          pactl set-default-sink ci_null
       - name: WebGL2 preflight
         working-directory: tests/browser
         env:
