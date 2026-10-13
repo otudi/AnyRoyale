@@ -641,6 +641,22 @@ select {
   }
 }
 
+.opp-away {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(150, 30, 30, 0.88);
+  border: 2px solid rgba(255, 150, 150, 0.6);
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 29;
+}
+
 .toast {
   position: absolute;
   bottom: 30%;

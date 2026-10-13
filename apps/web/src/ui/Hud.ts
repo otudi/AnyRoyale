@@ -17,6 +17,8 @@ export class Hud {
   private crownsMine: HTMLElement;
   private crownsOpp: HTMLElement;
   private oppTag: HTMLElement;
+  private oppAway: HTMLElement | null = null;
+  private oppAwayTimer = 0;
   private towerEls = new Map<number, HTMLElement>();
   private fpsEl: HTMLElement;
   private hand: (string | null)[] = [null, null, null, null];
@@ -237,7 +239,31 @@ export class Hud {
     setTimeout(() => el.remove(), 1700);
   }
 
+  /**
+   * Persistent notice while the opponent is disconnected, counting down their grace period
+   * (a toast alone is easy to miss mid-battle).
+   */
+  setOpponentConnected(connected: boolean, graceSeconds = 30): void {
+    window.clearInterval(this.oppAwayTimer);
+    this.oppAway?.remove();
+    this.oppAway = null;
+    if (connected) return;
+    const el = document.createElement('div');
+    el.className = 'opp-away';
+    el.dataset.oppAway = '';
+    const until = performance.now() + graceSeconds * 1000;
+    const render = () => {
+      const s = Math.max(0, Math.ceil((until - performance.now()) / 1000));
+      el.textContent = t('opponentDisconnected', { s });
+    };
+    render();
+    this.oppAwayTimer = window.setInterval(render, 250);
+    this.el.appendChild(el);
+    this.oppAway = el;
+  }
+
   reset(): void {
+    this.setOpponentConnected(true);
     this.hand = [null, null, null, null];
     this.next = null;
     for (const el of this.towerEls.values()) el.remove();

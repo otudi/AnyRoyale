@@ -2,12 +2,19 @@ import type { ServerMessage, Welcome } from './protocol';
 import { loadIdentity, saveIdentity } from './identity';
 
 type Listener = (msg: ServerMessage) => void;
+
+const PING_MS = 4000;
+const SILENCE_MS = 12000;
 export type ConnectionState = 'connecting' | 'open' | 'reconnecting' | 'closed';
 
 /**
  * WebSocket client with automatic reconnection (exponential backoff with jitter), identity
  * handshake ("hello") on every (re)connect, latency measurement and a small outbound queue for
  * messages sent while reconnecting. The server resumes an in-progress match on hello.
+ *
+ * A mobile network can vanish without closing the socket, so the connection is also dropped
+ * (and re-dialled) when the browser reports going offline or when nothing has been received for
+ * {@link SILENCE_MS} although the server answers pings every few seconds and streams snapshots.
  */
 export class Connection {
   private ws: WebSocket | null = null;
@@ -19,6 +26,7 @@ export class Connection {
   private reconnectTimer = 0;
   private closedByUser = false;
   private authed = false;
+  private lastRecvAt = 0;
   state: ConnectionState = 'connecting';
   rttMs = 0;
   /** serverTime - localTime, measured from pongs. */
@@ -36,7 +44,12 @@ export class Connection {
     this.closedByUser = false;
     this.open();
     window.addEventListener('online', () => this.reconnectNow());
+    window.addEventListener('offline', () => this.dropSocket());
     document.addEventListener('visibilitychange', () => {
+      // Timers may have been frozen in the background: give the socket a fresh chance to prove
+      // it is alive before the silence watchdog judges it.
+      this.lastRecvAt = performance.now();
+      if (document.visibilityState === 'visible' && this.state === 'open') this.sendNow({ type: 'ping', t: performance.now() });
       if (document.visibilityState === 'visible' && this.state !== 'open') this.reconnectNow();
     });
   }
@@ -58,6 +71,7 @@ export class Connection {
       ws.send(JSON.stringify({ type: 'hello', guestId: id.guestId, token: id.token, name: id.name }));
     };
     ws.onmessage = (ev) => {
+      this.lastRecvAt = performance.now();
       let msg: ServerMessage;
       try {
         msg = JSON.parse(ev.data as string) as ServerMessage;
@@ -94,6 +108,22 @@ export class Connection {
     };
   }
 
+  /** Abandons the current socket without waiting for a close handshake, then re-dials. */
+  private dropSocket(): void {
+    const ws = this.ws;
+    if (!ws || this.closedByUser) return;
+    ws.onopen = ws.onmessage = ws.onerror = ws.onclose = null;
+    try {
+      ws.close();
+    } catch {
+      // already closing
+    }
+    window.clearInterval(this.pingTimer);
+    this.ws = null;
+    this.authed = false;
+    this.scheduleReconnect();
+  }
+
   private scheduleReconnect(): void {
     this.setState('reconnecting');
     this.attempts++;
@@ -109,9 +139,16 @@ export class Connection {
 
   private startPing(): void {
     window.clearInterval(this.pingTimer);
-    const ping = () => this.sendNow({ type: 'ping', t: performance.now() });
+    this.lastRecvAt = performance.now();
+    const ping = () => {
+      if (performance.now() - this.lastRecvAt > SILENCE_MS) {
+        this.dropSocket();
+        return;
+      }
+      this.sendNow({ type: 'ping', t: performance.now() });
+    };
     ping();
-    this.pingTimer = window.setInterval(ping, 5000);
+    this.pingTimer = window.setInterval(ping, PING_MS);
   }
 
   private flush(): void {

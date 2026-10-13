@@ -31,3 +31,7 @@ tools/asset-inventory/output/
 replays/
 tools/asset-pipeline/.cache/
 tools/asset-pipeline/node_modules/
+
+# Python
+__pycache__/
+*.pyc

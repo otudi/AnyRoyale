@@ -1,0 +1,20 @@
+AnyRoyale
+Third-party components and assets included in this repository:
+
+1. crforge battle engine (server/engine/crforge-core, server/engine/crforge-data)
+   Copyright 2025-2026 voonhous — Apache License 2.0 (server/engine/LICENSE, server/engine/NOTICE).
+   Vendored from https://github.com/voonhous/crforge at b41cf9b6276945152ec4c869ce56f98a5fa3f513
+   and modified by AnyRoyale; every change is listed in server/engine/VENDOR.md.
+
+2. 3D models (apps/web/public/assets/models)
+   Derived from KayKit asset packs by Kay Lousberg (www.kaylousberg.com), CC0 1.0.
+   Sources and pinned commits: tools/asset-pipeline/sources.json, per-file origins in
+   apps/web/public/assets/models/index.json.
+
+3. npm / Maven dependencies (three.js, Vite, Javalin, Jackson, ...) are fetched at build time
+   under their own licences and are not stored in this repository.
+
+Clash Royale is a game by Supercell Oy. "Clash Royale", "Supercell" and related names are
+trademarks of Supercell Oy. AnyRoyale is an independent project, not affiliated with or endorsed
+by Supercell, and contains no Supercell artwork, audio or game files. Card statistics come from
+the crforge data set (community-decoded values).

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openPlayer, state } from './helpers';
+import { contextOptions, openPlayer, state } from './helpers';
 
 test('audio starts after the first user gesture and effects are synthesised', async ({ browser }) => {
   const p = await openPlayer(browser);
@@ -40,4 +40,22 @@ test('health endpoint and card catalog reflect the engine', async ({ request }) 
     expect(c.cost).toBeGreaterThan(0);
     expect(['TROOP', 'SPELL', 'BUILDING']).toContain(c.type);
   }
+});
+
+test('without WebGL the player gets a clear message instead of a blank page', async ({ browser }) => {
+  const ctx = await browser.newContext(contextOptions());
+  await ctx.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+      if (/webgl/i.test(type)) return null;
+      return (original as any).call(this, type, ...rest);
+    } as typeof original;
+  });
+  const page = await ctx.newPage();
+  await page.goto('/');
+  const screen = page.locator('[data-screen="error"]');
+  await expect(screen).toBeVisible({ timeout: 30_000 });
+  await expect(screen).toContainText('WebGL');
+  await expect(screen.locator('[data-act="retry"]')).toBeVisible();
+  await ctx.close();
 });

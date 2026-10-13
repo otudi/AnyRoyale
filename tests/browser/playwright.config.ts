@@ -64,7 +64,20 @@ export default defineConfig({
     },
     {
       name: 'firefox-desktop',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        // Headless Firefox on GPU-less CI machines blocks WebGL; force software WebGL.
+        launchOptions: {
+          firefoxUserPrefs: {
+            'webgl.force-enabled': true,
+            'webgl.disabled': false,
+            'webgl.enable-webgl2': true,
+            'gfx.webrender.software': true,
+            'media.autoplay.default': 0,
+            'media.autoplay.blocking_policy': 0,
+          },
+        },
+      },
     },
   ],
 });

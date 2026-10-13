@@ -122,6 +122,7 @@ export class BattleSession {
         break;
       }
       case 'opponentStatus':
+        this.hud.setOpponentConnected(msg.connected, msg.graceSeconds ?? 30);
         this.hud.toast(msg.connected ? t('opponentReconnected') : t('opponentDisconnected', { s: msg.graceSeconds ?? 30 }));
         break;
       default:
@@ -196,6 +197,7 @@ export class BattleSession {
     this.ended = true;
     this.input.enabled = false;
     this.input.cancel();
+    this.hud.setOpponentConnected(true);
   }
 
   dispose(): void {

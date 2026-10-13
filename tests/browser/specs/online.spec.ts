@@ -2,13 +2,21 @@ import { expect, test, type Page } from '@playwright/test';
 import { affordableTroopSlot, dragCard, openPlayer, ownSpot, state, surrender, waitElixir, waitRunning } from './helpers';
 
 async function commonTickConsistency(a: Page, b: Page): Promise<number> {
-  // Find ticks both clients received and compare the authoritative state at each.
-  const ta: number[] = await a.evaluate(() => (window as any).__anyroyale.debugTicks());
-  const tb: number[] = await b.evaluate(() => (window as any).__anyroyale.debugTicks());
-  const common = ta.filter((t) => tb.includes(t));
+  // Find ticks both clients received and compare the authoritative state at each. Each client's
+  // history is captured in one evaluate: it is a sliding window that keeps moving while we compare.
+  const capture = (p: Page): Promise<Map<number, any>> =>
+    p
+      .evaluate(() => {
+        const r = (window as any).__anyroyale;
+        return r.debugTicks().map((t: number) => [t, r.debugSnapshot(t)]);
+      })
+      .then((entries: [number, any][]) => new Map(entries));
+  const ha = await capture(a);
+  const hb = await capture(b);
+  const common = [...ha.keys()].filter((t) => hb.has(t));
   for (const tick of common) {
-    const sa: any = await a.evaluate((t) => (window as any).__anyroyale.debugSnapshot(t), tick);
-    const sb: any = await b.evaluate((t) => (window as any).__anyroyale.debugSnapshot(t), tick);
+    const sa = ha.get(tick);
+    const sb = hb.get(tick);
     expect(sa.towers, `tower HP at tick ${tick}`).toEqual(sb.towers);
     // Entity lists match except invisible units, which are only sent to their owner.
     const onlyA = sa.ids.filter((id: number) => !sb.ids.includes(id));
@@ -65,7 +73,7 @@ test('two browsers: matchmaking, identical deck and arena, synchronised battle, 
   // A surrenders: A loses, B wins.
   await surrender(A.page);
   await expect.poll(async () => (await state(B.page)).result?.youWon, { timeout: 15_000 }).toBe(true);
-  expect((await state(A.page)).result?.youWon).toBe(false);
+  await expect.poll(async () => (await state(A.page)).result?.youWon, { timeout: 15_000 }).toBe(false);
   expect((await state(B.page)).result?.reason).toBe('surrender');
   // The server's replay of the match contains both players' plays.
   const replay = await (await A.page.request.get(`/api/replays/${sa.match!.id}`)).json();

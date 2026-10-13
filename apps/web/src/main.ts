@@ -1,6 +1,6 @@
 import './ui/styles.css';
 import { audio } from './audio/AudioManager';
-import { applyDocumentLang } from './i18n/strings';
+import { applyDocumentLang, t } from './i18n/strings';
 import { App } from './ui/App';
 
 applyDocumentLang();
@@ -15,5 +15,18 @@ for (const ev of ['pointerdown', 'touchend', 'keydown']) {
 document.addEventListener('gesturestart', (e) => e.preventDefault());
 document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
 
-const app = new App();
-void app.boot();
+let app: App | null = null;
+try {
+  app = new App();
+} catch (e) {
+  // Almost always: WebGL is unavailable (disabled, blocklisted GPU, or lost at start-up).
+  console.error(e);
+  const screens = document.getElementById('screens')!;
+  screens.innerHTML = `<div class="screen backdrop" data-screen="error"><div class="logo">AnyRoyale</div>
+    <div class="panel"><p></p><button class="btn" data-act="retry"></button></div></div>`;
+  screens.querySelector('p')!.textContent = t('noWebgl');
+  const retry = screens.querySelector<HTMLButtonElement>('[data-act="retry"]')!;
+  retry.textContent = t('retry');
+  retry.addEventListener('click', () => location.reload());
+}
+void app?.boot();

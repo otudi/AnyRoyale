@@ -24,6 +24,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Engine (vendored crforge) and server tests
         run: ./gradlew --no-daemon :crforge-core:test :crforge-data:test :server:test
+      - name: Card support table is current and every entity has a visual
+        run: node tools/compatibility/card-support.mjs --check
+      - name: Asset inventory tool tests
+        run: python3 -m unittest discover -s tools/asset-inventory -p 'test_*.py'
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4

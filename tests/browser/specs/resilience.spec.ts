@@ -30,9 +30,11 @@ test('losing the network shows the reconnect banner, the opponent is told, and p
   await A.ctx.setOffline(true);
   await A.page.evaluate(() => (window as any).__anyroyale.conn.ws?.close());
   await expect(A.page.locator('.status-bar')).toBeVisible({ timeout: 20_000 });
-  await expect(B.page.locator('.toast')).toBeVisible({ timeout: 30_000 });
+  // The opponent sees a persistent notice with the grace countdown until A is back.
+  await expect(B.page.locator('[data-opp-away]')).toBeVisible({ timeout: 30_000 });
   await A.ctx.setOffline(false);
   await expect(A.page.locator('.status-bar')).toHaveCount(0, { timeout: 40_000 });
+  await expect(B.page.locator('[data-opp-away]')).toHaveCount(0, { timeout: 30_000 });
   await expect.poll(async () => (await state(A.page)).match?.id, { timeout: 30_000 }).toBe(sa.match!.id);
   const t0 = (await state(A.page)).match!.tick;
   await expect.poll(async () => (await state(A.page)).match!.tick, { timeout: 15_000 }).toBeGreaterThan(t0);
