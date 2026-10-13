@@ -1,0 +1,7 @@
+The 3D models in this directory are derived from KayKit asset packs by Kay Lousberg
+(www.kaylousberg.com), released under Creative Commons Zero (CC0 1.0):
+http://creativecommons.org/publicdomain/zero/1.0/
+
+They were converted (animations split, data pruned, quantized, meshopt-compressed) by
+tools/asset-pipeline/build.mjs. Source repositories and pinned commits: see index.json.
+They are not Clash Royale assets and are not affiliated with Supercell.

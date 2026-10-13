@@ -1,0 +1,540 @@
+{
+  "comment": "What build.mjs produces. Paths are relative to each pack's root (see sources.json). Character models are separate files because they share bone names (GLTFLoader renames duplicate node names inside one file, which would break animation binding). Props are bundled per theme; each item becomes a named top-level node the client clones.",
+  "animationLibrary": {
+    "out": "anims.glb",
+    "pack": "skeletons",
+    "path": "Characters/gltf/Skeleton_Warrior.glb",
+    "keep": [
+      "Idle",
+      "Idle_Combat",
+      "Walking_A",
+      "Walking_D_Skeletons",
+      "Running_A",
+      "1H_Melee_Attack_Chop",
+      "1H_Melee_Attack_Slice_Horizontal",
+      "1H_Melee_Attack_Stab",
+      "2H_Melee_Attack_Chop",
+      "2H_Melee_Attack_Slice",
+      "2H_Melee_Attack_Spin",
+      "1H_Ranged_Shoot",
+      "2H_Ranged_Shoot",
+      "Spellcast_Shoot",
+      "Spellcast_Summon",
+      "Throw",
+      "Unarmed_Melee_Attack_Punch_A",
+      "Dualwield_Melee_Attack_Slice",
+      "Hit_A",
+      "Death_A",
+      "Death_C_Skeletons",
+      "Spawn_Ground",
+      "Spawn_Ground_Skeletons",
+      "Cheer",
+      "Jump_Full_Short",
+      "Taunt"
+    ]
+  },
+  "characters": [
+    {
+      "out": "char_knight.glb",
+      "pack": "adventurers",
+      "path": "Characters/gltf/Knight.glb"
+    },
+    {
+      "out": "char_barbarian.glb",
+      "pack": "adventurers",
+      "path": "Characters/gltf/Barbarian.glb"
+    },
+    {
+      "out": "char_mage.glb",
+      "pack": "adventurers",
+      "path": "Characters/gltf/Mage.glb"
+    },
+    {
+      "out": "char_rogue.glb",
+      "pack": "adventurers",
+      "path": "Characters/gltf/Rogue.glb"
+    },
+    {
+      "out": "char_rogue_hooded.glb",
+      "pack": "adventurers",
+      "path": "Characters/gltf/Rogue_Hooded.glb"
+    },
+    {
+      "out": "char_skel_warrior.glb",
+      "pack": "skeletons",
+      "path": "Characters/gltf/Skeleton_Warrior.glb"
+    },
+    {
+      "out": "char_skel_minion.glb",
+      "pack": "skeletons",
+      "path": "Characters/gltf/Skeleton_Minion.glb"
+    },
+    {
+      "out": "char_skel_mage.glb",
+      "pack": "skeletons",
+      "path": "Characters/gltf/Skeleton_Mage.glb"
+    },
+    {
+      "out": "char_skel_rogue.glb",
+      "pack": "skeletons",
+      "path": "Characters/gltf/Skeleton_Rogue.glb"
+    }
+  ],
+  "bundles": [
+    {
+      "out": "env_core.glb",
+      "items": [
+        {
+          "key": "tower_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_tower_A_blue.gltf"
+        },
+        {
+          "key": "tower_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_tower_A_red.gltf"
+        },
+        {
+          "key": "castle_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_castle_blue.gltf"
+        },
+        {
+          "key": "castle_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_castle_red.gltf"
+        },
+        {
+          "key": "ruins",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/building_destroyed.gltf"
+        },
+        {
+          "key": "bridge",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/building_bridge_A.gltf"
+        },
+        {
+          "key": "fence_wood",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/fence_wood_straight.gltf"
+        },
+        {
+          "key": "fence_stone",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/fence_stone_straight.gltf"
+        },
+        {
+          "key": "wall",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/wall_straight.gltf"
+        },
+        {
+          "key": "boulder",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/neutral/projectile_catapult.gltf"
+        },
+        {
+          "key": "tree_a",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/tree_single_A.gltf"
+        },
+        {
+          "key": "tree_b",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/tree_single_B.gltf"
+        },
+        {
+          "key": "trees_small",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/trees_B_small.gltf"
+        },
+        {
+          "key": "trees_medium",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/trees_A_medium.gltf"
+        },
+        {
+          "key": "rock_a",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/rock_single_A.gltf"
+        },
+        {
+          "key": "rock_c",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/rock_single_C.gltf"
+        },
+        {
+          "key": "rock_e",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/rock_single_E.gltf"
+        },
+        {
+          "key": "mountain",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/mountain_A_grass_trees.gltf"
+        },
+        {
+          "key": "mountain_bare",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/mountain_B.gltf"
+        },
+        {
+          "key": "hills",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/hills_A_trees.gltf"
+        },
+        {
+          "key": "cloud",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/cloud_small.gltf"
+        },
+        {
+          "key": "waterlily",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/waterlily_A.gltf"
+        },
+        {
+          "key": "waterplant",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/nature/waterplant_A.gltf"
+        },
+        {
+          "key": "flag_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/flag_blue.gltf"
+        },
+        {
+          "key": "flag_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/flag_red.gltf"
+        },
+        {
+          "key": "tent",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/tent.gltf"
+        },
+        {
+          "key": "crate",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/crate_A_big.gltf"
+        },
+        {
+          "key": "barrel_small",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/barrel.gltf"
+        },
+        {
+          "key": "weaponrack",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/weaponrack.gltf"
+        },
+        {
+          "key": "target",
+          "pack": "hexagon",
+          "path": "Assets/gltf/decoration/props/target.gltf"
+        }
+      ]
+    },
+    {
+      "out": "card_buildings.glb",
+      "items": [
+        {
+          "key": "catapult_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_tower_catapult_blue.gltf"
+        },
+        {
+          "key": "catapult_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_tower_catapult_red.gltf"
+        },
+        {
+          "key": "towerb_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_tower_B_blue.gltf"
+        },
+        {
+          "key": "towerb_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_tower_B_red.gltf"
+        },
+        {
+          "key": "towerbase_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_tower_base_blue.gltf"
+        },
+        {
+          "key": "towerbase_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_tower_base_red.gltf"
+        },
+        {
+          "key": "hut_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_home_A_blue.gltf"
+        },
+        {
+          "key": "hut_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_home_A_red.gltf"
+        },
+        {
+          "key": "barracks_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_barracks_blue.gltf"
+        },
+        {
+          "key": "barracks_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_barracks_red.gltf"
+        },
+        {
+          "key": "well_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_well_blue.gltf"
+        },
+        {
+          "key": "well_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_well_red.gltf"
+        },
+        {
+          "key": "smithy_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_blacksmith_blue.gltf"
+        },
+        {
+          "key": "smithy_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_blacksmith_red.gltf"
+        },
+        {
+          "key": "mine_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_mine_blue.gltf"
+        },
+        {
+          "key": "mine_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_mine_red.gltf"
+        },
+        {
+          "key": "archery_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_archeryrange_blue.gltf"
+        },
+        {
+          "key": "archery_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_archeryrange_red.gltf"
+        },
+        {
+          "key": "windmill_blue",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/blue/building_windmill_blue.gltf"
+        },
+        {
+          "key": "windmill_red",
+          "pack": "hexagon",
+          "path": "Assets/gltf/buildings/red/building_windmill_red.gltf"
+        }
+      ]
+    },
+    {
+      "out": "props_dungeon.glb",
+      "items": [
+        {
+          "key": "barrel",
+          "pack": "dungeon",
+          "path": "Assets/gltf/barrel_large.gltf.glb"
+        },
+        {
+          "key": "keg",
+          "pack": "dungeon",
+          "path": "Assets/gltf/keg.gltf.glb"
+        },
+        {
+          "key": "torch",
+          "pack": "dungeon",
+          "path": "Assets/gltf/torch_lit.gltf.glb"
+        },
+        {
+          "key": "chest",
+          "pack": "dungeon",
+          "path": "Assets/gltf/chest.glb"
+        },
+        {
+          "key": "banner_blue",
+          "pack": "dungeon",
+          "path": "Assets/gltf/banner_blue.gltf.glb"
+        },
+        {
+          "key": "banner_red",
+          "pack": "dungeon",
+          "path": "Assets/gltf/banner_patternA_red.gltf.glb"
+        },
+        {
+          "key": "column",
+          "pack": "dungeon",
+          "path": "Assets/gltf/column.gltf.glb"
+        },
+        {
+          "key": "rubble",
+          "pack": "dungeon",
+          "path": "Assets/gltf/rubble_large.gltf.glb"
+        },
+        {
+          "key": "coins",
+          "pack": "dungeon",
+          "path": "Assets/gltf/coin_stack_medium.gltf.glb"
+        },
+        {
+          "key": "box",
+          "pack": "dungeon",
+          "path": "Assets/gltf/box_stacked.gltf.glb"
+        }
+      ]
+    },
+    {
+      "out": "props_spooky.glb",
+      "items": [
+        {
+          "key": "gravestone",
+          "pack": "halloween",
+          "path": "Assets/gltf/gravestone.gltf"
+        },
+        {
+          "key": "grave",
+          "pack": "halloween",
+          "path": "Assets/gltf/grave_A.gltf"
+        },
+        {
+          "key": "crypt",
+          "pack": "halloween",
+          "path": "Assets/gltf/crypt.gltf"
+        },
+        {
+          "key": "skull",
+          "pack": "halloween",
+          "path": "Assets/gltf/skull.gltf"
+        },
+        {
+          "key": "ribcage",
+          "pack": "halloween",
+          "path": "Assets/gltf/ribcage.gltf"
+        },
+        {
+          "key": "tree_dead",
+          "pack": "halloween",
+          "path": "Assets/gltf/tree_dead_medium.gltf"
+        },
+        {
+          "key": "pine_orange",
+          "pack": "halloween",
+          "path": "Assets/gltf/tree_pine_orange_medium.gltf"
+        },
+        {
+          "key": "pumpkin",
+          "pack": "halloween",
+          "path": "Assets/gltf/pumpkin_orange_jackolantern.gltf"
+        },
+        {
+          "key": "lantern",
+          "pack": "halloween",
+          "path": "Assets/gltf/lantern_standing.gltf"
+        },
+        {
+          "key": "fence_iron",
+          "pack": "halloween",
+          "path": "Assets/gltf/fence.gltf"
+        },
+        {
+          "key": "arch",
+          "pack": "halloween",
+          "path": "Assets/gltf/arch_gate.gltf"
+        },
+        {
+          "key": "coffin",
+          "pack": "halloween",
+          "path": "Assets/gltf/coffin.gltf"
+        }
+      ]
+    },
+    {
+      "out": "weapons.glb",
+      "items": [
+        {
+          "key": "arrow",
+          "pack": "adventurers",
+          "path": "Assets/gltf/arrow.gltf"
+        },
+        {
+          "key": "staff",
+          "pack": "adventurers",
+          "path": "Assets/gltf/staff.gltf"
+        },
+        {
+          "key": "axe",
+          "pack": "adventurers",
+          "path": "Assets/gltf/axe_2handed.gltf"
+        },
+        {
+          "key": "smokebomb",
+          "pack": "adventurers",
+          "path": "Assets/gltf/smokebomb.gltf"
+        },
+        {
+          "key": "dagger",
+          "pack": "adventurers",
+          "path": "Assets/gltf/dagger.gltf"
+        },
+        {
+          "key": "spellbook",
+          "pack": "adventurers",
+          "path": "Assets/gltf/spellbook_open.gltf"
+        },
+        {
+          "key": "bone_arrow",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Arrow.gltf"
+        },
+        {
+          "key": "skel_blade",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Blade.gltf"
+        },
+        {
+          "key": "skel_axe",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Axe.gltf"
+        },
+        {
+          "key": "skel_shield",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Shield_Small_A.gltf"
+        },
+        {
+          "key": "skel_crossbow",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Crossbow.gltf"
+        },
+        {
+          "key": "skel_staff",
+          "pack": "skeletons",
+          "path": "Assets/gltf/Skeleton_Staff.gltf"
+        },
+        {
+          "key": "sword",
+          "pack": "adventurers",
+          "path": "Assets/gltf/sword_1handed.gltf"
+        },
+        {
+          "key": "shield_round",
+          "pack": "adventurers",
+          "path": "Assets/gltf/shield_round.gltf"
+        }
+      ]
+    }
+  ]
+}

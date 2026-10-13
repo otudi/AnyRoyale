@@ -93,6 +93,14 @@ public final class SnapshotWriter {
 
       g.writeArrayFieldStart("e");
       for (Entity e : state.getAliveEntities()) {
+        // Invisible enemy troops (Royal Ghost, Suspicious Bush) are not sent at all: hiding them
+        // only in the browser would let a modified client see them.
+        if (viewer != null
+            && e.getTeam() != viewer.getTeam()
+            && e instanceof Troop t
+            && t.isInvisible()) {
+          continue;
+        }
         writeEntity(g, e);
       }
       g.writeEndArray();

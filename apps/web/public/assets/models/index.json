@@ -1,0 +1,834 @@
+{
+  "generated": "2026-10-13",
+  "license": "CC0-1.0",
+  "files": {
+    "anims.glb": {
+      "bytes": 642656,
+      "sha256": "ba219218541b880ff1f242c68648b07216f551858bb8d8f9dad96a44855c2488",
+      "origin": {
+        "pack": "KayKit Character Pack : Skeletons (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+        "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+        "path": "Characters/gltf/Skeleton_Warrior.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_knight.glb": {
+      "bytes": 172172,
+      "sha256": "749cb84c776d79526692899ff6e0f6fe9ddf1fb2d54aaec01f77b3643525194b",
+      "origin": {
+        "pack": "KayKit : Adventurers Character Pack (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+        "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+        "path": "Characters/gltf/Knight.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_barbarian.glb": {
+      "bytes": 154164,
+      "sha256": "c84ea3cf71b4a283150abd65c8b7c529817d0ce7182f474ad8da523028c68098",
+      "origin": {
+        "pack": "KayKit : Adventurers Character Pack (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+        "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+        "path": "Characters/gltf/Barbarian.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_mage.glb": {
+      "bytes": 146796,
+      "sha256": "0ba99545d2d30ec76f7180526e7cb1a76299e93603324ea6b5873aa54607ba9f",
+      "origin": {
+        "pack": "KayKit : Adventurers Character Pack (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+        "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+        "path": "Characters/gltf/Mage.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_rogue.glb": {
+      "bytes": 152664,
+      "sha256": "f611cc19a76e48335195c7767b22422d089f06a71e48c56a9150c3f0b6e47049",
+      "origin": {
+        "pack": "KayKit : Adventurers Character Pack (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+        "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+        "path": "Characters/gltf/Rogue.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_rogue_hooded.glb": {
+      "bytes": 147888,
+      "sha256": "2cd1fd67a8ca61e01828b838ad0704a20026d9f20aa31822c6e816a85912907e",
+      "origin": {
+        "pack": "KayKit : Adventurers Character Pack (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+        "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+        "path": "Characters/gltf/Rogue_Hooded.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_skel_warrior.glb": {
+      "bytes": 168132,
+      "sha256": "54c2563e4375e2a4fe85f2144faf6af6bc54d790026528e782cf5a8a696a7e97",
+      "origin": {
+        "pack": "KayKit Character Pack : Skeletons (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+        "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+        "path": "Characters/gltf/Skeleton_Warrior.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_skel_minion.glb": {
+      "bytes": 147064,
+      "sha256": "ac87ea7735b1317d9d0dda39229702d6fddc27b3095ad8861a1ec8a46b4b263d",
+      "origin": {
+        "pack": "KayKit Character Pack : Skeletons (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+        "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+        "path": "Characters/gltf/Skeleton_Minion.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_skel_mage.glb": {
+      "bytes": 130276,
+      "sha256": "0f28634d7996bef75cef94f8e94004acd9bad52db5dcd7767dbde9fc73056844",
+      "origin": {
+        "pack": "KayKit Character Pack : Skeletons (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+        "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+        "path": "Characters/gltf/Skeleton_Mage.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "char_skel_rogue.glb": {
+      "bytes": 153176,
+      "sha256": "08203c5e8d784a4ab9b663ab7178678fd4ae3630813cc292781e03d2a163fbe3",
+      "origin": {
+        "pack": "KayKit Character Pack : Skeletons (1.0)",
+        "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+        "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+        "path": "Characters/gltf/Skeleton_Rogue.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "env_core.glb": {
+      "bytes": 326432,
+      "sha256": "39089ee9efe473f6bf12dffad51ebcf9f314ba64509d256ba29c9513eb3efa5f",
+      "origin": [
+        {
+          "key": "tower_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_tower_A_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "tower_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_tower_A_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "castle_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_castle_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "castle_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_castle_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "ruins",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/building_destroyed.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "bridge",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/building_bridge_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "fence_wood",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/fence_wood_straight.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "fence_stone",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/fence_stone_straight.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "wall",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/wall_straight.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "boulder",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/neutral/projectile_catapult.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "tree_a",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/tree_single_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "tree_b",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/tree_single_B.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "trees_small",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/trees_B_small.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "trees_medium",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/trees_A_medium.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "rock_a",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/rock_single_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "rock_c",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/rock_single_C.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "rock_e",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/rock_single_E.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "mountain",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/mountain_A_grass_trees.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "mountain_bare",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/mountain_B.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "hills",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/hills_A_trees.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "cloud",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/cloud_small.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "waterlily",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/waterlily_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "waterplant",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/nature/waterplant_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "flag_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/flag_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "flag_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/flag_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "tent",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/tent.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "crate",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/crate_A_big.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "barrel_small",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/barrel.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "weaponrack",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/weaponrack.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "target",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/decoration/props/target.gltf",
+          "license": "CC0-1.0"
+        }
+      ]
+    },
+    "card_buildings.glb": {
+      "bytes": 426712,
+      "sha256": "bd4ddda9d4d9440e9730a1ff77f0dd703a20fcc3f76c51530f81006e8d4226f8",
+      "origin": [
+        {
+          "key": "catapult_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_tower_catapult_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "catapult_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_tower_catapult_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "towerb_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_tower_B_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "towerb_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_tower_B_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "towerbase_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_tower_base_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "towerbase_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_tower_base_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "hut_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_home_A_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "hut_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_home_A_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "barracks_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_barracks_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "barracks_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_barracks_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "well_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_well_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "well_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_well_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "smithy_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_blacksmith_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "smithy_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_blacksmith_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "mine_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_mine_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "mine_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_mine_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "archery_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_archeryrange_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "archery_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_archeryrange_red.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "windmill_blue",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/blue/building_windmill_blue.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "windmill_red",
+          "pack": "KayKit : Medieval Hexagon Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+          "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+          "path": "Assets/gltf/buildings/red/building_windmill_red.gltf",
+          "license": "CC0-1.0"
+        }
+      ]
+    },
+    "props_dungeon.glb": {
+      "bytes": 174552,
+      "sha256": "6e3df4f27a4a2a8291faef4b6ae6ebeb6566292c8dd602b6ca9fd47c1aa5539c",
+      "origin": [
+        {
+          "key": "barrel",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/barrel_large.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "keg",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/keg.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "torch",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/torch_lit.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "chest",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/chest.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "banner_blue",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/banner_blue.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "banner_red",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/banner_patternA_red.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "column",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/column.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "rubble",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/rubble_large.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "coins",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/coin_stack_medium.gltf.glb",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "box",
+          "pack": "KayKit : Dungeon Remastered (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+          "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+          "path": "Assets/gltf/box_stacked.gltf.glb",
+          "license": "CC0-1.0"
+        }
+      ]
+    },
+    "props_spooky.glb": {
+      "bytes": 147020,
+      "sha256": "ae2e1bbb785e1e372732d503e148944295802814a0aee02c10205cd3f4f44ab8",
+      "origin": [
+        {
+          "key": "gravestone",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/gravestone.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "grave",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/grave_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "crypt",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/crypt.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skull",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/skull.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "ribcage",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/ribcage.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "tree_dead",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/tree_dead_medium.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "pine_orange",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/tree_pine_orange_medium.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "pumpkin",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/pumpkin_orange_jackolantern.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "lantern",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/lantern_standing.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "fence_iron",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/fence.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "arch",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/arch_gate.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "coffin",
+          "pack": "KayKit : Halloween Bits (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+          "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+          "path": "Assets/gltf/coffin.gltf",
+          "license": "CC0-1.0"
+        }
+      ]
+    },
+    "weapons.glb": {
+      "bytes": 207820,
+      "sha256": "1165c0c3adb4b458005e7e9d043e11c5eeb8fdb0773e2c47c3a2db1d4e244863",
+      "origin": [
+        {
+          "key": "arrow",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/arrow.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "staff",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/staff.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "axe",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/axe_2handed.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "smokebomb",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/smokebomb.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "dagger",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/dagger.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "spellbook",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/spellbook_open.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "bone_arrow",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Arrow.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skel_blade",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Blade.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skel_axe",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Axe.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skel_shield",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Shield_Small_A.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skel_crossbow",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Crossbow.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "skel_staff",
+          "pack": "KayKit Character Pack : Skeletons (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+          "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+          "path": "Assets/gltf/Skeleton_Staff.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "sword",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/sword_1handed.gltf",
+          "license": "CC0-1.0"
+        },
+        {
+          "key": "shield_round",
+          "pack": "KayKit : Adventurers Character Pack (1.0)",
+          "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+          "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+          "path": "Assets/gltf/shield_round.gltf",
+          "license": "CC0-1.0"
+        }
+      ]
+    }
+  }
+}

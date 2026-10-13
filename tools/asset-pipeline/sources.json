@@ -1,0 +1,40 @@
+{
+  "comment": "Asset packs used by AnyRoyale. All are CC0 1.0 (public domain dedication) by Kay Lousberg (www.kaylousberg.com). Commits are pinned so builds are reproducible.",
+  "packs": {
+    "adventurers": {
+      "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0",
+      "commit": "672074b73ba276876a19e8816ecdc5241817ab47",
+      "root": "addons/kaykit_character_pack_adventures",
+      "license": "CC0-1.0",
+      "title": "KayKit : Adventurers Character Pack (1.0)"
+    },
+    "skeletons": {
+      "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
+      "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
+      "root": "addons/kaykit_character_pack_skeletons",
+      "license": "CC0-1.0",
+      "title": "KayKit Character Pack : Skeletons (1.0)"
+    },
+    "hexagon": {
+      "repo": "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0",
+      "commit": "84fa4e91af6a88989be7c99e0891cede11f2ca38",
+      "root": "addons/kaykit_medieval_hexagon_pack",
+      "license": "CC0-1.0",
+      "title": "KayKit : Medieval Hexagon Pack (1.0)"
+    },
+    "dungeon": {
+      "repo": "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0",
+      "commit": "b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07",
+      "root": "addons/kaykit_dungeon_remastered",
+      "license": "CC0-1.0",
+      "title": "KayKit : Dungeon Remastered (1.0)"
+    },
+    "halloween": {
+      "repo": "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0",
+      "commit": "6dc69bf6b2fa766a985754f35ec6a0324090e6c6",
+      "root": "addons/kaykit_halloween_bits",
+      "license": "CC0-1.0",
+      "title": "KayKit : Halloween Bits (1.0)"
+    }
+  }
+}

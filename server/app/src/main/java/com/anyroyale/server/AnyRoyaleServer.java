@@ -69,20 +69,25 @@ public final class AnyRoyaleServer {
               cfg.startup.showJavalinBanner = false;
               cfg.http.maxRequestSize = 16 * 1024;
               if (config.staticDir() != null) {
+                // Order matters: the more specific /assets mount must be registered first.
+                // Vite emits content-hashed bundles and models are requested with ?v=<sha>,
+                // so everything under /assets can be cached immutably.
+                cfg.staticFiles.add(
+                    sf -> {
+                      sf.hostedPath = "/assets";
+                      sf.directory = config.staticDir().resolve("assets").toString();
+                      sf.location = Location.EXTERNAL;
+                      sf.headers.put("Cache-Control", "public, max-age=31536000, immutable");
+                      sf.mimeTypes.add("model/gltf-binary", "glb");
+                      sf.mimeTypes.add("application/json", "json");
+                    });
                 cfg.staticFiles.add(
                     sf -> {
                       sf.hostedPath = "/";
                       sf.directory = config.staticDir().toString();
                       sf.location = Location.EXTERNAL;
                       sf.headers.put("Cache-Control", "public, max-age=300");
-                    });
-                cfg.staticFiles.add(
-                    sf -> {
-                      // Vite emits content-hashed file names under /assets: cache them forever.
-                      sf.hostedPath = "/assets";
-                      sf.directory = config.staticDir().resolve("assets").toString();
-                      sf.location = Location.EXTERNAL;
-                      sf.headers.put("Cache-Control", "public, max-age=31536000, immutable");
+                      sf.mimeTypes.add("application/manifest+json", "webmanifest");
                     });
                 if (Files.exists(config.staticDir().resolve("index.html"))) {
                   cfg.spaRoot.addFile(

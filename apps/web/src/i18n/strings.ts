@@ -1,0 +1,239 @@
+// UI strings in Arabic and English. Arabic is the default when the browser language is Arabic.
+
+const en = {
+  tagline: 'Play instantly in your browser',
+  playOnline: 'Play Online',
+  training: 'Training vs Bot',
+  friend: 'Challenge a Friend',
+  settings: 'Settings',
+  editName: 'Tap to change your name',
+  nameTitle: 'Your name',
+  save: 'Save',
+  cancel: 'Cancel',
+  back: 'Back',
+  close: 'Close',
+  searching: 'Searching for an opponent…',
+  searchingHint: 'Only real players are matched. Share the link with a friend to play faster.',
+  waitingPlayers: 'Players waiting: {n}',
+  chooseDifficulty: 'Choose difficulty',
+  easy: 'Easy',
+  normal: 'Normal',
+  hard: 'Hard',
+  expert: 'Expert',
+  easyDesc: 'Slow reactions, frequent mistakes',
+  normalDesc: 'Sensible defence and balanced attacks',
+  hardDesc: 'Good elixir management and smart spells',
+  expertDesc: 'Reads your cycle, defends under its towers',
+  createRoom: 'Create room',
+  joinRoom: 'Join with code',
+  roomCode: 'Room code',
+  join: 'Join',
+  shareCode: 'Send this code or link to your friend',
+  copyLink: 'Copy invite link',
+  share: 'Share',
+  copied: 'Copied!',
+  waitingFriend: 'Waiting for your friend to join…',
+  music: 'Music',
+  sfx: 'Sound effects',
+  quality: 'Graphics quality',
+  qualityAuto: 'Auto',
+  qualityHigh: 'High',
+  qualityLow: 'Low (battery saver)',
+  language: 'Language',
+  showFps: 'Show FPS',
+  loading: 'Loading…',
+  loadingAssets: 'Loading arena and troops',
+  loadFailed: 'Some files failed to load. Retry?',
+  retry: 'Retry',
+  connecting: 'Connecting to server…',
+  reconnecting: 'Connection lost — reconnecting…',
+  offline: 'You are offline',
+  vs: 'VS',
+  battleBegins: 'Battle begins!',
+  doubleElixir: '2x Elixir!',
+  overtime: 'Overtime!',
+  tripleElixir: '3x Elixir!',
+  victory: 'Victory!',
+  defeat: 'Defeat',
+  draw: 'Draw',
+  rematch: 'Rematch',
+  rematchSameDeck: 'Replay same deck',
+  newDeck: 'New random deck',
+  waitingRematch: 'Waiting for opponent…',
+  opponentWantsRematch: 'Opponent wants a rematch!',
+  opponentLeft: 'Opponent left',
+  menu: 'Main menu',
+  surrender: 'Surrender',
+  surrenderConfirm: 'Leave the battle? You will lose.',
+  yes: 'Yes',
+  no: 'No',
+  opponentDisconnected: 'Opponent disconnected ({s}s to return)',
+  opponentReconnected: 'Opponent reconnected',
+  sharedDeck: 'Shared deck for this battle',
+  next: 'Next',
+  notEnoughElixir: 'Not enough elixir',
+  invalidPlacement: "Can't deploy there",
+  reason_kingTower: 'King tower destroyed',
+  reason_crowns: 'More crowns',
+  reason_towerHp: 'Tower health tiebreak',
+  reason_draw: 'Equal crowns and tower health',
+  reason_surrender: 'Surrender',
+  reason_disconnect: 'Disconnect',
+  reason_abandoned: 'Both players left',
+  matchCancelled: 'The match was cancelled',
+  roomNotFound: 'Room not found or expired',
+  ownRoom: 'Share the code with a friend to start',
+  serverFull: 'The server is full. Try again shortly.',
+  inMatch: 'You are already in a match',
+  replaced: 'You opened AnyRoyale in another tab',
+  serverRestart: 'The server is restarting…',
+  tapToStart: 'Tap to start',
+  arena: 'Arena',
+  guest: 'Guest',
+  you: 'You',
+  bot: 'Bot',
+  howTo: 'Drag a card onto your side of the arena. Destroy the enemy King Tower to win!',
+  cards: 'Cards',
+};
+
+type Strings = typeof en;
+
+const ar: Strings = {
+  tagline: 'العب فورًا في متصفحك',
+  playOnline: 'العب أونلاين',
+  training: 'تدريب ضد البوت',
+  friend: 'تحدّى صديقًا',
+  settings: 'الإعدادات',
+  editName: 'اضغط لتغيير اسمك',
+  nameTitle: 'اسمك',
+  save: 'حفظ',
+  cancel: 'إلغاء',
+  back: 'رجوع',
+  close: 'إغلاق',
+  searching: 'جارٍ البحث عن خصم…',
+  searchingHint: 'تتم المطابقة مع لاعبين حقيقيين فقط. أرسل الرابط لصديق للعب أسرع.',
+  waitingPlayers: 'لاعبون في الانتظار: {n}',
+  chooseDifficulty: 'اختر مستوى الصعوبة',
+  easy: 'سهل',
+  normal: 'عادي',
+  hard: 'صعب',
+  expert: 'خبير',
+  easyDesc: 'ردود فعل بطيئة وأخطاء متكررة',
+  normalDesc: 'دفاع معقول وهجوم متوازن',
+  hardDesc: 'إدارة جيدة للإكسير وتعويذات ذكية',
+  expertDesc: 'يقرأ دورة بطاقاتك ويدافع تحت أبراجه',
+  createRoom: 'إنشاء غرفة',
+  joinRoom: 'الدخول برمز',
+  roomCode: 'رمز الغرفة',
+  join: 'دخول',
+  shareCode: 'أرسل هذا الرمز أو الرابط لصديقك',
+  copyLink: 'نسخ رابط الدعوة',
+  share: 'مشاركة',
+  copied: 'تم النسخ!',
+  waitingFriend: 'بانتظار دخول صديقك…',
+  music: 'الموسيقى',
+  sfx: 'المؤثرات الصوتية',
+  quality: 'جودة الرسومات',
+  qualityAuto: 'تلقائي',
+  qualityHigh: 'عالية',
+  qualityLow: 'منخفضة (توفير البطارية)',
+  language: 'اللغة',
+  showFps: 'إظهار عدد الإطارات',
+  loading: 'جارٍ التحميل…',
+  loadingAssets: 'تحميل الساحة والجنود',
+  loadFailed: 'تعذّر تحميل بعض الملفات. إعادة المحاولة؟',
+  retry: 'إعادة المحاولة',
+  connecting: 'جارٍ الاتصال بالخادم…',
+  reconnecting: 'انقطع الاتصال — جارٍ إعادة الاتصال…',
+  offline: 'أنت غير متصل بالإنترنت',
+  vs: 'ضد',
+  battleBegins: 'بدأت المعركة!',
+  doubleElixir: 'إكسير مضاعف ×2!',
+  overtime: 'الوقت الإضافي!',
+  tripleElixir: 'إكسير ×3!',
+  victory: 'فوز!',
+  defeat: 'خسارة',
+  draw: 'تعادل',
+  rematch: 'إعادة التحدي',
+  rematchSameDeck: 'إعادة بنفس التشكيلة',
+  newDeck: 'تشكيلة عشوائية جديدة',
+  waitingRematch: 'بانتظار الخصم…',
+  opponentWantsRematch: 'الخصم يريد إعادة التحدي!',
+  opponentLeft: 'غادر الخصم',
+  menu: 'القائمة الرئيسية',
+  surrender: 'استسلام',
+  surrenderConfirm: 'مغادرة المعركة؟ ستُحتسب خسارة.',
+  yes: 'نعم',
+  no: 'لا',
+  opponentDisconnected: 'انقطع اتصال الخصم (أمامه {s} ثانية للعودة)',
+  opponentReconnected: 'عاد الخصم',
+  sharedDeck: 'التشكيلة المشتركة لهذه المعركة',
+  next: 'التالية',
+  notEnoughElixir: 'الإكسير غير كافٍ',
+  invalidPlacement: 'لا يمكن النشر هنا',
+  reason_kingTower: 'تدمير برج الملك',
+  reason_crowns: 'تيجان أكثر',
+  reason_towerHp: 'حسم بصحة الأبراج',
+  reason_draw: 'تساوي التيجان وصحة الأبراج',
+  reason_surrender: 'استسلام',
+  reason_disconnect: 'انقطاع الاتصال',
+  reason_abandoned: 'غادر اللاعبان',
+  matchCancelled: 'أُلغيت المباراة',
+  roomNotFound: 'الغرفة غير موجودة أو انتهت صلاحيتها',
+  ownRoom: 'أرسل الرمز لصديقك ليبدأ اللعب',
+  serverFull: 'الخادم ممتلئ. حاول بعد قليل.',
+  inMatch: 'أنت في مباراة بالفعل',
+  replaced: 'فتحت AnyRoyale في تبويب آخر',
+  serverRestart: 'يُعاد تشغيل الخادم…',
+  tapToStart: 'اضغط للبدء',
+  arena: 'الساحة',
+  guest: 'ضيف',
+  you: 'أنت',
+  bot: 'بوت',
+  howTo: 'اسحب بطاقة إلى جهتك من الساحة. دمّر برج ملك الخصم لتفوز!',
+  cards: 'البطاقات',
+};
+
+export type Lang = 'ar' | 'en';
+export type StringKey = keyof Strings;
+
+const LANG_KEY = 'anyroyale.lang';
+
+function detect(): Lang {
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'ar' || saved === 'en') return saved;
+  } catch {
+    // ignore
+  }
+  return (navigator.language || '').toLowerCase().startsWith('ar') ? 'ar' : 'en';
+}
+
+let lang: Lang = detect();
+
+export function getLang(): Lang {
+  return lang;
+}
+
+export function setLang(l: Lang): void {
+  lang = l;
+  try {
+    localStorage.setItem(LANG_KEY, l);
+  } catch {
+    // ignore
+  }
+  applyDocumentLang();
+}
+
+export function applyDocumentLang(): void {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+}
+
+export function t(key: StringKey, vars?: Record<string, string | number>): string {
+  let s = (lang === 'ar' ? ar : en)[key] ?? en[key] ?? key;
+  if (vars) {
+    for (const [k, v] of Object.entries(vars)) s = s.replace(`{${k}}`, String(v));
+  }
+  return s;
+}
