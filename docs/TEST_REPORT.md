@@ -136,10 +136,14 @@ above. Run 2 (`e7f6d95`): server ✅, tools ✅, Docker ✅, Chromium ✅, WebKi
 Run 3 (`432f0ca`): Firefox headed under Xvfb reports `WebGL2 OK — llvmpipe`; **23 pass,
 1 skipped, 1 failed**: the AudioContext stayed `suspended` because the runner has no audio
 output device. The app retries `resume()` on every gesture; the next commit gives the CI job a
-virtual PulseAudio sink. Later runs: see the Actions tab.
+virtual PulseAudio sink.
+Run 4 (`7e5346f`): **all five jobs green**: engine + server tests, tool checks, Docker
+build + smoke test, and browser suites in Chromium (Pixel 7), WebKit (iPhone 14) and Firefox
+(desktop). In every browser the only skipped test is the Chromium-only CDP touch test outside
+Chromium.
 
-Firefox therefore plays full matches (bots, two-browser online, rooms, reconnect) in CI;
-only audio start-up was unverified in run 3, because of the missing audio device.
+All three engines now play full matches in CI (bots, two-browser online, rooms, reconnect,
+audio start-up). This is automation on Linux, not real devices (see the top of this report).
 
 ## 7. Known gaps
 
