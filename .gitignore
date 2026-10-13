@@ -1,0 +1,31 @@
+# Build outputs
+build/
+.gradle/
+out/
+*.class
+node_modules/
+apps/web/dist/
+tests/browser/test-results/
+tests/browser/playwright-report/
+tests/browser/.cache/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Third-party game files must never be committed (see docs/ASSETS.md)
+user-provided/
+*.apk
+*.xapk
+*.obb
+tools/asset-inventory/output/
+replays/
