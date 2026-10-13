@@ -29,6 +29,7 @@ public final class GameGateway {
 
   private static final Logger log = LoggerFactory.getLogger(GameGateway.class);
   public static final int PROTOCOL_VERSION = 1;
+  static final int IDLE_TIMEOUT_SECONDS = 20;
 
   private final GuestSessionManager guests;
   private final MatchManager matches;
@@ -48,14 +49,27 @@ public final class GameGateway {
     this.matchmaker = matchmaker;
     this.rooms = rooms;
     matches.setChannelLookup(byGuest::get);
+    // An online match cancelled before it began (opponent never loaded or vanished) sends the
+    // remaining player straight back into the queue instead of to the menu.
+    matches.setRequeue(
+        guestId -> {
+          WsClient c = byGuest.get(guestId);
+          if (c != null && c.isOpen()) {
+            queue(c);
+          }
+        });
+    rooms.setChannelLookup(byGuest::get);
   }
 
   public void configure(WsConfig ws) {
     ws.onConnect(
         ctx -> {
-          ctx.session.setIdleTimeout(java.time.Duration.ofSeconds(60));
+          // The client pings every 4 s and the browser answers our protocol pings even from a
+          // background tab, so 20 s of silence means the network is gone. Detecting that quickly
+          // is what keeps the opponent from waiting on a dead connection.
+          ctx.session.setIdleTimeout(java.time.Duration.ofSeconds(IDLE_TIMEOUT_SECONDS));
           ctx.session.setMaxTextMessageSize(8 * 1024);
-          ctx.enableAutomaticPings(15, java.util.concurrent.TimeUnit.SECONDS);
+          ctx.enableAutomaticPings(5, java.util.concurrent.TimeUnit.SECONDS);
           WsClient client = new WsClient(ctx);
           bySession.put(ctx.sessionId(), client);
           connectionsTotal.incrementAndGet();
@@ -82,8 +96,9 @@ public final class GameGateway {
       return;
     }
     byGuest.remove(guestId, client);
+    // Leave the queue (the client queues again after reconnecting). A hosted room survives a
+    // short network drop: the rooms manager finds the host's new connection by guest id.
     matchmaker.cancel(guestId);
-    rooms.cancelHostedBy(guestId);
     MatchSession session = matches.activeMatchOf(guestId);
     if (session != null) {
       session.detach(client);

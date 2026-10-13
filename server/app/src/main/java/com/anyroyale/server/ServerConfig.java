@@ -61,8 +61,8 @@ public record ServerConfig(
         intEnv(env, "PORT", 8080),
         secret,
         staticDir,
-        intEnv(env, "RECONNECT_GRACE_SECONDS", 30),
-        intEnv(env, "READY_TIMEOUT_SECONDS", 20),
+        intEnv(env, "RECONNECT_GRACE_SECONDS", 20),
+        intEnv(env, "READY_TIMEOUT_SECONDS", 25),
         intEnv(env, "MAX_MATCHES", 200),
         replayDir,
         intEnv(env, "TICK_THREADS", Math.max(1, Math.min(4, cores))));

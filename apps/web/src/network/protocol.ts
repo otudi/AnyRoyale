@@ -127,7 +127,7 @@ export type ServerMessage =
   | { type: 'reject'; seq: number; reason: string }
   | { type: 'opponentStatus'; connected: boolean; graceSeconds?: number }
   | { type: 'rematchStatus'; opponentWants?: boolean; opponentLeft?: boolean }
-  | { type: 'matchCancelled'; reason: string }
+  | { type: 'matchCancelled'; reason: string; matchId?: string; requeued?: boolean }
   | { type: 'replaced' }
   | { type: 'serverShutdown'; reason: string }
   | { type: 'error'; code: string; message: string };
