@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { assets } from '../assets/AssetLoader';
 import { audio } from '../audio/AudioManager';
 import { BattleSession } from '../game/BattleSession';
@@ -52,6 +53,7 @@ export class App {
     const room = params.get('room');
     if (room && /^[A-Za-z0-9]{4,8}$/.test(room)) this.pendingJoin = room.toUpperCase();
     (window as unknown as { __anyroyale: App }).__anyroyale = this; // test hook (read-only use)
+    (window as unknown as { __anyroyaleThemes: string[] }).__anyroyaleThemes = Object.keys(ARENA_THEMES);
   }
 
   async boot(): Promise<void> {
@@ -562,6 +564,8 @@ export class App {
             id: b.matchId,
             you: b.start.you,
             arena: b.start.arena.id,
+            seed: b.start.seed,
+            opponent: b.start.opponent.name,
             deck: b.start.deck,
             mode: b.start.mode,
             running: b.running,
@@ -575,9 +579,28 @@ export class App {
           }
         : null,
       fps: this.r.fps,
+      audio: { unlocked: audio.unlocked, ready: audio.ready, state: audio.state() },
+      failedAssets: [...assets.failed],
       renderer: this.r.info(),
       result: this.resultEnd ? { youWon: this.resultEnd.youWon, draw: this.resultEnd.draw, reason: this.resultEnd.reason } : null,
     };
+  }
+
+  /** Test hook: screen position (relative to the stage) of a game-unit arena position. */
+  debugProject(gx: number, gy: number): { x: number; y: number } {
+    const p = this.r.project(new THREE.Vector3(gx / 1000 - 9, 0, 16 - gy / 1000));
+    const rect = this.stage.getBoundingClientRect();
+    return { x: rect.left + p.x, y: rect.top + p.y };
+  }
+
+  /** Test hook: the authoritative state this client saw at a given tick. */
+  debugSnapshot(tick: number): unknown {
+    return this.battle?.history.get(tick) ?? null;
+  }
+
+  /** Test hook: ticks for which this client holds a snapshot. */
+  debugTicks(): number[] {
+    return this.battle ? [...this.battle.history.keys()] : [];
   }
 
   /** Test hook: plays a card through the same path as a drag (used by Playwright). */

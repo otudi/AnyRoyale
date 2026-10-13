@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server:
+    name: Engine + server tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Engine (vendored crforge) and server tests
+        run: ./gradlew --no-daemon :crforge-core:test :crforge-data:test :server:test
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-reports
+          path: |
+            server/app/build/reports/tests
+            server/engine/*/build/reports/tests
+          retention-days: 7
+
+  browser:
+    name: Browser tests (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium-mobile
+            browser: chromium
+          - project: webkit-iphone
+            browser: webkit
+          - project: firefox-desktop
+            browser: firefox
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            apps/web/package-lock.json
+            tests/browser/package-lock.json
+      - name: Build server
+        run: ./gradlew --no-daemon :server:installDist -x test
+      - name: Build web client
+        working-directory: apps/web
+        run: npm ci && npm run build
+      - name: Install Playwright browser
+        working-directory: tests/browser
+        run: npm ci && npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run browser tests
+        working-directory: tests/browser
+        run: npx playwright test --project=${{ matrix.project }} --grep-invert "full real-time"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-${{ matrix.project }}
+          path: tests/browser/test-results
+          retention-days: 7
+
+  docker:
+    name: Docker image builds and serves
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: anyroyale:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Smoke test container
+        run: |
+          docker run -d --name ar -p 8080:8080 -e PORT=8080 -e SESSION_SECRET=ci anyroyale:ci
+          for i in $(seq 1 60); do curl -fs localhost:8080/healthz && break; sleep 1; done
+          curl -fs localhost:8080/healthz | grep '"status":"ok"'
+          curl -fs localhost:8080/ | grep -q AnyRoyale
+          curl -fsI localhost:8080/assets/models/anims.glb | grep -i gltf-binary
+          docker logs ar | tail -20

@@ -97,6 +97,8 @@ export class BattleView {
   private diedIds = new Set<number>();
   private recentSpells: { card: string; x: number; z: number; t: number }[] = [];
   private time = 0;
+  /** Units created so far (cumulative), by side. */
+  private spawned = { own: 0, enemy: 0 };
   private removeUpdater: () => void;
   private world = new THREE.Group();
   private tmp = new THREE.Vector3();
@@ -207,6 +209,7 @@ export class BattleView {
       if (!v) {
         v = new UnitVisual(visualFor(eb[1], kind, eb[4], eb[12]), side);
         this.units.set(id, v);
+        this.spawned[side]++;
         this.world.add(v.root);
         v.root.position.copy(pos);
         v.root.rotation.y = side === 'own' ? (this.myTeam === 'BLUE' ? Math.PI : 0) : this.myTeam === 'BLUE' ? 0 : Math.PI;
@@ -556,8 +559,8 @@ export class BattleView {
     return true;
   }
 
-  stats(): { units: number; projectiles: number; areas: number } {
-    return { units: this.units.size, projectiles: this.projectiles.size, areas: this.areas.size };
+  stats(): { units: number; projectiles: number; areas: number; spawnedOwn: number; spawnedEnemy: number } {
+    return { units: this.units.size, projectiles: this.projectiles.size, areas: this.areas.size, spawnedOwn: this.spawned.own, spawnedEnemy: this.spawned.enemy };
   }
 
   dispose(): void {

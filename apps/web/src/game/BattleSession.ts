@@ -31,6 +31,8 @@ export class BattleSession {
   running = false;
   ended = false;
   lastSnapshot: Snapshot | null = null;
+  /** Recent authoritative states by tick (for cross-client consistency checks in tests). */
+  readonly history = new Map<number, { ids: number[]; towers: Record<number, number>; hand: (string | null)[] | null }>();
 
   constructor(
     readonly start: MatchStart,
@@ -129,6 +131,10 @@ export class BattleSession {
 
   private onSnapshot(s: Snapshot): void {
     this.lastSnapshot = s;
+    const towers: Record<number, number> = {};
+    for (const e of s.e) if (e[3] === 'K' || e[3] === 'P') towers[e[0]] = e[7];
+    this.history.set(s.tick, { ids: s.e.map((e) => e[0]).sort((a, b) => a - b), towers, hand: s.me?.hand ?? null });
+    if (this.history.size > 120) this.history.delete(this.history.keys().next().value!);
     this.view.ingest(s);
     if (s.me) {
       this.hud.setHand(s.me.hand, s.me.next);

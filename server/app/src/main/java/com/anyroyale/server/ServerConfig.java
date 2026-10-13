@@ -51,10 +51,10 @@ public record ServerConfig(
     Path staticDir = null;
     String staticEnv = env.getOrDefault("STATIC_DIR", "apps/web/dist");
     if (!staticEnv.isBlank() && Files.isDirectory(Path.of(staticEnv))) {
-      staticDir = Path.of(staticEnv).toAbsolutePath();
+      staticDir = Path.of(staticEnv).toAbsolutePath().normalize();
     }
     String replayEnv = env.getOrDefault("REPLAY_DIR", "");
-    Path replayDir = replayEnv.isBlank() ? null : Path.of(replayEnv).toAbsolutePath();
+    Path replayDir = replayEnv.isBlank() ? null : Path.of(replayEnv).toAbsolutePath().normalize();
     int cores = Runtime.getRuntime().availableProcessors();
     return new ServerConfig(
         env.getOrDefault("HOST", "0.0.0.0"),

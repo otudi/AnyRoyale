@@ -122,6 +122,10 @@ export class AudioManager {
     src.start();
   }
 
+  state(): string {
+    return this.ctx?.state ?? 'none';
+  }
+
   get ready(): boolean {
     return this.buffers.size > 0;
   }

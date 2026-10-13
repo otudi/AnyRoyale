@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/build
+**/.gradle
+apps/web/dist
+tests/browser/test-results
+tests/browser/playwright-report
+tools/asset-pipeline/.cache
+.env
+*.apk
+user-provided
