@@ -88,6 +88,8 @@ class EntityInventoryTest {
     Path out = Path.of("build", "entity-inventory.json");
     Files.createDirectories(out.getParent());
     Files.writeString(out, Json.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(root));
+    // The live catalog, so docs/CARD_SUPPORT.md can be generated without a running server.
+    Files.writeString(Path.of("build", "card-catalog.json"), CardCatalog.json());
     assertThat(names).isNotEmpty();
   }
 

@@ -51,6 +51,8 @@ final class HeuristicBot implements BotBrain {
   private static final Set<String> TOWER_SPELLS =
       Set.of("goblinbarrel", "graveyard", "miner", "goblindrill");
   private static final Set<String> SIEGE = Set.of("xbow", "mortar");
+  private static final Set<String> SPAWNERS =
+      Set.of("barbarianhut", "goblinhut_rework", "tombstone", "firespirithut", "goblincage");
   private static final Set<String> SMALL_SPELLS =
       Set.of("zap", "log", "arrows", "snowball", "barblog", "goblincurse");
 
@@ -134,7 +136,7 @@ final class HeuristicBot implements BotBrain {
     if (best == null || best.score() < 4) {
       best = better(best, tag(attack(v, !underPressure), "attack"));
     }
-    if (best == null && p.avoidLeak() && v.elixir() >= 9.6) {
+    if (best == null && (p.avoidLeak() || v.elixir() >= 10) && v.elixir() >= 9.6) {
       best = tag(leakPlay(v), "leak");
     }
     if (best == null) {
@@ -498,6 +500,10 @@ final class HeuristicBot implements BotBrain {
         } else {
           y = 12500;
         }
+      } else if (c.getType() == CardType.BUILDING && SPAWNERS.contains(c.getId())) {
+        score = 2.2; // spawners build pressure from the back
+        x = W / 2 + (lane == 0 ? -2500 : 2500);
+        y = 7000;
       } else if (c.getType() == CardType.TROOP && !tr.targetsBuildingsOnly()) {
         score = 2.5 + (tr.splash() ? 0.5 : 0);
         x = laneX + (lane == 0 ? 1500 : -1500);
@@ -613,15 +619,63 @@ final class HeuristicBot implements BotBrain {
     return laneTowerHpRatio(v, team, localLane) > 0;
   }
 
+  /**
+   * Elixir is about to cap: spend it with whatever the hand allows so the bot can never stall with
+   * a hand of only buildings and spells. Troops go to the back of a lane, buildings to the
+   * defensive centre, damaging spells onto the weakest enemy princess tower, Log-type spells roll
+   * from the bridge, other spells (Rage, Freeze, Clone...) over the most advanced own unit.
+   */
   private Candidate leakPlay(BotView v) {
     Candidate best = null;
+    int lane = chooseLane(v);
+    int laneX = lane == 0 ? LEFT_LANE_X : RIGHT_LANE_X;
     for (int slot = 0; slot < 4; slot++) {
       Card c = v.handCard(slot);
-      if (c == null || !affordable(v, c) || c.getType() != CardType.TROOP) {
+      if (c == null || !affordable(v, c) || c.isMirror()) {
         continue;
       }
-      int lane = rng.nextInt(2);
-      best = better(best, new Candidate(slot, c, lane == 0 ? 6500 : 11500, 2000, 1 + (10 - c.getCost()) * 0.1));
+      CardTraits tr = CardTraits.of(c);
+      double cheapness = (10 - c.getCost()) * 0.1;
+      int x;
+      int y;
+      double score;
+      if (c.getType() == CardType.TROOP) {
+        x = rng.nextInt(2) == 0 ? 6500 : 11500;
+        y = 2000;
+        score = 1.5 + cheapness;
+      } else if (c.getType() == CardType.BUILDING) {
+        x = W / 2;
+        y = 8000;
+        score = 1.2 + cheapness;
+      } else if (c.isSpellAsDeploy() && !c.isCanDeployOnEnemySide()) {
+        x = laneX;
+        y = 13500;
+        score = 1.0 + cheapness;
+      } else if (tr.damagingSpell() || TOWER_SPELLS.contains(c.getId())) {
+        x = laneX;
+        y = 25500;
+        score = 1.1 + cheapness;
+      } else {
+        int[] front = mostAdvancedOwnUnit(v);
+        x = front != null ? front[0] : laneX;
+        y = front != null ? front[1] : 12000;
+        score = 0.8 + cheapness;
+      }
+      best = better(best, new Candidate(slot, c, x, y, score));
+    }
+    return best;
+  }
+
+  private int[] mostAdvancedOwnUnit(BotView v) {
+    int[] best = null;
+    for (Entity e : v.visibleEntities()) {
+      if (e.getTeam() != v.team() || e.getEntityType() != EntityType.TROOP) {
+        continue;
+      }
+      int ly = ly(v, e.getPosition().getY());
+      if (best == null || ly > best[1]) {
+        best = new int[] {lx(v, e.getPosition().getX()), ly};
+      }
     }
     return best;
   }

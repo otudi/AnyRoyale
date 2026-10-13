@@ -37,10 +37,12 @@ class BotDebugTest {
       public void onRematch(MatchSession s, boolean sd) {}
       public void onClosed(MatchSession s) {}
     };
-    var deck = new SharedRandomDeckGenerator().generate(seed);
+    var deck = System.getenv("DECK") != null
+        ? new SharedRandomDeckGenerator.DeckSpec(seed, java.util.List.of(System.getenv("DECK").split(",")), 1)
+        : new SharedRandomDeckGenerator().generate(seed);
     MatchConfig cfg = new MatchConfig("d", seed, deck, ArenaCatalog.pick(seed), MatchMode.BOT, null);
     MatchSession s = new MatchSession(cfg, "A", a, logging(new HeuristicBot(BotProfile.of(a), 1), a, log),
-        "B", b, logging(new HeuristicBot(BotProfile.of(b), 2), b, log), l, 30, 20, now::get);
+        "B", b, b.equals("idle") ? new BotBrain() { public Decision think(BotView v) { return null; } public String difficulty() { return "idle"; } } : logging(new HeuristicBot(BotProfile.of(b), 2), b, log), l, 30, 20, now::get);
     int guard = 0;
     while (s.state() != MatchSession.State.ENDED && guard++ < 20*60*8) {
       now.addAndGet(50); TestAccess.step(s);
