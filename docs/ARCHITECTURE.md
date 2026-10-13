@@ -43,7 +43,11 @@ Browser (Safari / Chrome / Firefox)                        Render web service (o
 
 - Disconnect: the seat is kept for `RECONNECT_GRACE_SECONDS` (30). Reconnecting with the same
   guest token resumes (`matchStart{resume:true}` + snapshot). Past the grace period the player
-  forfeits; if both are gone the match is abandoned.
+  forfeits; if both are gone the match is abandoned. The opponent sees a countdown while the
+  seat is empty.
+- Dead-connection detection: the client re-dials on the browser `offline` event or after 12 s
+  without any server message (it pings every 4 s; snapshots arrive at 10 Hz), with exponential
+  backoff; the server pings every 15 s and drops sockets idle for 60 s.
 - A different guest can never act in a match: commands are routed by the authenticated guest id
   and seats are fixed at creation. Rooms hold exactly two seats.
 - Rematch requires both humans (bot matches: one click; "same deck" reuses the seed).

@@ -48,10 +48,17 @@ jobs:
         include:
           - project: chromium-mobile
             browser: chromium
+            run: ''
+            headed: ''
           - project: webkit-iphone
             browser: webkit
+            run: ''
+            headed: ''
+          # Headless Firefox has no software GL: run it headed on a virtual display with Mesa.
           - project: firefox-desktop
             browser: firefox
+            run: xvfb-run -a
+            headed: --headed
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -73,10 +80,19 @@ jobs:
         run: npm ci && npm run build
       - name: Install Playwright browser
         working-directory: tests/browser
-        run: npm ci && npx playwright install --with-deps ${{ matrix.browser }}
+        run: |
+          npm ci && npx playwright install --with-deps ${{ matrix.browser }}
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libegl-mesa0
+      - name: WebGL2 preflight
+        working-directory: tests/browser
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: ${{ matrix.run }} node webgl-check.mjs ${{ matrix.browser }} ${{ matrix.headed }}
       - name: Run browser tests
         working-directory: tests/browser
-        run: npx playwright test --project=${{ matrix.project }} --grep-invert "full real-time"
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: ${{ matrix.run }} npx playwright test --project=${{ matrix.project }} ${{ matrix.headed }} --grep-invert "full real-time"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
