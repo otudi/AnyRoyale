@@ -111,7 +111,10 @@ export class DragDeploy {
 
   private onMove = (e: PointerEvent) => {
     if (!this.enabled || !this.dragging || e.pointerId !== this.pointerId) return;
-    if (Math.hypot(e.clientX - this.startX, e.clientY - this.startY) > 8) this.moved = true;
+    if (!this.moved && Math.hypot(e.clientX - this.startX, e.clientY - this.startY) > 8) {
+      this.moved = true;
+      this.hud.hideInfo();
+    }
     const card = this.card(this.hud.selected);
     const at = this.evaluate(e);
     if (card && at) {

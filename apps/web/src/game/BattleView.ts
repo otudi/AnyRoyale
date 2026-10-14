@@ -126,7 +126,7 @@ export class BattleView {
     const mine: 0 | 1 = myTeam === 'BLUE' ? 0 : 1;
     this.side = { 0: mine === 0 ? 'own' : 'enemy', 1: mine === 1 ? 'own' : 'enemy' };
     const theme = themeFor(arenaId);
-    this.arena = new ArenaBuilder(theme, r.quality);
+    this.arena = new ArenaBuilder(theme, r.quality, myTeam === 'BLUE' ? 1 : -1);
     this.fx = new Effects(r.quality);
     this.world.add(this.arena.root, this.fx.root, this.bars.root, this.markers.root, this.blobs.mesh);
     r.scene.add(this.world);
@@ -134,6 +134,7 @@ export class BattleView {
     r.scene.fog = new THREE.Fog(theme.fog, r.cameraDistance * 1.35, r.cameraDistance * 3.2);
     r.hemi.color.setHex(theme.hemiSky);
     r.hemi.groundColor.setHex(theme.hemiGround);
+    r.hemi.intensity = 0.85;
     r.sun.color.setHex(theme.sunColor);
     r.sun.intensity = theme.sunIntensity;
     r.setPerspective(myTeam);
@@ -343,7 +344,10 @@ export class BattleView {
       if (!b.entities.has(id) && !tw.destroyed) {
         tw.destroy();
         const d = this.towerData.get(id);
-        if (d) d.alive = false;
+        if (d) {
+          d.hp = 0;
+          d.alive = false;
+        }
       }
       tw.update(dt, false);
     }
@@ -354,6 +358,16 @@ export class BattleView {
   private syncTower(id: number, e: EntityTuple, pos: THREE.Vector3, side: Side, flags: number, dt: number): void {
     let tw = this.towers.get(id);
     const kind = e[3] as 'K' | 'P';
+    if (tw?.destroyed) {
+      // The 'die' event can be applied while the interpolation snapshot still holds the tower:
+      // never resurrect it with its last (non-zero) hit points.
+      const d = this.towerData.get(id);
+      if (d) {
+        d.hp = 0;
+        d.alive = false;
+      }
+      return;
+    }
     if (!tw) {
       tw = new TowerVisual(kind, side);
       tw.root.position.copy(pos);
@@ -583,7 +597,10 @@ export class BattleView {
           const tw = this.towers.get(id);
           tw?.destroy();
           const d = this.towerData.get(id);
-          if (d) d.alive = false;
+          if (d) {
+            d.hp = 0;
+            d.alive = false;
+          }
           this.onTowerDestroyed(side, towerKind);
         } else {
           const skel = /Skeleton|Ghost|Bomber|Wallbreaker/.test(name);

@@ -1,14 +1,15 @@
 # Assets
 
 AnyRoyale ships **no Clash Royale / Supercell files**: no models, textures, sounds, music, fonts,
-card art or logos. Everything you see or hear comes from one of three sources:
+card art or logos. Everything you see or hear comes from one of these sources:
 
 | Source | What | Licence |
 |---|---|---|
 | KayKit packs by Kay Lousberg (pinned commits, below) | rigged humanoid characters, skeletons, medieval buildings (card buildings, tower ruins), props, weapons, one shared animation library | CC0 1.0 |
-| Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, arena terrain, river, bridges, particles, projectiles, card icons | this repository |
+| Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, the arena (painted field, stone plazas, cobbled lanes, water shader, stone bridges and walls, hills, trees, rocks, bushes), particles, projectiles, card art | this repository |
 | npm packages `@fontsource/tajawal` 5.2.7, `material-icons` 1.13.14 (bundled at build time) | Tajawal font (Arabic + Latin) and Material Icons used by the menus | OFL-1.1 / Apache-2.0 |
-| Code in `apps/web/src/audio/` | every sound effect and both music tracks, synthesised with Web Audio at load time | this repository |
+| Kenney audio packs (impact, interface, RPG, sci-fi, UI, music jingles) and rubberduck's OpenGameArt packs (80 RPG SFX, 100 SFX, 100 SFX 2, sci-fi SFX, bang/firework SFX, water/splash SFX) | the recorded sound effects in `apps/web/public/assets/sfx` | CC0 1.0 |
+| Code in `apps/web/src/audio/` | fallback effects synthesised with Web Audio, and both music tracks | this repository |
 
 None of these is the original artwork, and none is presented as identical to it. Unit names come
 from the crforge card data (Apache-2.0); the game is not affiliated with or endorsed by Supercell.
@@ -61,20 +62,33 @@ originals.
 
 ## Audio
 
-All audio is synthesised by `apps/web/src/audio/sfx.ts` (40 effects rendered once into
-`AudioBuffer`s with `OfflineAudioContext`) and `music.ts` (menu and battle loops built from
-oscillators and noise). There are no audio files to download, so there is nothing to cache and
-nothing that can fail to load. Effects are chosen by category (deploy, melee weapon type, ranged
-projectile type, spell type, death, tower events, countdown, victory/defeat); there are **no
-per-card voice lines**. Safari/iOS: the `AudioContext` is created and resumed inside the first
-user gesture and a silent buffer is played to unlock output.
+Sound effects are short recorded clips from CC0 packs, built by `tools/audio-pipeline/build.mjs`:
+
+1. downloads each pack listed in `tools/audio-pipeline/sources.json` (SHA-256 of every zip pinned)
+   into `tools/audio-pipeline/.cache` (git-ignored);
+2. for each of the 40 game sounds in `sounds.json` picks one to three source clips (variants are
+   chosen at random when played), peak-normalises them, layers/trims them with ffmpeg;
+3. writes mono 80 kbit/s MP3 files (decodable by Chrome, Safari/iOS and Firefox; ≈290 KB in total)
+   and `index.json`, which also records the source pages, licences and hashes.
+
+Rebuild: `cd tools/audio-pipeline && node build.mjs` (needs curl, unzip and ffmpeg with libmp3lame).
+
+At runtime `AudioManager` decodes the files after the first user gesture; until they are decoded,
+or if they cannot be fetched, the original synthesised effects in `sfx.ts` play instead. The music
+loops are still synthesised (`music.ts`). Effects are chosen by category (deploy, melee weapon type,
+ranged projectile type, spell type, death, tower events, countdown, victory/defeat); there are
+**no per-card voice lines**.
+
+Safari/iOS: the `AudioContext` is created and resumed inside the first user gesture, a silent
+buffer is played to unlock output, and the page's audio session is set to `playback` so effects
+are heard even when the phone's ring/silent switch is on silent (Safari 16.4+).
 
 ## Missing compared with the original game
 
 - Original 3D models, textures and animations for every unit, building, tower and arena.
 - Original card artwork (cards show generated icons: unit silhouette, type colour, cost).
-- Original sound effects, voice lines and music.
-- Arena decorations of the 8 themed arenas are recoloured CC0 props, not the original arenas.
+- Original sound effects, voice lines and music (the recorded effects are generic CC0 sounds).
+- The 8 themed arenas are procedural scenery plus recoloured CC0 props, not the original arenas.
 - Emotes, card-specific deploy/death animations, evolution and champion visuals (those cards are
   not playable, see `docs/CARD_SUPPORT.md`).
 

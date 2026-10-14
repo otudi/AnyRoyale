@@ -1,0 +1,193 @@
+{
+ "sounds": {
+  "click": [
+   "click.mp3"
+  ],
+  "select": [
+   "select.mp3"
+  ],
+  "deploy": [
+   "deploy.mp3"
+  ],
+  "deployHeavy": [
+   "deployHeavy.mp3"
+  ],
+  "spawnMagic": [
+   "spawnMagic.mp3"
+  ],
+  "sword": [
+   "sword.mp3",
+   "sword-2.mp3",
+   "sword-3.mp3"
+  ],
+  "axe": [
+   "axe.mp3"
+  ],
+  "punch": [
+   "punch.mp3",
+   "punch-2.mp3",
+   "punch-3.mp3"
+  ],
+  "bite": [
+   "bite.mp3",
+   "bite-2.mp3"
+  ],
+  "arrow": [
+   "arrow.mp3"
+  ],
+  "arrowHit": [
+   "arrowHit.mp3",
+   "arrowHit-2.mp3"
+  ],
+  "magic": [
+   "magic.mp3"
+  ],
+  "zapShot": [
+   "zapShot.mp3"
+  ],
+  "fireLaunch": [
+   "fireLaunch.mp3"
+  ],
+  "explosion": [
+   "explosion.mp3",
+   "explosion-2.mp3"
+  ],
+  "bigExplosion": [
+   "bigExplosion.mp3"
+  ],
+  "zap": [
+   "zap.mp3"
+  ],
+  "freeze": [
+   "freeze.mp3"
+  ],
+  "poison": [
+   "poison.mp3"
+  ],
+  "rage": [
+   "rage.mp3"
+  ],
+  "heal": [
+   "heal.mp3"
+  ],
+  "lightning": [
+   "lightning.mp3"
+  ],
+  "roll": [
+   "roll.mp3"
+  ],
+  "cannon": [
+   "cannon.mp3"
+  ],
+  "towerHit": [
+   "towerHit.mp3"
+  ],
+  "towerDestroyed": [
+   "towerDestroyed.mp3"
+  ],
+  "kingWake": [
+   "kingWake.mp3"
+  ],
+  "death": [
+   "death.mp3"
+  ],
+  "skeletonDeath": [
+   "skeletonDeath.mp3"
+  ],
+  "buildingDeath": [
+   "buildingDeath.mp3"
+  ],
+  "countdown": [
+   "countdown.mp3"
+  ],
+  "battleStart": [
+   "battleStart.mp3"
+  ],
+  "victory": [
+   "victory.mp3"
+  ],
+  "defeat": [
+   "defeat.mp3"
+  ],
+  "crown": [
+   "crown.mp3"
+  ],
+  "reject": [
+   "reject.mp3"
+  ],
+  "elixirFull": [
+   "elixirFull.mp3"
+  ],
+  "flap": [
+   "flap.mp3"
+  ],
+  "inferno": [
+   "inferno.mp3"
+  ],
+  "heavyStep": [
+   "heavyStep.mp3"
+  ]
+ },
+ "sources": {
+  "k_impact": {
+   "page": "https://kenney.nl/assets/impact-sounds",
+   "license": "CC0-1.0",
+   "sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8"
+  },
+  "k_interface": {
+   "page": "https://kenney.nl/assets/interface-sounds",
+   "license": "CC0-1.0",
+   "sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232"
+  },
+  "k_jingles": {
+   "page": "https://kenney.nl/assets/music-jingles",
+   "license": "CC0-1.0",
+   "sha256": "b729ba57959bd58793d2c5cafa348aaf2655d354f3da35ec4729e03ec77197b8"
+  },
+  "k_rpg": {
+   "page": "https://kenney.nl/assets/rpg-audio",
+   "license": "CC0-1.0",
+   "sha256": "6dbeaf8544da958d8f2adcb4a4a4b76c1ade34a05f8ab9edccd327da7375f38b"
+  },
+  "k_scifi": {
+   "page": "https://kenney.nl/assets/sci-fi-sounds",
+   "license": "CC0-1.0",
+   "sha256": "119340f351a5098ad814f78719438c0da355a9ce8a4c8a3af6a8d48aa3d49e04"
+  },
+  "k_ui": {
+   "page": "https://kenney.nl/assets/ui-audio",
+   "license": "CC0-1.0",
+   "sha256": "946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6"
+  },
+  "o_bang": {
+   "page": "https://opengameart.org/content/25-cc0-bang-firework-sfx",
+   "license": "CC0-1.0",
+   "sha256": "c0c9ecc11e2dc0d190f0cced755569858234b8528286bc83becb6314c663407f"
+  },
+  "o_rpg80": {
+   "page": "https://opengameart.org/content/80-cc0-rpg-sfx",
+   "license": "CC0-1.0",
+   "sha256": "1c2f06ff4e8563b5b8b745b23cf213c1474142a69bb82bd8f5e10d9b3f7a7bbd"
+  },
+  "o_scifi": {
+   "page": "https://opengameart.org/content/50-cc0-sci-fi-sfx",
+   "license": "CC0-1.0",
+   "sha256": "7824c08e54b5b68d6c70ced9d8fe9e47f86ce19c1d8d47d093e1dc1b579f78ec"
+  },
+  "o_sfx100": {
+   "page": "https://opengameart.org/content/100-cc0-sfx",
+   "license": "CC0-1.0",
+   "sha256": "a5c135878c132f1c59cca54e60061c296cd0ac27ad031ca2c41b8cd5cab3c706"
+  },
+  "o_sfx100v2": {
+   "page": "https://opengameart.org/content/100-cc0-sfx-2",
+   "license": "CC0-1.0",
+   "sha256": "0fc61b4494e2e893c0c015ced4877b3f689c7d84a48cb61daecd7ddb52db797b"
+  },
+  "o_water": {
+   "page": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+   "license": "CC0-1.0",
+   "sha256": "7cd39abb49d4362a37ba18dc0e454c7dc1d08029d4e5b683149046bc237b2eba"
+  }
+ }
+}

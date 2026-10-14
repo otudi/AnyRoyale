@@ -81,6 +81,17 @@
   padding: calc(env(safe-area-inset-top, 0px) + 16px) 5% calc(env(safe-area-inset-bottom, 0px) + 28px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* free, elastic scrolling on every menu (the arena itself stays locked) */
+  touch-action: pan-y;
+  overscroll-behavior-y: auto;
+}
+
+/* one extra pixel keeps the column scrollable even when everything fits, so it always bounces */
+.mm-col::after {
+  content: '';
+  display: block;
+  flex: 0 0 1px;
+  min-height: 1px;
 }
 
 .mm-center {

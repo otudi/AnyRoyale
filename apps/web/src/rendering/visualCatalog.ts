@@ -30,6 +30,9 @@ export type ProcShape =
   | 'icegolem'
   | 'elixirblob'
   | 'spirit'
+  | 'icespirit'
+  | 'electrospirit'
+  | 'healspirit'
   | 'hog'
   | 'ram'
   | 'phoenix'
@@ -199,9 +202,9 @@ export const VISUALS: Record<string, VisualSpec> = {
   ElixirGolem2: proc('elixirblob', 1.1, { color: 0xd040c8 }),
   ElixirGolem4: proc('elixirblob', 0.75, { color: 0xd040c8 }),
   FireSpirits: proc('spirit', 0.7, { color: 0xff6a20 }),
-  IceSpirits: proc('spirit', 0.7, { color: 0x9fe0ff }),
-  ElectroSpirit: proc('spirit', 0.7, { color: 0x6ab8ff }),
-  HealSpirit: proc('spirit', 0.7, { color: 0xffe066 }),
+  IceSpirits: proc('icespirit', 0.7, { color: 0xe8f7ff }),
+  ElectroSpirit: proc('electrospirit', 0.7, { color: 0x2f4fe0 }),
+  HealSpirit: proc('healspirit', 0.7, { color: 0xffe066 }),
   Ram: proc('ram', 1.2, { color: 0xe8e0d0 }),
   RoyalHog: proc('hog', 1.1, { color: 0xd88a6a, rider: char('rogue', 0.9, '1H_Melee_Attack_Chop', { gear: ['Knife'] }) }),
   BattleRam: proc('batteringram', 1.2, { color: 0x8a5a30 }),

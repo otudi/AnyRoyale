@@ -12,6 +12,7 @@ import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
 import { Renderer3D } from '../rendering/Renderer3D';
 import { CORE_MODEL_FILES, resetClipCache } from '../rendering/UnitFactory';
+import { attacks, cardName, kindLabel, prettyName, targetsLabel } from './cardLabels';
 import { getSettings, updateSettings, type Quality } from './settings';
 import { isDark } from './theme';
 
@@ -28,24 +29,8 @@ function ic(name: string, cls = ''): string {
   return `<span class="material-icons ${cls}" aria-hidden="true">${name}</span>`;
 }
 
-/** "BabyDragon" -> "Baby Dragon" */
-function prettyName(name: string): string {
-  return name.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
-}
-
-function cardName(c: CardInfo): string {
-  return getLang() === 'ar' ? (CARD_TEXTS[c.id]?.ar ?? prettyName(c.name)) : prettyName(c.name);
-}
-
 function speedLabel(speed: number): string {
   return t(speed <= 800 ? 'speedSlow' : speed <= 1100 ? 'speedMedium' : speed <= 1600 ? 'speedFast' : 'speedVeryFast');
-}
-
-function targetsLabel(c: CardInfo): string {
-  if (c.tags.includes('buildings')) return t('tgtBuildings');
-  const air = c.tags.includes('air');
-  const ground = c.tags.includes('ground');
-  return t(air && ground ? 'tgtBoth' : air ? 'tgtAir' : 'tgtGround');
 }
 
 const HELP_KEY = 'anyroyale.helpSeen';
@@ -208,7 +193,7 @@ export class App {
 
   private brand(): string {
     return `<div class="mm-logo-icons">${ic('shield')}${ic('emoji_events', 'center')}${ic('shield', 'red')}</div>
-      <h1 class="mm-title">AnyRoyale</h1><div class="mm-tagline">${t('tagline')}</div>`;
+      <h1 class="mm-title">AnyRoyale</h1>`;
   }
 
   private renderLoading(pct: number, text: string): void {
@@ -312,7 +297,6 @@ export class App {
          <div class="mm-status">${t('searching')}</div>
          <div class="mm-timer" data-search-timer>00:00</div>
          <div class="mm-note" data-waiting style="margin-bottom:4px">${t('waitingPlayers', { n: this.queueWaiting })}</div>
-         <div class="mm-note">${t('searchingHint')}</div>
          ${this.btn('cancel', 'close', t('cancel'), { cls: 'center' })}
        </div>`,
     );
@@ -464,7 +448,7 @@ export class App {
        <div class="mm-chips">${filters
          .map((f) => `<button class="mm-chip ${f === this.cardFilter ? 'on' : ''}" data-filter="${f}">${f === 'ALL' ? t('filterAll') : t(`type${f}` as 'typeTROOP')}</button>`)
          .join('')}</div>
-       <div class="mm-note" style="margin-bottom:14px">${t('levelNote', { n: cards.level })}</div>
+       <div style="height:12px"></div>
        <div class="mm-grid">${list
          .map(
            (c) =>
@@ -522,7 +506,8 @@ export class App {
         stats.push([t('statRange'), u.range < 2000 ? t('melee') : t('tiles', { n: r1(u.range / 1000) })]);
       }
       if (c.type === 'TROOP' && u.speed > 0) stats.push([t('statSpeed'), speedLabel(u.speed)]);
-      if (u.damage > 0) stats.push([t('statTargets'), targetsLabel(c)]);
+      if (c.type === 'TROOP') stats.push([t('statKind'), kindLabel(c)]);
+      if (attacks(c)) stats.push([t('statTargets'), targetsLabel(c)]);
       if (u.lifetime) stats.push([t('statLifetime'), t('seconds', { n: r1(u.lifetime) })]);
     }
     if (c.spell) {
@@ -927,7 +912,7 @@ export class App {
           }
         : null,
       fps: this.r.fps,
-      audio: { unlocked: audio.unlocked, ready: audio.ready, state: audio.state() },
+      audio: { unlocked: audio.unlocked, ready: audio.ready, state: audio.state(), samples: audio.sampleCount },
       failedAssets: [...assets.failed],
       renderer: this.r.info(),
       result: this.resultEnd ? { youWon: this.resultEnd.youWon, draw: this.resultEnd.draw, reason: this.resultEnd.reason } : null,

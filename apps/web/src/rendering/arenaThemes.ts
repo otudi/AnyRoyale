@@ -35,6 +35,34 @@ export interface ArenaTheme {
   bridge: number;
 }
 
+/** Procedural scenery around the field: tree style, foliage and stone colours. */
+export interface Scenery {
+  trees: 'round' | 'pine' | 'palm' | 'dead' | 'mixed';
+  foliage: [number, number];
+  trunk: number;
+  /** Stone of walls, tower plazas, bridges and river banks. */
+  stone: number;
+  /** White caps on trees, rocks and walls. */
+  snow?: boolean;
+  /** Ground colours of the surroundings: near the walls, and far away. */
+  ground: [number, number];
+}
+
+export const SCENERY: Record<string, Scenery> = {
+  meadow: { trees: 'round', foliage: [0x3f8f34, 0x6cbf45], trunk: 0x6b4426, stone: 0xbab3a0, ground: [0x5aa83c, 0x3f8a32] },
+  goblin: { trees: 'mixed', foliage: [0x5b8f2f, 0x8ab843], trunk: 0x6b4426, stone: 0xc9ad7c, ground: [0x8fa850, 0x9a8048] },
+  bones: { trees: 'dead', foliage: [0x3a5236, 0x56704a], trunk: 0x4a3e34, stone: 0x8e8c84, ground: [0x55604a, 0x3e4038] },
+  sands: { trees: 'palm', foliage: [0x4f9a3a, 0x7cc048], trunk: 0x9a7448, stone: 0xdcc292, ground: [0xd9b77a, 0xc89d5e] },
+  arcane: { trees: 'pine', foliage: [0x5a4fb0, 0x8a72e0], trunk: 0x3e3458, stone: 0xa49cc0, ground: [0x5f5a96, 0x403c70] },
+  frost: { trees: 'pine', foliage: [0x2f6a52, 0x4a8a68], trunk: 0x5a4030, stone: 0xc9d6e2, snow: true, ground: [0xe6f0f8, 0xc8daea] },
+  jungle: { trees: 'round', foliage: [0x1f7a32, 0x3fae46], trunk: 0x5a3a20, stone: 0x9aa48a, ground: [0x3f8f34, 0x2a6a28] },
+  highlands: { trees: 'pine', foliage: [0x356e3a, 0x55964a], trunk: 0x5e4430, stone: 0xb0aa9a, ground: [0x7a9a52, 0x8a8670] },
+};
+
+export function sceneryFor(id: string): Scenery {
+  return SCENERY[id] ?? SCENERY.meadow;
+}
+
 const env = 'env_core.glb';
 const spooky = 'props_spooky.glb';
 const dungeon = 'props_dungeon.glb';

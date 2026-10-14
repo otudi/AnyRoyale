@@ -35,3 +35,4 @@ tools/asset-pipeline/node_modules/
 # Python
 __pycache__/
 *.pyc
+tools/audio-pipeline/.cache/

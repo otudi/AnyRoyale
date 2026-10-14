@@ -2,6 +2,7 @@ import { cards } from '../game/cards';
 import type { TowerLabel } from '../game/BattleView';
 import { t } from '../i18n/strings';
 import type { CardArt } from '../rendering/CardArt';
+import { attacks, cardDesc, cardName, kindLabel, targetsLabel } from './cardLabels';
 
 /** DOM HUD drawn over the 3D canvas. All numbers shown come from server snapshots. */
 export class Hud {
@@ -21,6 +22,8 @@ export class Hud {
   private oppAwayTimer = 0;
   private towerEls = new Map<number, HTMLElement>();
   private fpsEl: HTMLElement;
+  private infoEl: HTMLElement;
+  private infoTimer = 0;
   private hand: (string | null)[] = [null, null, null, null];
   private next: string | null = null;
   private displayedElixir = 0;
@@ -50,6 +53,7 @@ export class Hud {
       <button class="surrender" data-surrender title="${t('surrender')}">🏳️</button>
       <div class="towers" data-towers></div>
       <div class="tray">
+        <div class="card-info hidden" data-card-info></div>
         <div class="hand">
           <div class="next"><div class="card small" data-next><img alt="" /><div class="cost"><span></span></div></div><div>${t('next')}</div></div>
           ${[0, 1, 2, 3]
@@ -71,6 +75,7 @@ export class Hud {
     this.crownsOpp = root.querySelector('[data-crowns-opp]')!;
     this.oppTag = root.querySelector('[data-opp]')!;
     this.fpsEl = root.querySelector('[data-fps]')!;
+    this.infoEl = root.querySelector('[data-card-info]')!;
     root.querySelector<HTMLButtonElement>('[data-surrender]')!.addEventListener('click', () => this.onSurrender());
     (root.querySelector('[data-timer-label]') as HTMLElement).textContent = t('arena');
   }
@@ -222,6 +227,33 @@ export class Hud {
   select(slot: number): void {
     this.selected = slot;
     this.cardEls.forEach((el, i) => el.classList.toggle('selected', i === slot));
+    const id = slot >= 0 ? this.hand[slot] : null;
+    const card = id ? cards.get(id) : undefined;
+    if (!card) {
+      this.hideInfo();
+      return;
+    }
+    // Short card info: name, what it is (flying / ground / building / spell), what it hits, one line.
+    const chips = [`<span class="ci-chip">${kindLabel(card)}</span>`];
+    if (attacks(card)) chips.push(`<span class="ci-chip hit">${t('hitsLabel')}: ${targetsLabel(card)}</span>`);
+    const name = document.createElement('b');
+    name.textContent = cardName(card);
+    const desc = document.createElement('div');
+    desc.className = 'ci-desc';
+    desc.textContent = cardDesc(card);
+    this.infoEl.innerHTML = `<div class="ci-head"><div class="ci-chips">${chips.join('')}</div></div>`;
+    this.infoEl.querySelector('.ci-head')!.prepend(name);
+    if (desc.textContent) this.infoEl.append(desc);
+    this.infoEl.dataset.cardInfo = card.id;
+    this.infoEl.classList.remove('hidden');
+    window.clearTimeout(this.infoTimer);
+    this.infoTimer = window.setTimeout(() => this.hideInfo(), 4000);
+  }
+
+  /** Hides the card info bubble (e.g. while a card is dragged over the arena). */
+  hideInfo(): void {
+    this.infoEl.classList.add('hidden');
+    this.infoEl.dataset.cardInfo = '';
   }
 
   markPending(slot: number, pending: boolean): void {

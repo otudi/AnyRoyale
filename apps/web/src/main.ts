@@ -14,7 +14,7 @@ applyTheme();
 
 // Browsers only start audio after a user gesture (Safari is strict): unlock on the first one.
 const unlock = () => audio.unlock();
-for (const ev of ['pointerdown', 'touchend', 'keydown']) {
+for (const ev of ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']) {
   window.addEventListener(ev, unlock, { capture: true, passive: true });
 }
 

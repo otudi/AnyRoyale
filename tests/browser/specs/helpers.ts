@@ -33,7 +33,7 @@ export interface DebugState {
     view: { units: number; projectiles: number; areas: number; spawnedOwn: number; spawnedEnemy: number };
   };
   fps: number;
-  audio: { unlocked: boolean; ready: boolean; state: string };
+  audio: { unlocked: boolean; ready: boolean; state: string; samples: number };
   failedAssets: string[];
   result: null | { youWon: boolean; draw: boolean; reason: string };
 }

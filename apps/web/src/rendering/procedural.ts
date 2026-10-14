@@ -338,6 +338,91 @@ export function buildProc(shape: ProcShape, height: number, color = 0x888888, co
       top = 0.9;
       break;
     }
+    case 'icespirit': {
+      // a round snowball with a crown of icicles and a snowflake on its belly
+      const snow = mat(c, { rough: 0.55 });
+      const orb = part(sphere(1, 2), snow, 0.34, 0.31, 0.34, 0, 0.42, 0);
+      body.add(orb);
+      const ice = mat(0x8fdcff, { emissive: 0x3aa8ff, rough: 0.2, opacity: 0.92 });
+      const spikes: [number, number, number, number][] = [
+        [0, 0.78, 0, 0.32],
+        [0.16, 0.7, 0.05, 0.24],
+        [-0.16, 0.7, 0.05, 0.24],
+        [0.08, 0.7, -0.15, 0.22],
+        [-0.08, 0.7, -0.15, 0.22],
+      ];
+      for (const [x, y, z, h] of spikes) {
+        const sp = part(geo('oct', () => new THREE.OctahedronGeometry(1, 0)), ice, 0.07, h, 0.07, x, y, z);
+        sp.rotation.z = -x * 1.6;
+        sp.rotation.x = z * 1.4;
+        body.add(sp);
+      }
+      const flake = new THREE.Group();
+      flake.position.set(0, 0.4, 0.33);
+      for (let i = 0; i < 3; i++) {
+        const arm = part(box(), mat(0x9fe4ff, { emissive: 0x58c0ff }), 0.03, 0.22, 0.02);
+        arm.rotation.z = (i * Math.PI) / 3;
+        flake.add(arm);
+      }
+      body.add(flake);
+      for (const sx of [-1, 1]) body.add(part(sphere(1, 0), mat(0x9fd8ff), 0.05, 0.04, 0.02, sx * 0.2, 0.43, 0.29));
+      eyes(orb, 0.2, 0.82, 0.32, 0.17, 0x1f5fb0);
+      animate = (s) => {
+        body.position.y = Math.abs(Math.sin(s.t * 9)) * 0.18 * (s.frozen ? 0 : 1);
+        flake.rotation.z = s.t * 1.5;
+      };
+      top = 1.0;
+      break;
+    }
+    case 'electrospirit': {
+      // a dark-blue charged orb with a yellow lightning bolt on top and orbiting sparks
+      const orb = part(sphere(1, 1), mat(c, { emissive: 0x2238b0, rough: 0.35 }), 0.3, 0.3, 0.3, 0, 0.45, 0);
+      body.add(orb);
+      const bolt = mat(0xfff060, { emissive: 0xffd000, rough: 0.3 });
+      const zig: [number, number, number][] = [
+        [0.02, 0.8, 0.5],
+        [-0.04, 0.95, -0.6],
+        [0.04, 1.08, 0.5],
+      ];
+      for (const [x, y, r] of zig) {
+        const seg = part(box(), bolt, 0.06, 0.2, 0.06, x, y, 0);
+        seg.rotation.z = r;
+        body.add(seg);
+      }
+      body.add(part(cone(4), bolt, 0.07, 0.14, 0.07, 0.08, 1.2, 0));
+      const sparks = new THREE.Group();
+      sparks.position.y = 0.45;
+      for (let i = 0; i < 3; i++) {
+        const a = (i / 3) * Math.PI * 2;
+        sparks.add(part(sphere(1, 0), mat(0xfff7a0, { emissive: 0xfff000 }), 0.06, 0.06, 0.06, Math.cos(a) * 0.45, 0, Math.sin(a) * 0.45));
+      }
+      body.add(sparks);
+      eyes(orb, 0.08, 0.82, 0.34, 0.17, 0xfff060);
+      animate = (s) => {
+        body.position.y = Math.abs(Math.sin(s.t * 9)) * 0.18 * (s.frozen ? 0 : 1);
+        sparks.rotation.y = s.t * 5;
+        sparks.rotation.x = Math.sin(s.t * 3) * 0.4;
+      };
+      top = 1.1;
+      break;
+    }
+    case 'healspirit': {
+      const m = mat(c, { emissive: 0xffb000, rough: 0.4 });
+      const orb = part(sphere(1, 1), m, 0.3, 0.3, 0.3, 0, 0.45, 0);
+      body.add(orb);
+      const halo = part(geo('halo', () => new THREE.TorusGeometry(1, 0.12, 6, 18)), mat(0xfff4b0, { emissive: 0xffe060 }), 0.2, 0.2, 0.2, 0, 0.88, 0);
+      halo.rotation.x = Math.PI / 2;
+      body.add(halo);
+      const plus = mat(0x40d860, { emissive: 0x20a040 });
+      body.add(part(box(), plus, 0.16, 0.05, 0.03, 0, 0.36, 0.3));
+      body.add(part(box(), plus, 0.05, 0.16, 0.03, 0, 0.36, 0.3));
+      eyes(orb, 0.12, 0.82, 0.34, 0.17);
+      animate = (s) => {
+        body.position.y = Math.abs(Math.sin(s.t * 9)) * 0.18 * (s.frozen ? 0 : 1);
+      };
+      top = 0.95;
+      break;
+    }
     case 'hog':
     case 'ram': {
       const isHog = shape === 'hog';

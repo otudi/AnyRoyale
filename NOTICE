@@ -11,7 +11,12 @@ Third-party components and assets included in this repository:
    Sources and pinned commits: tools/asset-pipeline/sources.json, per-file origins in
    apps/web/public/assets/models/index.json.
 
-3. npm / Maven dependencies (three.js, Vite, Javalin, Jackson, ...) are fetched at build time
+3. Sound effects (apps/web/public/assets/sfx)
+   Derived from CC0 1.0 sound packs by Kenney (kenney.nl) and by "rubberduck" on OpenGameArt.org.
+   Sources and pinned SHA-256 hashes: tools/audio-pipeline/sources.json, per-sound mapping in
+   tools/audio-pipeline/sounds.json and apps/web/public/assets/sfx/index.json.
+
+4. npm / Maven dependencies (three.js, Vite, Javalin, Jackson, ...) are fetched at build time
    under their own licences and are not stored in this repository.
 
 Clash Royale is a game by Supercell Oy. "Clash Royale", "Supercell" and related names are

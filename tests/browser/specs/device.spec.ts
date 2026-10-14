@@ -29,7 +29,7 @@ test('touch drag deploys a card (real touch events, Chromium CDP)', async ({ bro
   await p.ctx.close();
 });
 
-test('tap a card then tap the arena also deploys', async ({ browser }) => {
+test('tap a card shows its info, then tap the arena deploys', async ({ browser }) => {
   const p = await openPlayer(browser);
   await p.page.locator('[data-act="bot"]').click();
   await p.page.locator('[data-act="d_easy"]').click();
@@ -38,10 +38,16 @@ test('tap a card then tap the arena also deploys', async ({ browser }) => {
   const slot = await affordableTroopSlot(p.page);
   await p.page.locator(`[data-slot="${slot}"]`).click();
   await expect(p.page.locator(`[data-slot="${slot}"]`)).toHaveClass(/selected/);
+  // a short info bubble names the card and says what it is and what it hits
+  const info = p.page.locator('[data-card-info]');
+  await expect(info).toBeVisible();
+  await expect(info).toHaveAttribute('data-card-info', (await state(p.page)).match!.hand![slot]!);
+  await expect(info.locator('.ci-chip').first()).not.toBeEmpty();
   const spot = ownSpot(s.match!.you, 'right');
   const target = await p.page.evaluate(([x, y]) => (window as any).__anyroyale.debugProject(x, y), [spot.gx, spot.gy]);
   await p.page.mouse.click(target.x, target.y);
   await expect.poll(async () => (await state(p.page)).match!.view.units, { timeout: 15_000 }).toBeGreaterThan(0);
+  await expect(info).toBeHidden();
   await surrender(p.page);
   await p.ctx.close();
 });

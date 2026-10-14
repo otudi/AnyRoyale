@@ -592,16 +592,94 @@ const EMBLEMS: Record<string, (g: CanvasRenderingContext2D) => void> = {
     g.fillRect(-12, 14, 24, 6);
   },
   goblincurse: (g) => {
-    EMBLEMS.poison(g);
+    // a goblin head with hypnotic purple spiral eyes inside a cursed mist
     g.beginPath();
-    g.ellipse(0, 52, 30, 8, 0, 0, Math.PI * 2);
-    g.fillStyle = 'rgba(80,255,120,0.6)';
+    g.arc(0, 6, 80, 0, Math.PI * 2);
+    g.fillStyle = 'rgba(170,90,255,0.32)';
     g.fill();
+    for (const sx of [-1, 1]) {
+      g.beginPath();
+      g.moveTo(sx * 36, -6);
+      g.lineTo(sx * 88, -34);
+      g.lineTo(sx * 44, 22);
+      g.closePath();
+      g.fillStyle = '#7cc84a';
+      g.fill();
+      outline(g, 4);
+    }
+    g.beginPath();
+    g.arc(0, 8, 50, 0, Math.PI * 2);
+    g.fillStyle = radial(g, 50, [
+      [0, '#c8f08a'],
+      [1, '#4a8a24'],
+    ], 0, 8);
+    g.fill();
+    outline(g, 5);
+    for (const sx of [-1, 1]) {
+      g.beginPath();
+      for (let a = 0; a < Math.PI * 5; a += 0.2) {
+        const r = 1 + a * 1.1;
+        g.lineTo(sx * 20 + Math.cos(a) * r, -2 + Math.sin(a) * r);
+      }
+      g.lineWidth = 3.5;
+      g.strokeStyle = '#8a2ae0';
+      g.stroke();
+    }
+    g.beginPath();
+    g.arc(0, 30, 14, 0.15 * Math.PI, 0.85 * Math.PI);
+    g.lineWidth = 4;
+    g.strokeStyle = INK;
+    g.stroke();
   },
   rage: (g) => {
-    flame(g, 1, '#ffe0ff', '#9a2ad8');
+    // a spiky purple burst with an angry face: "your troops get furious (faster)"
+    g.beginPath();
+    for (let i = 0; i < 24; i++) {
+      const a = (i / 24) * Math.PI * 2 - Math.PI / 2;
+      const r = i % 2 ? 58 : 84;
+      g.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    g.closePath();
+    g.fillStyle = radial(g, 84, [
+      [0, '#ffd6ff'],
+      [0.45, '#d050ff'],
+      [1, '#6a14b0'],
+    ]);
+    g.fill();
     outline(g, 5);
-    flame(g, 0.55, '#ffffff', '#e070ff');
+    // furious eyes under heavy V brows
+    for (const sx of [-1, 1]) {
+      g.beginPath();
+      g.ellipse(sx * 22, -6, 14, 10, 0, 0, Math.PI * 2);
+      g.fillStyle = '#ffffff';
+      g.fill();
+      outline(g, 3);
+      g.beginPath();
+      g.arc(sx * 18, -4, 5, 0, Math.PI * 2);
+      g.fillStyle = INK;
+      g.fill();
+      g.beginPath();
+      g.moveTo(sx * 42, -30);
+      g.lineTo(sx * 6, -14);
+      g.lineWidth = 11;
+      g.strokeStyle = INK;
+      g.stroke();
+    }
+    // clenched teeth
+    g.beginPath();
+    g.roundRect(-28, 20, 56, 22, 8);
+    g.fillStyle = '#ffffff';
+    g.fill();
+    outline(g, 4);
+    g.lineWidth = 3;
+    g.beginPath();
+    g.moveTo(-28, 31);
+    g.lineTo(28, 31);
+    for (const x of [-14, 0, 14]) {
+      g.moveTo(x, 20);
+      g.lineTo(x, 42);
+    }
+    g.stroke();
   },
   rocket: (g) => {
     g.rotate(-0.7);
@@ -671,7 +749,54 @@ const EMBLEMS: Record<string, (g: CanvasRenderingContext2D) => void> = {
       }
     }
   },
-  barblog: (g) => EMBLEMS.goblinbarrel(g),
+  barblog: (g) => {
+    // a barrel rolling sideways with a horned barbarian helmet popping out
+    g.lineWidth = 7;
+    g.strokeStyle = 'rgba(255,255,255,0.8)';
+    for (const y of [-6, 16, 38]) {
+      g.beginPath();
+      g.moveTo(-92, y);
+      g.lineTo(-66, y);
+      g.stroke();
+    }
+    g.beginPath();
+    g.roundRect(-60, -14, 120, 70, 30);
+    const wood = g.createLinearGradient(0, -14, 0, 56);
+    wood.addColorStop(0, '#e8aa66');
+    wood.addColorStop(0.5, '#b0743a');
+    wood.addColorStop(1, '#5a3418');
+    g.fillStyle = wood;
+    g.fill();
+    outline(g, 5);
+    g.lineWidth = 8;
+    g.strokeStyle = '#5a6070';
+    for (const x of [-30, 30]) {
+      g.beginPath();
+      g.moveTo(x, -12);
+      g.lineTo(x, 54);
+      g.stroke();
+    }
+    // helmet
+    g.beginPath();
+    g.arc(4, -14, 34, Math.PI, 0);
+    g.closePath();
+    const steel = g.createLinearGradient(-30, -48, 38, -14);
+    steel.addColorStop(0, '#ffffff');
+    steel.addColorStop(1, '#8a98b0');
+    g.fillStyle = steel;
+    g.fill();
+    outline(g, 4);
+    for (const sx of [-1, 1]) {
+      g.beginPath();
+      g.moveTo(4 + sx * 28, -26);
+      g.quadraticCurveTo(4 + sx * 58, -36, 4 + sx * 52, -78);
+      g.quadraticCurveTo(4 + sx * 40, -46, 4 + sx * 18, -40);
+      g.closePath();
+      g.fillStyle = '#fff3d6';
+      g.fill();
+      outline(g, 3);
+    }
+  },
   tornado: (g) => {
     for (let i = 0; i < 6; i++) {
       const y = -66 + i * 24;

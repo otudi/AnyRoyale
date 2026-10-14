@@ -1,13 +1,16 @@
 import { expect, test } from '@playwright/test';
 import { contextOptions, openPlayer, state } from './helpers';
 
-test('audio starts after the first user gesture and effects are synthesised', async ({ browser }) => {
+test('audio starts after the first user gesture and the recorded effects decode', async ({ browser }) => {
   const p = await openPlayer(browser);
   expect((await state(p.page)).audio.unlocked).toBe(false);
   await p.page.locator('[data-act="settings"]').click();
   await expect.poll(async () => (await state(p.page)).audio.unlocked).toBe(true);
   await expect.poll(async () => (await state(p.page)).audio.state, { timeout: 10_000 }).toBe('running');
   await expect.poll(async () => (await state(p.page)).audio.ready, { timeout: 20_000 }).toBe(true);
+  // Every recorded sample (MP3, decodable in Chromium, WebKit and Firefox) is decoded.
+  const index = await (await p.page.request.get('/assets/sfx/index.json')).json();
+  await expect.poll(async () => (await state(p.page)).audio.samples, { timeout: 20_000 }).toBe(Object.keys(index.sounds).length);
   await p.ctx.close();
 });
 

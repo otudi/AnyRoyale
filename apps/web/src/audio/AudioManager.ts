@@ -14,6 +14,8 @@ export class AudioManager {
   private musicBus!: GainNode;
   private sfxBus!: GainNode;
   private buffers = new Map<SfxName, AudioBuffer>();
+  /** Recorded CC0 samples (public/assets/sfx); they replace the synthesised fallback once decoded. */
+  private samples = new Map<SfxName, AudioBuffer[]>();
   private music: MusicPlayer | null = null;
   private pendingTrack: Track = 'none';
   private voices = new Map<SfxName, number>();
@@ -36,6 +38,16 @@ export class AudioManager {
       const Ctor =
         window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!Ctor) return;
+      // iOS: Web Audio is silenced by the ring/silent switch unless the page's audio session is
+      // 'playback' (like a video). Safari 16.4+ exposes this; older browsers ignore it.
+      const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+      if (session) {
+        try {
+          session.type = 'playback';
+        } catch {
+          // read-only in some versions
+        }
+      }
       this.ctx = new Ctor({ latencyHint: 'interactive' });
       this.master = this.ctx.createGain();
       this.master.connect(this.ctx.destination);
@@ -52,6 +64,7 @@ export class AudioManager {
       src.connect(this.ctx.destination);
       src.start(0);
       void this.prerender();
+      void this.loadSamples();
     }
     if (this.ctx.state !== 'running') void this.ctx.resume();
     this.unlocked = true;
@@ -68,6 +81,32 @@ export class AudioManager {
         // OfflineAudioContext unsupported: that sound stays silent
       }
     }
+  }
+
+  private async loadSamples(): Promise<void> {
+    const ctx = this.ctx!;
+    const base = `${import.meta.env.BASE_URL}assets/sfx/`;
+    let index: { sounds: Record<string, string[]> };
+    try {
+      index = await (await fetch(`${base}index.json`)).json();
+    } catch {
+      return; // offline: keep the synthesised sounds
+    }
+    await Promise.all(
+      Object.entries(index.sounds).map(async ([name, files]) => {
+        const list: AudioBuffer[] = [];
+        for (const f of files) {
+          try {
+            const data = await (await fetch(base + f)).arrayBuffer();
+            // callback form: older Safari has no promise-returning decodeAudioData
+            list.push(await new Promise<AudioBuffer>((ok, fail) => ctx.decodeAudioData(data, ok, fail)));
+          } catch {
+            // that variant stays unavailable
+          }
+        }
+        if (list.length) this.samples.set(name as SfxName, list);
+      }),
+    );
   }
 
   private applyVolumes(): void {
@@ -94,7 +133,8 @@ export class AudioManager {
    */
   play(name: SfxName, opts: { pan?: number; volume?: number; rate?: number } = {}): void {
     const ctx = this.ctx;
-    const buf = this.buffers.get(name);
+    const variants = this.samples.get(name);
+    const buf = variants ? variants[Math.floor(Math.random() * variants.length)] : this.buffers.get(name);
     if (!ctx || !buf || ctx.state !== 'running' || getSettings().sfx <= 0 || getSettings().muted) return;
     const now = ctx.currentTime;
     const last = this.lastPlay.get(name) ?? -1;
@@ -127,8 +167,12 @@ export class AudioManager {
     return this.ctx?.state ?? 'none';
   }
 
+  get sampleCount(): number {
+    return this.samples.size;
+  }
+
   get ready(): boolean {
-    return this.buffers.size > 0;
+    return this.buffers.size > 0 || this.samples.size > 0;
   }
 }
 

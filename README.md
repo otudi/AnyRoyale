@@ -27,8 +27,9 @@ layout and only looks different.
 - **3D client:** three.js with animated CC0 characters, procedural creatures, particles, shadows,
   health bars and a fixed camera fitted to any screen. Drag-and-drop or tap-to-deploy works on
   touch and mouse. Arabic/English UI (RTL).
-- **Audio:** synthesised effects and music. Audio unlocks on the first tap, which Safari
-  requires. Sound and music volumes are separate.
+- **Audio:** recorded CC0 sound effects (synthesised fallback) and synthesised music. Audio
+  unlocks on the first tap, which Safari requires, and plays even with the iPhone on silent.
+  Sound and music volumes are separate.
 
 Graphics and audio are **not** the original game's: see [docs/ASSETS.md](docs/ASSETS.md).
 

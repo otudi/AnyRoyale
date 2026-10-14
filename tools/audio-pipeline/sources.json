@@ -1,0 +1,77 @@
+{
+  "comment": "Sound packs used by AnyRoyale. All are CC0 1.0 (public domain). Kenney packs by Kenney Vleugels (kenney.nl); the OpenGameArt packs by 'rubberduck' (opengameart.org/users/rubberduck). Each pack ships its own licence text; SHA-256 of every downloaded zip is pinned.",
+  "packs": {
+    "k_impact": {
+      "url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "page": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0-1.0",
+      "sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8"
+    },
+    "k_interface": {
+      "url": "https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip",
+      "page": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0-1.0",
+      "sha256": "f2193d072726d6758a5f7871b2dcc54dcce0d5c35c6f0a62f92549b327c81232"
+    },
+    "k_rpg": {
+      "url": "https://kenney.nl/media/pages/assets/rpg-audio/8e99002d76-1677590336/kenney_rpg-audio.zip",
+      "page": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0-1.0",
+      "sha256": "6dbeaf8544da958d8f2adcb4a4a4b76c1ade34a05f8ab9edccd327da7375f38b"
+    },
+    "k_scifi": {
+      "url": "https://kenney.nl/media/pages/assets/sci-fi-sounds/6b296f9ecf-1677589334/kenney_sci-fi-sounds.zip",
+      "page": "https://kenney.nl/assets/sci-fi-sounds",
+      "license": "CC0-1.0",
+      "sha256": "119340f351a5098ad814f78719438c0da355a9ce8a4c8a3af6a8d48aa3d49e04"
+    },
+    "k_ui": {
+      "url": "https://kenney.nl/media/pages/assets/ui-audio/490d233f68-1677590494/kenney_ui-audio.zip",
+      "page": "https://kenney.nl/assets/ui-audio",
+      "license": "CC0-1.0",
+      "sha256": "946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6"
+    },
+    "k_jingles": {
+      "url": "https://kenney.nl/media/pages/assets/music-jingles/f37e530b9e-1677590399/kenney_music-jingles.zip",
+      "page": "https://kenney.nl/assets/music-jingles",
+      "license": "CC0-1.0",
+      "sha256": "b729ba57959bd58793d2c5cafa348aaf2655d354f3da35ec4729e03ec77197b8"
+    },
+    "o_rpg80": {
+      "url": "https://opengameart.org/sites/default/files/80-CC0-RPG-SFX_0.zip",
+      "page": "https://opengameart.org/content/80-cc0-rpg-sfx",
+      "license": "CC0-1.0",
+      "sha256": "1c2f06ff4e8563b5b8b745b23cf213c1474142a69bb82bd8f5e10d9b3f7a7bbd"
+    },
+    "o_sfx100": {
+      "url": "https://opengameart.org/sites/default/files/100-CC0-SFX_0.zip",
+      "page": "https://opengameart.org/content/100-cc0-sfx",
+      "license": "CC0-1.0",
+      "sha256": "a5c135878c132f1c59cca54e60061c296cd0ac27ad031ca2c41b8cd5cab3c706"
+    },
+    "o_sfx100v2": {
+      "url": "https://opengameart.org/sites/default/files/sfx_100_v2.zip",
+      "page": "https://opengameart.org/content/100-cc0-sfx-2",
+      "license": "CC0-1.0",
+      "sha256": "0fc61b4494e2e893c0c015ced4877b3f689c7d84a48cb61daecd7ddb52db797b"
+    },
+    "o_scifi": {
+      "url": "https://opengameart.org/sites/default/files/sci-fi-sfx.zip",
+      "page": "https://opengameart.org/content/50-cc0-sci-fi-sfx",
+      "license": "CC0-1.0",
+      "sha256": "7824c08e54b5b68d6c70ced9d8fe9e47f86ce19c1d8d47d093e1dc1b579f78ec"
+    },
+    "o_bang": {
+      "url": "https://opengameart.org/sites/default/files/25-CC0-bang-sfx.zip",
+      "page": "https://opengameart.org/content/25-cc0-bang-firework-sfx",
+      "license": "CC0-1.0",
+      "sha256": "c0c9ecc11e2dc0d190f0cced755569858234b8528286bc83becb6314c663407f"
+    },
+    "o_water": {
+      "url": "https://opengameart.org/sites/default/files/water-splash-slime-sfx.zip",
+      "page": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "license": "CC0-1.0",
+      "sha256": "7cd39abb49d4362a37ba18dc0e454c7dc1d08029d4e5b683149046bc237b2eba"
+    }
+  }
+}
