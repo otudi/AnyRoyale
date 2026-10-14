@@ -330,16 +330,20 @@ select {
 }
 
 .opp-tag {
-  background: rgba(120, 20, 20, 0.75);
-  border-radius: 10px;
-  padding: 5px 10px;
-  font-weight: 800;
-  font-size: 14px;
+  background: linear-gradient(180deg, #e04848 0%, #a8222a 100%);
+  border-radius: 12px;
+  padding: 5px 12px 4px;
+  font-weight: 900;
+  font-size: 15px;
   max-width: 48%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border: 2px solid rgba(255, 120, 120, 0.4);
+  border: 2.5px solid #1b1030;
+  box-shadow: 0 3px 0 #1b1030;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+  color: #fff;
 }
 
 .score {
@@ -350,18 +354,22 @@ select {
 }
 
 .timer {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 10px;
-  padding: 4px 10px;
+  background: linear-gradient(180deg, #2a3560 0%, #18204a 100%);
+  border-radius: 12px;
+  padding: 3px 12px 2px;
   text-align: center;
-  min-width: 78px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  min-width: 82px;
+  border: 2.5px solid #0c1230;
+  box-shadow: 0 3px 0 #0c1230;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
+  color: #fff;
 }
 
 .timer .label {
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 700;
+  font-size: 11px;
+  color: #ffb36a;
+  font-weight: 800;
 }
 
 .timer .value {
@@ -382,29 +390,34 @@ select {
 }
 
 .crowns .c {
-  padding: 2px 8px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.55);
+  padding: 2px 9px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #2a3560 0%, #18204a 100%);
+  border: 2.5px solid #0c1230;
+  box-shadow: 0 3px 0 #0c1230;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
 }
 
 .crowns .c.red {
-  color: #ff8a8a;
+  color: #ff9c9c;
 }
 
 .crowns .c.blue {
-  color: #8ac0ff;
+  color: #9cccff;
 }
 
 .surrender {
   pointer-events: auto;
   position: absolute;
-  top: calc(44px + var(--safe-top));
+  top: calc(48px + var(--safe-top));
   left: 8px;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  border: none;
-  background: rgba(0, 0, 0, 0.45);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 2.5px solid #0c1230;
+  box-shadow: 0 3px 0 #0c1230;
+  background: linear-gradient(180deg, #2a3560 0%, #18204a 100%);
   color: #fff;
   font-size: 18px;
 }

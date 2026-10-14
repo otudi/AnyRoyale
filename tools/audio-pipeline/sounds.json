@@ -1,5 +1,5 @@
 {
- "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds). 'music' maps each music track to a whole source file (loudness-normalised, stereo).",
+ "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds). 'music' maps each music track (the menus play the battle theme muffled) to a whole source file (loudness-normalised, stereo).",
  "sounds": {
   "click": [
    [
@@ -424,7 +424,6 @@
   ]
  },
  "music": {
-  "menu": "m_town",
   "battle": "m_battleA",
   "overtime": "m_battleB"
  }

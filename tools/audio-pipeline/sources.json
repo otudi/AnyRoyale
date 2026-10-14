@@ -73,13 +73,6 @@
       "license": "CC0-1.0",
       "sha256": "7cd39abb49d4362a37ba18dc0e454c7dc1d08029d4e5b683149046bc237b2eba"
     },
-    "m_town": {
-      "url": "https://opengameart.org/sites/default/files/TownTheme.mp3",
-      "page": "https://opengameart.org/content/town-theme-rpg",
-      "license": "CC0-1.0",
-      "single": true,
-      "sha256": "2657861d5107d4a3c01ef81cb6a4d61ddd5e7a054b6da57e658373d79d0c3466"
-    },
     "m_battleA": {
       "url": "https://opengameart.org/sites/default/files/battleThemeA.mp3",
       "page": "https://opengameart.org/content/battle-theme-a",

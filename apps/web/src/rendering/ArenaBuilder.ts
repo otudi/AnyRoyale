@@ -663,6 +663,7 @@ export class ArenaBuilder {
     const tex = this.track(new THREE.CanvasTexture(c));
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.anisotropy = 8;
     const mat = this.track(new THREE.MeshLambertMaterial({ map: tex, vertexColors: true }));
     const W = 110;
     const H = 150;

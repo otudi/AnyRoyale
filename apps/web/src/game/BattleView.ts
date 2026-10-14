@@ -132,7 +132,8 @@ export class BattleView {
     this.world.add(this.arena.root, this.fx.root, this.bars.root, this.markers.root, this.blobs.mesh);
     r.scene.add(this.world);
     r.scene.background = skyTexture(theme.sky, theme.skyHorizon);
-    r.scene.fog = new THREE.Fog(theme.fog, r.cameraDistance * 1.35, r.cameraDistance * 3.2);
+    // fog only far beyond the field: the top of the screen (enemy side) stays crisp
+    r.scene.fog = new THREE.Fog(theme.fog, r.cameraDistance * 2.6, r.cameraDistance * 6);
     r.hemi.color.setHex(theme.hemiSky);
     r.hemi.groundColor.setHex(theme.hemiGround);
     r.hemi.intensity = 0.85;
