@@ -122,3 +122,26 @@ test('queue can be cancelled', async ({ browser }) => {
   await A.ctx.close();
   await B.ctx.close();
 });
+
+test('players with different languages (Arabic / English) are matched together', async ({ browser }) => {
+  test.setTimeout(120_000);
+  const A = await openPlayer(browser, { locale: 'ar-SA' });
+  const B = await openPlayer(browser, { locale: 'en-US' });
+  expect(await A.page.evaluate(() => document.documentElement.lang)).toBe('ar');
+  expect(await B.page.evaluate(() => document.documentElement.lang)).toBe('en');
+  for (const P of [A, B]) {
+    await P.page.locator('[data-act="play"]').click();
+    await P.page.locator('[data-act="online"]').click();
+  }
+  const sa = await waitRunning(A.page);
+  const sb = await waitRunning(B.page);
+  expect(sa.match!.id).toBe(sb.match!.id);
+  expect(sa.match!.you).not.toBe(sb.match!.you);
+  expect(sa.match!.deck).toEqual(sb.match!.deck);
+  await surrender(A.page);
+  await expect.poll(async () => (await state(B.page)).result?.youWon, { timeout: 15_000 }).toBe(true);
+  expect(A.errors).toEqual([]);
+  expect(B.errors).toEqual([]);
+  await A.ctx.close();
+  await B.ctx.close();
+});
