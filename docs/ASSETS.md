@@ -9,7 +9,8 @@ card art or logos. Everything you see or hear comes from one of these sources:
 | Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, the arena (painted field, stone plazas, cobbled lanes, water shader, stone bridges and walls, hills, trees, rocks, bushes), particles, projectiles, card art | this repository |
 | npm packages `@fontsource/tajawal` 5.2.7, `material-icons` 1.13.14 (bundled at build time) | Tajawal font (Arabic + Latin) and Material Icons used by the menus | OFL-1.1 / Apache-2.0 |
 | Kenney audio packs (impact, interface, RPG, sci-fi, UI, music jingles) and rubberduck's OpenGameArt packs (80 RPG SFX, 100 SFX, 100 SFX 2, sci-fi SFX, bang/firework SFX, water/splash SFX) | the recorded sound effects in `apps/web/public/assets/sfx` | CC0 1.0 |
-| Code in `apps/web/src/audio/` | fallback effects synthesised with Web Audio, and both music tracks | this repository |
+| "Town Theme RPG", "Battle Theme A" and "Battle Theme B" by cynicmusic (OpenGameArt) | menu, battle and overtime music (`apps/web/public/assets/sfx/music-*.mp3`) | CC0 1.0 |
+| Code in `apps/web/src/audio/` | fallback effects synthesised with Web Audio | this repository |
 
 None of these is the original artwork, and none is presented as identical to it. Unit names come
 from the crforge card data (Apache-2.0); the game is not affiliated with or endorsed by Supercell.
@@ -74,8 +75,12 @@ Sound effects are short recorded clips from CC0 packs, built by `tools/audio-pip
 Rebuild: `cd tools/audio-pipeline && node build.mjs` (needs curl, unzip and ffmpeg with libmp3lame).
 
 At runtime `AudioManager` decodes the files after the first user gesture; until they are decoded,
-or if they cannot be fetched, the original synthesised effects in `sfx.ts` play instead. The music
-loops are still synthesised (`music.ts`). Effects are chosen by category (deploy, melee weapon type,
+or if they cannot be fetched, the original synthesised effects in `sfx.ts` play instead.
+
+Music: three recorded CC0 tracks (menu, battle, overtime), loudness-normalised to −20 LUFS and
+encoded at 96 kbit/s stereo (≈3 MB in total) by the same pipeline. `music.ts` streams them with
+`<audio>` elements routed through Web Audio (so volume and mute work on iOS too) and crossfades
+between them; overtime switches to the more urgent battle track. Effects are chosen by category (deploy, melee weapon type,
 ranged projectile type, spell type, death, tower events, countdown, victory/defeat); there are
 **no per-card voice lines**.
 

@@ -63,7 +63,7 @@ export class CardArt {
     if (hit) return hit;
     let url: string;
     try {
-      url = compose(card, card.type === 'SPELL' || !card.unit ? null : this.renderUnit(card));
+      url = compose(card, card.type === 'SPELL' || !portraitOf(card) ? null : this.renderUnit(card));
     } catch (e) {
       console.warn('Card art failed for', card.id, e);
       url = compose(card, null);
@@ -74,7 +74,7 @@ export class CardArt {
 
   /** The unit model on a transparent background, as a canvas. */
   private renderUnit(card: CardInfo): HTMLCanvasElement {
-    const unit = card.unit!;
+    const unit = portraitOf(card)!;
     const visual = new UnitVisual(visualFor(unit.name, card.type === 'BUILDING' ? 'B' : 'T', unit.movement === 'AIR' ? 1 : 0, unit.radius), 'own');
     visual.update(0.016, 0, { frozen: false });
     this.scene.add(visual.root);
@@ -446,6 +446,15 @@ function arrow(g: CanvasRenderingContext2D, len: number): void {
   }
 }
 
+/** Cards whose catalog entry has no unit stats still get a portrait of the unit they deploy. */
+const PORTRAITS: Record<string, { name: string; movement: string; radius: number }> = {
+  mergemaiden: { name: 'MergeMaiden_Mounted', movement: 'AIR', radius: 600 },
+};
+
+function portraitOf(card: CardInfo): { name: string; movement: string; radius: number } | undefined {
+  return card.unit ?? PORTRAITS[card.id];
+}
+
 const EMBLEMS: Record<string, (g: CanvasRenderingContext2D) => void> = {
   fireball: (g) => {
     g.save();
@@ -682,36 +691,43 @@ const EMBLEMS: Record<string, (g: CanvasRenderingContext2D) => void> = {
     g.stroke();
   },
   rocket: (g) => {
-    g.rotate(-0.7);
-    // flame
-    flame(g, 0.45, '#fff2a0', '#ff5a10');
+    g.rotate(0.7);
+    // exhaust flame behind the rocket
     g.save();
-    g.translate(0, -70);
+    g.translate(0, 70);
+    g.rotate(Math.PI);
+    flame(g, 0.42, '#fff2a0', '#ff5a10');
+    g.restore();
     // body
     g.beginPath();
-    g.moveTo(0, -60);
-    g.bezierCurveTo(28, -40, 28, 10, 24, 40);
-    g.lineTo(-24, 40);
-    g.bezierCurveTo(-28, 10, -28, -40, 0, -60);
+    g.moveTo(0, -80);
+    g.bezierCurveTo(30, -56, 30, 6, 26, 44);
+    g.lineTo(-26, 44);
+    g.bezierCurveTo(-30, 6, -30, -56, 0, -80);
     g.closePath();
-    const body = g.createLinearGradient(-26, 0, 26, 0);
+    const body = g.createLinearGradient(-28, 0, 28, 0);
     body.addColorStop(0, '#ffffff');
     body.addColorStop(0.5, '#e04a3a');
     body.addColorStop(1, '#7a1a14');
     g.fillStyle = body;
     g.fill();
     outline(g, 4);
+    // window
+    g.beginPath();
+    g.arc(0, -22, 11, 0, Math.PI * 2);
+    g.fillStyle = '#bfe6ff';
+    g.fill();
+    outline(g, 3);
     for (const sx of [-1, 1]) {
       g.beginPath();
-      g.moveTo(sx * 22, 14);
-      g.lineTo(sx * 42, 44);
-      g.lineTo(sx * 22, 40);
+      g.moveTo(sx * 24, 14);
+      g.lineTo(sx * 46, 50);
+      g.lineTo(sx * 24, 44);
       g.closePath();
       g.fillStyle = '#c8d0e0';
       g.fill();
       outline(g, 3);
     }
-    g.restore();
   },
   log: (g) => {
     g.rotate(-0.25);

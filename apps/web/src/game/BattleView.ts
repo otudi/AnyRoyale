@@ -3,6 +3,7 @@ import { audio } from '../audio/AudioManager';
 import type { SfxName } from '../audio/sfx';
 import { F, type EntityTuple, type GameEvent, type Phase, type ProjectileTuple, type Snapshot, type TeamName } from '../network/protocol';
 import { ArenaBuilder } from '../rendering/ArenaBuilder';
+import { cardName } from '../ui/cardLabels';
 import { themeFor } from '../rendering/arenaThemes';
 import { toWorld } from '../rendering/coords';
 import { AreaVisual, Effects } from '../rendering/Effects';
@@ -521,7 +522,7 @@ export class BattleView {
           audio.play(card && card.cost >= 6 ? 'deployHeavy' : 'deploy', { pan: this.pan(p.x) });
         }
         if (side === 'enemy' && card) {
-          this.fx.label(card.name, p.x, p.z, '#ffb0b0');
+          this.fx.label(cardName(card), p.x, p.z, '#ffb0b0');
           this.onOpponentPlay(cardId);
         }
         break;
@@ -618,6 +619,41 @@ export class BattleView {
         this.onPhase(ev[1]);
         break;
     }
+  }
+
+  /**
+   * Builds every deck unit once (both team colours) and compiles their shaders while the intro is
+   * on screen, so the first time a card is played the frame does not stall on model cloning and
+   * shader compilation (a visible hitch on phones).
+   */
+  prewarm(deck: string[]): void {
+    const tmp: UnitVisual[] = [];
+    for (const id of deck) {
+      const card = cards.get(id);
+      const u = card?.unit;
+      if (!card || !u) continue;
+      const kind = card.type === 'BUILDING' ? 'B' : 'T';
+      const movement = card.tags.includes('flying') ? 1 : kind === 'B' ? 2 : 0;
+      for (const side of ['own', 'enemy'] as Side[]) {
+        try {
+          const v = new UnitVisual(visualFor(u.name, kind, movement, u.radius), side);
+          v.root.position.set(0, -40, 0);
+          this.world.add(v.root);
+          tmp.push(v);
+        } catch {
+          // a model that fails here fails visibly later too; never block the battle
+        }
+      }
+    }
+    try {
+      this.r.renderer.compile(this.r.scene, this.r.camera);
+    } catch {
+      // compile is an optimisation only
+    }
+    // keep them one rendered frame (uploads textures/buffers), then drop them
+    window.setTimeout(() => {
+      for (const v of tmp) v.dispose();
+    }, 250);
   }
 
   /** Tower labels in screen space for the HUD. */

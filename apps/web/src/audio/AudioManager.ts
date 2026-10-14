@@ -27,8 +27,10 @@ export class AudioManager {
     onSettings(() => this.applyVolumes());
     document.addEventListener('visibilitychange', () => {
       if (!this.ctx) return;
-      if (document.visibilityState === 'hidden') void this.ctx.suspend();
+      const hidden = document.visibilityState === 'hidden';
+      if (hidden) void this.ctx.suspend();
       else void this.ctx.resume();
+      this.music?.setHidden(hidden);
     });
   }
 
@@ -56,7 +58,8 @@ export class AudioManager {
       this.sfxBus = this.ctx.createGain();
       this.sfxBus.connect(this.master);
       this.applyVolumes();
-      this.music = new MusicPlayer(this.ctx, this.musicBus);
+      this.music = new MusicPlayer(this.ctx, this.musicBus, `${import.meta.env.BASE_URL}assets/sfx/`);
+      this.music.bless();
       // iOS: play a silent buffer inside the gesture to fully unlock output.
       const silent = this.ctx.createBuffer(1, 1, 22050);
       const src = this.ctx.createBufferSource();
@@ -113,7 +116,7 @@ export class AudioManager {
     if (!this.ctx) return;
     const s = getSettings();
     const on = s.muted ? 0 : 1;
-    this.musicBus.gain.value = s.music * 0.6 * on;
+    this.musicBus.gain.value = s.music * 0.45 * on;
     this.sfxBus.gain.value = s.sfx * on;
   }
 
@@ -165,6 +168,10 @@ export class AudioManager {
 
   state(): string {
     return this.ctx?.state ?? 'none';
+  }
+
+  musicInfo(): { track: string | null; playing: boolean; time: number } {
+    return this.music?.info() ?? { track: null, playing: false, time: 0 };
   }
 
   get sampleCount(): number {

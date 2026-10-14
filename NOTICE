@@ -11,8 +11,9 @@ Third-party components and assets included in this repository:
    Sources and pinned commits: tools/asset-pipeline/sources.json, per-file origins in
    apps/web/public/assets/models/index.json.
 
-3. Sound effects (apps/web/public/assets/sfx)
-   Derived from CC0 1.0 sound packs by Kenney (kenney.nl) and by "rubberduck" on OpenGameArt.org.
+3. Sound effects and music (apps/web/public/assets/sfx)
+   Derived from CC0 1.0 sound packs by Kenney (kenney.nl) and by "rubberduck" on OpenGameArt.org,
+   and CC0 1.0 music by "cynicmusic" on OpenGameArt.org.
    Sources and pinned SHA-256 hashes: tools/audio-pipeline/sources.json, per-sound mapping in
    tools/audio-pipeline/sounds.json and apps/web/public/assets/sfx/index.json.
 

@@ -1,45 +1,431 @@
 {
-  "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds).",
-  "sounds": {
-    "click": [[{ "f": "k_ui:click1.ogg" }]],
-    "select": [[{ "f": "k_interface:select_002.ogg" }]],
-    "deploy": [[{ "f": "k_impact:impactSoft_heavy_000.ogg", "gain": -2 }, { "f": "k_rpg:cloth2.ogg", "gain": -10, "max": 0.3 }]],
-    "deployHeavy": [[{ "f": "k_impact:impactPunch_heavy_000.ogg" }, { "f": "o_sfx100v2:sfx100v2_stones_02.ogg", "gain": -6 }]],
-    "spawnMagic": [[{ "f": "o_rpg80:spell_01.ogg", "gain": -3 }]],
-    "sword": [[{ "f": "o_rpg80:blade_01.ogg" }], [{ "f": "o_rpg80:blade_02.ogg" }], [{ "f": "o_rpg80:blade_03.ogg", "max": 0.3 }]],
-    "axe": [[{ "f": "k_rpg:chop.ogg" }, { "f": "o_rpg80:blade_03.ogg", "gain": -8, "max": 0.25 }]],
-    "punch": [[{ "f": "k_impact:impactPunch_medium_000.ogg" }], [{ "f": "k_impact:impactPunch_medium_001.ogg" }], [{ "f": "k_impact:impactPunch_medium_002.ogg" }]],
-    "bite": [[{ "f": "o_rpg80:creature_misc_01.ogg" }, { "f": "k_impact:impactSoft_medium_000.ogg", "gain": -6 }], [{ "f": "o_rpg80:creature_misc_02.ogg" }, { "f": "k_impact:impactSoft_medium_001.ogg", "gain": -6 }]],
-    "arrow": [[{ "f": "o_sfx100v2:sfx100v2_air_02.ogg", "max": 0.35, "gain": -3 }]],
-    "arrowHit": [[{ "f": "k_impact:impactWood_light_002.ogg" }], [{ "f": "k_impact:impactPlank_medium_000.ogg", "gain": -2 }]],
-    "magic": [[{ "f": "o_rpg80:spell_02.ogg", "gain": -3 }]],
-    "zapShot": [[{ "f": "k_scifi:laserSmall_000.ogg", "gain": -4 }]],
-    "fireLaunch": [[{ "f": "o_rpg80:spell_fire_01.ogg", "max": 0.8 }]],
-    "explosion": [[{ "f": "k_scifi:explosionCrunch_000.ogg" }], [{ "f": "k_scifi:explosionCrunch_002.ogg" }]],
-    "bigExplosion": [[{ "f": "k_scifi:lowFrequency_explosion_000.ogg", "max": 1.6 }, { "f": "o_bang:bang_01.ogg", "gain": -4, "max": 1.0 }]],
-    "zap": [[{ "f": "k_scifi:forceField_000.ogg", "max": 0.55 }, { "f": "o_scifi:shoot_01.ogg", "gain": -5 }]],
-    "freeze": [[{ "f": "k_impact:impactGlass_heavy_000.ogg" }, { "f": "k_interface:glass_001.ogg", "gain": -3, "at": 0.05 }]],
-    "poison": [[{ "f": "o_water:slime_01.ogg" }, { "f": "o_water:bubble_01.ogg", "gain": -4, "max": 0.6 }]],
-    "rage": [[{ "f": "o_rpg80:creature_roar_01.ogg" }]],
-    "heal": [[{ "f": "o_rpg80:item_gem_01.ogg", "gain": -3 }, { "f": "k_interface:confirmation_001.ogg", "gain": -4, "at": 0.08 }]],
-    "lightning": [[{ "f": "o_sfx100v2:sfx100v2_thunder_01.ogg", "max": 1.8 }, { "f": "k_scifi:laserLarge_000.ogg", "gain": -8 }]],
-    "roll": [[{ "f": "o_sfx100v2:sfx100v2_stones_02.ogg" }, { "f": "k_impact:impactWood_heavy_001.ogg", "gain": -4 }]],
-    "cannon": [[{ "f": "o_bang:cannon_01.ogg", "max": 0.9, "gain": -2 }]],
-    "towerHit": [[{ "f": "k_impact:impactPlate_heavy_000.ogg", "gain": -3 }]],
-    "towerDestroyed": [[{ "f": "o_sfx100:explosion.ogg" }, { "f": "o_rpg80:stones_03.ogg", "gain": -2, "at": 0.1 }]],
-    "kingWake": [[{ "f": "o_sfx100:gong_01.ogg", "gain": -3 }]],
-    "death": [[{ "f": "k_impact:impactSoft_heavy_001.ogg", "gain": -2 }, { "f": "o_rpg80:creature_hurt_01.ogg", "gain": -9 }]],
-    "skeletonDeath": [[{ "f": "o_rpg80:wood_05.ogg" }]],
-    "buildingDeath": [[{ "f": "o_rpg80:stones_03.ogg" }, { "f": "k_impact:impactWood_heavy_003.ogg", "gain": -3 }]],
-    "countdown": [[{ "f": "k_interface:bong_001.ogg" }]],
-    "battleStart": [[{ "f": "k_jingles:jingles_HIT15.ogg" }]],
-    "victory": [[{ "f": "k_jingles:jingles_SAX02.ogg" }, { "f": "o_rpg80:item_coins_01.ogg", "gain": -8, "at": 0.6 }]],
-    "defeat": [[{ "f": "k_jingles:jingles_SAX14.ogg" }]],
-    "crown": [[{ "f": "k_impact:impactBell_heavy_001.ogg", "gain": -3, "max": 1.0 }, { "f": "o_rpg80:item_coins_01.ogg", "gain": -6 }]],
-    "reject": [[{ "f": "k_interface:error_001.ogg", "gain": -3 }]],
-    "elixirFull": [[{ "f": "k_interface:pluck_001.ogg", "gain": -4 }]],
-    "flap": [[{ "f": "k_rpg:cloth1.ogg", "max": 0.3, "gain": -4 }]],
-    "inferno": [[{ "f": "k_scifi:thrusterFire_000.ogg", "max": 0.6, "gain": -6 }]],
-    "heavyStep": [[{ "f": "k_impact:footstep_concrete_000.ogg" }, { "f": "k_impact:impactSoft_heavy_002.ogg", "gain": -8 }]]
-  }
+ "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds). 'music' maps each music track to a whole source file (loudness-normalised, stereo).",
+ "sounds": {
+  "click": [
+   [
+    {
+     "f": "k_ui:click1.ogg"
+    }
+   ]
+  ],
+  "select": [
+   [
+    {
+     "f": "k_interface:select_002.ogg"
+    }
+   ]
+  ],
+  "deploy": [
+   [
+    {
+     "f": "k_impact:impactSoft_heavy_000.ogg",
+     "gain": -2
+    },
+    {
+     "f": "k_rpg:cloth2.ogg",
+     "gain": -10,
+     "max": 0.3
+    }
+   ]
+  ],
+  "deployHeavy": [
+   [
+    {
+     "f": "k_impact:impactPunch_heavy_000.ogg"
+    },
+    {
+     "f": "o_sfx100v2:sfx100v2_stones_02.ogg",
+     "gain": -6
+    }
+   ]
+  ],
+  "spawnMagic": [
+   [
+    {
+     "f": "o_rpg80:spell_01.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "sword": [
+   [
+    {
+     "f": "o_rpg80:blade_01.ogg"
+    }
+   ],
+   [
+    {
+     "f": "o_rpg80:blade_02.ogg"
+    }
+   ],
+   [
+    {
+     "f": "o_rpg80:blade_03.ogg",
+     "max": 0.3
+    }
+   ]
+  ],
+  "axe": [
+   [
+    {
+     "f": "k_rpg:chop.ogg"
+    },
+    {
+     "f": "o_rpg80:blade_03.ogg",
+     "gain": -8,
+     "max": 0.25
+    }
+   ]
+  ],
+  "punch": [
+   [
+    {
+     "f": "k_impact:impactPunch_medium_000.ogg"
+    }
+   ],
+   [
+    {
+     "f": "k_impact:impactPunch_medium_001.ogg"
+    }
+   ],
+   [
+    {
+     "f": "k_impact:impactPunch_medium_002.ogg"
+    }
+   ]
+  ],
+  "bite": [
+   [
+    {
+     "f": "o_rpg80:creature_misc_01.ogg"
+    },
+    {
+     "f": "k_impact:impactSoft_medium_000.ogg",
+     "gain": -6
+    }
+   ],
+   [
+    {
+     "f": "o_rpg80:creature_misc_02.ogg"
+    },
+    {
+     "f": "k_impact:impactSoft_medium_001.ogg",
+     "gain": -6
+    }
+   ]
+  ],
+  "arrow": [
+   [
+    {
+     "f": "o_sfx100v2:sfx100v2_air_02.ogg",
+     "max": 0.35,
+     "gain": -3
+    }
+   ]
+  ],
+  "arrowHit": [
+   [
+    {
+     "f": "k_impact:impactWood_light_002.ogg"
+    }
+   ],
+   [
+    {
+     "f": "k_impact:impactPlank_medium_000.ogg",
+     "gain": -2
+    }
+   ]
+  ],
+  "magic": [
+   [
+    {
+     "f": "o_rpg80:spell_02.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "zapShot": [
+   [
+    {
+     "f": "k_scifi:laserSmall_000.ogg",
+     "gain": -4
+    }
+   ]
+  ],
+  "fireLaunch": [
+   [
+    {
+     "f": "o_rpg80:spell_fire_01.ogg",
+     "max": 0.8
+    }
+   ]
+  ],
+  "explosion": [
+   [
+    {
+     "f": "k_scifi:explosionCrunch_000.ogg"
+    }
+   ],
+   [
+    {
+     "f": "k_scifi:explosionCrunch_002.ogg"
+    }
+   ]
+  ],
+  "bigExplosion": [
+   [
+    {
+     "f": "k_scifi:lowFrequency_explosion_000.ogg",
+     "max": 1.6
+    },
+    {
+     "f": "o_bang:bang_01.ogg",
+     "gain": -4,
+     "max": 1.0
+    }
+   ]
+  ],
+  "zap": [
+   [
+    {
+     "f": "k_scifi:forceField_000.ogg",
+     "max": 0.55
+    },
+    {
+     "f": "o_scifi:shoot_01.ogg",
+     "gain": -5
+    }
+   ]
+  ],
+  "freeze": [
+   [
+    {
+     "f": "k_impact:impactGlass_heavy_000.ogg"
+    },
+    {
+     "f": "k_interface:glass_001.ogg",
+     "gain": -3,
+     "at": 0.05
+    }
+   ]
+  ],
+  "poison": [
+   [
+    {
+     "f": "o_water:slime_01.ogg"
+    },
+    {
+     "f": "o_water:bubble_01.ogg",
+     "gain": -4,
+     "max": 0.6
+    }
+   ]
+  ],
+  "rage": [
+   [
+    {
+     "f": "o_rpg80:creature_roar_01.ogg"
+    }
+   ]
+  ],
+  "heal": [
+   [
+    {
+     "f": "o_rpg80:item_gem_01.ogg",
+     "gain": -3
+    },
+    {
+     "f": "k_interface:confirmation_001.ogg",
+     "gain": -4,
+     "at": 0.08
+    }
+   ]
+  ],
+  "lightning": [
+   [
+    {
+     "f": "o_sfx100v2:sfx100v2_thunder_01.ogg",
+     "max": 1.8
+    },
+    {
+     "f": "k_scifi:laserLarge_000.ogg",
+     "gain": -8
+    }
+   ]
+  ],
+  "roll": [
+   [
+    {
+     "f": "o_sfx100v2:sfx100v2_stones_02.ogg"
+    },
+    {
+     "f": "k_impact:impactWood_heavy_001.ogg",
+     "gain": -4
+    }
+   ]
+  ],
+  "cannon": [
+   [
+    {
+     "f": "o_bang:cannon_01.ogg",
+     "max": 0.9,
+     "gain": -2
+    }
+   ]
+  ],
+  "towerHit": [
+   [
+    {
+     "f": "k_impact:impactPlate_heavy_000.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "towerDestroyed": [
+   [
+    {
+     "f": "o_sfx100:explosion.ogg"
+    },
+    {
+     "f": "o_rpg80:stones_03.ogg",
+     "gain": -2,
+     "at": 0.1
+    }
+   ]
+  ],
+  "kingWake": [
+   [
+    {
+     "f": "o_sfx100:gong_01.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "death": [
+   [
+    {
+     "f": "k_impact:impactSoft_heavy_001.ogg",
+     "gain": -2
+    },
+    {
+     "f": "o_rpg80:creature_hurt_01.ogg",
+     "gain": -9
+    }
+   ]
+  ],
+  "skeletonDeath": [
+   [
+    {
+     "f": "o_rpg80:wood_05.ogg"
+    }
+   ]
+  ],
+  "buildingDeath": [
+   [
+    {
+     "f": "o_rpg80:stones_03.ogg"
+    },
+    {
+     "f": "k_impact:impactWood_heavy_003.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "countdown": [
+   [
+    {
+     "f": "k_interface:bong_001.ogg"
+    }
+   ]
+  ],
+  "battleStart": [
+   [
+    {
+     "f": "k_jingles:jingles_HIT15.ogg"
+    }
+   ]
+  ],
+  "victory": [
+   [
+    {
+     "f": "k_jingles:jingles_SAX02.ogg"
+    },
+    {
+     "f": "o_rpg80:item_coins_01.ogg",
+     "gain": -8,
+     "at": 0.6
+    }
+   ]
+  ],
+  "defeat": [
+   [
+    {
+     "f": "k_jingles:jingles_SAX14.ogg"
+    }
+   ]
+  ],
+  "crown": [
+   [
+    {
+     "f": "k_impact:impactBell_heavy_001.ogg",
+     "gain": -3,
+     "max": 1.0
+    },
+    {
+     "f": "o_rpg80:item_coins_01.ogg",
+     "gain": -6
+    }
+   ]
+  ],
+  "reject": [
+   [
+    {
+     "f": "k_interface:error_001.ogg",
+     "gain": -3
+    }
+   ]
+  ],
+  "elixirFull": [
+   [
+    {
+     "f": "k_interface:pluck_001.ogg",
+     "gain": -4
+    }
+   ]
+  ],
+  "flap": [
+   [
+    {
+     "f": "k_rpg:cloth1.ogg",
+     "max": 0.3,
+     "gain": -4
+    }
+   ]
+  ],
+  "inferno": [
+   [
+    {
+     "f": "k_scifi:thrusterFire_000.ogg",
+     "max": 0.6,
+     "gain": -6
+    }
+   ]
+  ],
+  "heavyStep": [
+   [
+    {
+     "f": "k_impact:footstep_concrete_000.ogg"
+    },
+    {
+     "f": "k_impact:impactSoft_heavy_002.ogg",
+     "gain": -8
+    }
+   ]
+  ]
+ },
+ "music": {
+  "menu": "m_town",
+  "battle": "m_battleA",
+  "overtime": "m_battleB"
+ }
 }

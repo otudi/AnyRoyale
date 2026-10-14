@@ -540,21 +540,22 @@ export class Effects {
   /** Floating text (card name of the opponent's play, "+1 crown"...). Uses a canvas sprite. */
   label(text: string, x: number, z: number, color = '#ffffff', y = 2.4): void {
     const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 64;
+    canvas.width = 512;
+    canvas.height = 96;
     const g = canvas.getContext('2d')!;
-    g.font = 'bold 34px system-ui, sans-serif';
+    g.font = "900 54px 'Tajawal', system-ui, sans-serif";
     g.textAlign = 'center';
     g.textBaseline = 'middle';
-    g.lineWidth = 6;
-    g.strokeStyle = 'rgba(0,0,0,0.75)';
-    g.strokeText(text, 128, 32);
+    g.lineJoin = 'round';
+    g.lineWidth = 12;
+    g.strokeStyle = 'rgba(40,0,0,0.9)';
+    g.strokeText(text, 256, 50);
     g.fillStyle = color;
-    g.fillText(text, 128, 32);
+    g.fillText(text, 256, 50);
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
-    sprite.scale.set(3.2, 0.8, 1);
+    sprite.scale.set(4.4, 0.83, 1);
     sprite.position.set(x, y, z);
     sprite.renderOrder = 20;
     this.root.add(sprite);

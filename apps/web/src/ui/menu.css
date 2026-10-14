@@ -1051,3 +1051,62 @@
   --mm-ink: #0d1224;
   --mm-card: #ffffff;
 }
+
+/* ------------------------------------------------------------------ free page scrolling
+   Menus scroll like a normal web page: the whole document moves, bounces, and Safari/Chrome
+   pull-to-refresh works. The battle (and the screens drawn over it) keep the locked stage. */
+html.menu-mode,
+html.menu-mode body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+}
+
+html.menu-mode body {
+  background: var(--mm-bg);
+}
+
+html.menu-mode #stage {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  left: auto;
+  transform: none;
+  margin: 0 auto;
+  min-height: 100dvh;
+  overflow: visible;
+  touch-action: auto;
+  background: var(--mm-bg);
+  box-shadow: none;
+}
+
+html.menu-mode .game-canvas {
+  visibility: hidden;
+}
+
+html.menu-mode .mm {
+  position: relative;
+  inset: auto;
+  min-height: calc(100dvh + 1px);
+  overflow: visible;
+}
+
+html.menu-mode .mm-col {
+  height: auto;
+  min-height: calc(100dvh + 1px);
+  overflow: visible;
+  touch-action: auto;
+}
+
+html.menu-mode .mm-modal,
+html.menu-mode .mm-help {
+  position: fixed;
+  inset: 0;
+  left: 50%;
+  right: auto;
+  width: var(--stage-w);
+  margin-left: calc(var(--stage-w) / -2);
+  z-index: 50;
+}

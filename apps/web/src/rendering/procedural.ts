@@ -268,7 +268,13 @@ export function buildProc(shape: ProcShape, height: number, color = 0x888888, co
       body.add(part(sphere(1, 1), mat(c), 0.4, 0.3, 0.6, 0, 0.6, 0));
       body.add(part(sphere(1, 1), mat(c), 0.22, 0.22, 0.25, 0, 0.8, 0.5));
       const ws = wings(body, c2, 1.0, 0.75);
-      body.add(part(sphere(1, 1), mat(0xffe0f0), 0.18, 0.4, 0.18, 0, 1.15, 0));
+      // the maiden riding it: dress, head, golden hair and a little crown
+      body.add(part(cone(8), mat(0xf06aa8), 0.22, 0.42, 0.22, 0, 1.02, -0.05));
+      const head = part(sphere(1, 1), mat(0xf6d2b4), 0.14, 0.15, 0.14, 0, 1.33, -0.05);
+      body.add(head);
+      body.add(part(sphere(1, 1), mat(0xffd34a), 0.16, 0.13, 0.15, 0, 1.38, -0.09));
+      body.add(part(cone(5), mat(0xffe066, { emissive: 0xc89000, metal: 0.4 }), 0.08, 0.1, 0.08, 0, 1.52, -0.05));
+      eyes(head, 0.02, 0.85, 0.35, 0.16, 0x3a6ad8);
       animate = (s) => {
         flap(ws, s.t, s.frozen ? 0 : 6, 0.5);
         body.position.y = Math.sin(s.t * 2) * 0.06;

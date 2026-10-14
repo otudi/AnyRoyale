@@ -45,6 +45,7 @@ export class BattleSession {
     stage: HTMLElement,
   ) {
     this.view = new BattleView(r, start.you, start.arena.id, start.placementDelay ?? 1.0);
+    this.view.prewarm(start.deck);
     this.hud = new Hud(hudRoot, art);
     this.damage = new DamageNumbers(hudRoot);
     this.hud.reset();

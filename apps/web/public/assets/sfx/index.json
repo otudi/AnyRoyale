@@ -128,6 +128,11 @@
    "heavyStep.mp3"
   ]
  },
+ "music": {
+  "menu": "music-menu.mp3",
+  "battle": "music-battle.mp3",
+  "overtime": "music-overtime.mp3"
+ },
  "sources": {
   "k_impact": {
    "page": "https://kenney.nl/assets/impact-sounds",
@@ -158,6 +163,21 @@
    "page": "https://kenney.nl/assets/ui-audio",
    "license": "CC0-1.0",
    "sha256": "946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6"
+  },
+  "m_battleA": {
+   "page": "https://opengameart.org/content/battle-theme-a",
+   "license": "CC0-1.0",
+   "sha256": "6042399782e581d753d616bc703e66483d5eccb5fb687a20c9a552d68c49e620"
+  },
+  "m_battleB": {
+   "page": "https://opengameart.org/content/battle-theme-b-for-rpg",
+   "license": "CC0-1.0",
+   "sha256": "8476ce29692d8d317a7d79628af967448ec09d9f66efe692a597336c5cea2629"
+  },
+  "m_town": {
+   "page": "https://opengameart.org/content/town-theme-rpg",
+   "license": "CC0-1.0",
+   "sha256": "2657861d5107d4a3c01ef81cb6a4d61ddd5e7a054b6da57e658373d79d0c3466"
   },
   "o_bang": {
    "page": "https://opengameart.org/content/25-cc0-bang-firework-sfx",

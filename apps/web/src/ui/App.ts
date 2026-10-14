@@ -143,6 +143,19 @@ export class App {
         ? `<div class="mm-patterns"><span class="material-icons">emoji_events</span><span class="material-icons">shield</span><span class="material-icons">bolt</span></div>`
         : '';
     this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}">${patterns}<div class="mm-col">${html}</div></div>`;
+    this.setMenuMode(variant === 'solid');
+  }
+
+  /** Menus scroll as a normal page (bounce, pull-to-refresh); the battle keeps the locked stage. */
+  private setMenuMode(on: boolean): void {
+    const root = document.documentElement;
+    const was = root.classList.contains('menu-mode');
+    if (was !== on) {
+      root.classList.toggle('menu-mode', on);
+      // the stage changed size without a window resize: let the renderer re-fit the canvas
+      window.dispatchEvent(new Event('resize'));
+    }
+    if (window.scrollY) window.scrollTo(0, 0);
   }
 
   /** A 3D menu button: icon + title (+ subtitle) on the start side, chevron on the end side. */
@@ -801,6 +814,7 @@ export class App {
   private hideScreens(): void {
     this.screen = 'battle';
     this.screens.innerHTML = '';
+    this.setMenuMode(false);
   }
 
   private confirmSurrender(): void {
@@ -912,7 +926,7 @@ export class App {
           }
         : null,
       fps: this.r.fps,
-      audio: { unlocked: audio.unlocked, ready: audio.ready, state: audio.state(), samples: audio.sampleCount },
+      audio: { unlocked: audio.unlocked, ready: audio.ready, state: audio.state(), samples: audio.sampleCount, music: audio.musicInfo() },
       failedAssets: [...assets.failed],
       renderer: this.r.info(),
       result: this.resultEnd ? { youWon: this.resultEnd.youWon, draw: this.resultEnd.draw, reason: this.resultEnd.reason } : null,

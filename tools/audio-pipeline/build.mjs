@@ -10,18 +10,19 @@ const here = dirname(fileURLToPath(import.meta.url));
 const cache = join(here, '.cache');
 const out = join(here, '../../apps/web/public/assets/sfx');
 const { packs } = JSON.parse(readFileSync(join(here, 'sources.json'), 'utf8'));
-const { sounds } = JSON.parse(readFileSync(join(here, 'sounds.json'), 'utf8'));
+const { sounds, music } = JSON.parse(readFileSync(join(here, 'sounds.json'), 'utf8'));
 
 mkdirSync(cache, { recursive: true });
 const sha256 = (buf) => createHash('sha256').update(buf).digest('hex');
 
 function fetchPack(id) {
   const p = packs[id];
-  const zip = join(cache, `${id}.zip`);
+  const zip = join(cache, `${id}.${p.single ? 'mp3' : 'zip'}`);
   const dir = join(cache, id);
   if (!existsSync(zip)) execFileSync('curl', ['-sSfL', '-m', '300', '-o', zip, p.url]);
   const hash = sha256(readFileSync(zip));
   if (p.sha256 && p.sha256 !== hash) throw new Error(`${id}: sha256 ${hash} != pinned ${p.sha256}`);
+  if (p.single) return zip;
   if (!existsSync(dir)) execFileSync('unzip', ['-qo', zip, '-d', dir]);
   return dir;
 }
@@ -79,11 +80,20 @@ for (const [name, variants] of Object.entries(sounds)) {
     index[name].push(file);
   });
 }
+// Music: whole tracks, loudness-normalised quieter than the effects so they never dominate.
+const musicIndex = {};
+for (const [track, id] of Object.entries(music ?? {})) {
+  const src = fetchPack(id);
+  used.add(id);
+  const file = `music-${track}.mp3`;
+  execFileSync('ffmpeg', ['-hide_banner', '-v', 'error', '-y', '-i', src, '-af', 'loudnorm=I=-20:TP=-2:LRA=11', '-c:a', 'libmp3lame', '-b:a', '96k', '-ar', '44100', '-ac', '2', join(out, file)]);
+  musicIndex[track] = file;
+}
 const sources = {};
 for (const id of [...used].sort()) {
-  sources[id] = { page: packs[id].page, license: packs[id].license, sha256: sha256(readFileSync(join(cache, `${id}.zip`))) };
+  sources[id] = { page: packs[id].page, license: packs[id].license, sha256: sha256(readFileSync(join(cache, `${id}.${packs[id].single ? 'mp3' : 'zip'}`))) };
 }
-writeFileSync(join(out, 'index.json'), JSON.stringify({ sounds: index, sources }, null, 1) + '\n');
+writeFileSync(join(out, 'index.json'), JSON.stringify({ sounds: index, music: musicIndex, sources }, null, 1) + '\n');
 let total = 0;
 for (const f of readdirSync(out)) total += statSync(join(out, f)).size;
 console.log(`${Object.keys(index).length} sounds, ${readdirSync(out).length - 1} files, ${(total / 1024).toFixed(0)} KB`);
