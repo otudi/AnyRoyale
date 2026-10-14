@@ -28,6 +28,8 @@ void main() {
   gl_FragColor = vec4(vColor.rgb, vColor.a * a);
 }`;
 
+const TMP_COLOR = new THREE.Color();
+
 interface Particle {
   life: number;
   max: number;
@@ -90,7 +92,7 @@ class ParticleField {
     p.max = p.life = o.max ?? 0.8;
     p.size0 = o.size0 ?? 0.6;
     p.size1 = o.size1 ?? 0.1;
-    const c = new THREE.Color(o.color);
+    const c = TMP_COLOR.setHex(o.color);
     p.r = c.r;
     p.g = c.g;
     p.b = c.b;
@@ -144,6 +146,82 @@ interface Transient {
   pool?: THREE.Object3D[];
 }
 
+function canvasTexture(size: number, draw: (g: CanvasRenderingContext2D, s: number) => void): THREE.CanvasTexture {
+  const c = document.createElement('canvas');
+  c.width = c.height = size;
+  draw(c.getContext('2d')!, size);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/** Four-point star with a soft core: hit flashes. */
+const starTexture = (): THREE.CanvasTexture =>
+  canvasTexture(128, (g, s) => {
+    const h = s / 2;
+    const core = g.createRadialGradient(h, h, 0, h, h, h);
+    core.addColorStop(0, 'rgba(255,255,255,1)');
+    core.addColorStop(0.18, 'rgba(255,255,255,0.9)');
+    core.addColorStop(0.45, 'rgba(255,255,255,0.25)');
+    core.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = core;
+    g.fillRect(0, 0, s, s);
+    g.fillStyle = 'rgba(255,255,255,0.95)';
+    for (const rot of [0, Math.PI / 2]) {
+      g.save();
+      g.translate(h, h);
+      g.rotate(rot);
+      g.beginPath();
+      g.moveTo(0, -h);
+      g.quadraticCurveTo(5, -5, h, 0);
+      g.quadraticCurveTo(5, 5, 0, h);
+      g.quadraticCurveTo(-5, 5, -h, 0);
+      g.quadraticCurveTo(-5, -5, 0, -h);
+      g.fill();
+      g.restore();
+    }
+  });
+
+/** Crescent swoosh: melee slashes. */
+const slashTexture = (): THREE.CanvasTexture =>
+  canvasTexture(128, (g, s) => {
+    const h = s / 2;
+    g.translate(h, h);
+    const grad = g.createLinearGradient(-h, 0, h, 0);
+    grad.addColorStop(0, 'rgba(255,255,255,0)');
+    grad.addColorStop(0.5, 'rgba(255,255,255,1)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grad;
+    g.beginPath();
+    g.arc(0, 10, h * 0.9, Math.PI * 1.1, Math.PI * 1.9);
+    g.arc(0, 26, h * 0.82, Math.PI * 1.85, Math.PI * 1.15, true);
+    g.closePath();
+    g.fill();
+  });
+
+/** Vertical light beam (bright at the bottom, fading upwards). */
+const beamTexture = (): THREE.CanvasTexture =>
+  canvasTexture(64, (g, s) => {
+    const grad = g.createLinearGradient(0, s, 0, 0);
+    grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+    grad.addColorStop(0.35, 'rgba(255,255,255,0.45)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, s, s);
+  });
+
+/** Soft round glow: projectile halos. */
+const glowTexture = (): THREE.CanvasTexture =>
+  canvasTexture(64, (g, s) => {
+    const h = s / 2;
+    const grad = g.createRadialGradient(h, h, 0, h, h, h);
+    grad.addColorStop(0, 'rgba(255,255,255,1)');
+    grad.addColorStop(0.3, 'rgba(255,255,255,0.55)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, s, s);
+  });
+
 /** Visual effects not tied to a single unit: explosions, spell areas, projectiles, bolts. */
 export class Effects {
   readonly root = new THREE.Group();
@@ -154,6 +232,12 @@ export class Effects {
   private ringGeo = new THREE.RingGeometry(0.85, 1, 40);
   private discGeo = new THREE.CircleGeometry(1, 40);
   private projMeshes = new Map<ProjectileLook, THREE.Object3D>();
+  private texStar = starTexture();
+  private texSlash = slashTexture();
+  private texBeam = beamTexture();
+  private texGlow = glowTexture();
+  private spritePool: THREE.Sprite[] = [];
+  private beamGeo = new THREE.CylinderGeometry(1, 1, 1, 20, 1, true);
   private projPool = new Map<ProjectileLook, THREE.Object3D[]>();
 
   constructor(quality: 'high' | 'low') {
@@ -268,6 +352,112 @@ export class Effects {
     for (let i = 0; i < amount; i++) {
       this.additive.emit(x, y, z, { color, spread: 1, speed: 3, up: 1, gravity: 6, max: 0.35, size0: 0.35, size1: 0.05 });
     }
+  }
+
+  private sprite(tex: THREE.Texture, color: number, additive = true): THREE.Sprite {
+    const sp =
+      this.spritePool.pop() ??
+      new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false, depthTest: false }));
+    const m = sp.material;
+    m.map = tex;
+    m.color.setHex(color);
+    m.blending = additive ? THREE.AdditiveBlending : THREE.NormalBlending;
+    m.opacity = 1;
+    m.rotation = 0;
+    sp.visible = true;
+    sp.renderOrder = 8;
+    this.root.add(sp);
+    return sp;
+  }
+
+  /** Bright star flash where a hit lands. {@code size} in world units. */
+  impact(x: number, y: number, z: number, color = 0xfff2c0, size = 1): void {
+    const sp = this.sprite(this.texStar, color);
+    sp.position.set(x, y, z);
+    sp.material.rotation = Math.random() * Math.PI;
+    this.transients.push({
+      obj: sp,
+      life: 0.2,
+      max: 0.2,
+      pool: this.spritePool as THREE.Object3D[],
+      update: (k) => {
+        const s = size * (k < 0.3 ? 0.4 + (k / 0.3) * 0.9 : 1.3 - (k - 0.3) * 1.2);
+        sp.scale.set(s, s, 1);
+        sp.material.opacity = 1 - k * k;
+      },
+    });
+    for (let i = 0; i < 5; i++) {
+      this.additive.emit(x, y, z, { color, spread: 1, speed: 3.5, up: 0.8, gravity: 7, max: 0.28, size0: 0.28 * size, size1: 0.04 });
+    }
+  }
+
+  /** White crescent swoosh for melee hits. */
+  slash(x: number, y: number, z: number, size = 1.2): void {
+    const sp = this.sprite(this.texSlash, 0xffffff);
+    sp.position.set(x, y, z);
+    const rot = (Math.random() - 0.5) * 1.6;
+    this.transients.push({
+      obj: sp,
+      life: 0.16,
+      max: 0.16,
+      pool: this.spritePool as THREE.Object3D[],
+      update: (k) => {
+        sp.material.rotation = rot + k * 0.9;
+        const s = size * (0.8 + k * 0.5);
+        sp.scale.set(s, s, 1);
+        sp.material.opacity = 1 - k;
+      },
+    });
+  }
+
+  /** Death puff: a ring of soft smoke, a few sparks and a rising wisp. */
+  deathPoof(x: number, y: number, z: number, size = 1): void {
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      this.smoke.emit(x, y + 0.2, z, {
+        color: 0xf0eee8, vx: Math.cos(a) * 2.2 * size, vz: Math.sin(a) * 2.2 * size, vy: 0.6,
+        gravity: -0.6, drag: 4, max: 0.6, size0: 0.7 * size, size1: 1.5 * size, a0: 0.85,
+      });
+    }
+    for (let i = 0; i < 6; i++) {
+      this.additive.emit(x, y + 0.5, z, { color: 0xffffff, spread: 1, speed: 1.2, up: 2.2, gravity: -0.5, max: 0.7, size0: 0.25, size1: 0.02 });
+    }
+    const sp = this.sprite(this.texGlow, 0xdfe8ff);
+    sp.position.set(x, y + 0.6, z);
+    this.transients.push({
+      obj: sp,
+      life: 0.7,
+      max: 0.7,
+      pool: this.spritePool as THREE.Object3D[],
+      update: (k) => {
+        sp.position.y = y + 0.6 + k * 1.8;
+        const s = (0.9 - k * 0.5) * size;
+        sp.scale.set(s * 0.7, s, 1);
+        sp.material.opacity = 0.8 * (1 - k);
+      },
+    });
+  }
+
+  /** Column of light in the team colour where a unit lands. */
+  deployBeam(x: number, z: number, radius: number, color: number): void {
+    const mat = new THREE.MeshBasicMaterial({
+      map: this.texBeam, color, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    });
+    const m = new THREE.Mesh(this.beamGeo, mat);
+    m.position.set(x, 0, z);
+    this.root.add(m);
+    this.transients.push({
+      obj: m,
+      life: 0.55,
+      max: 0.55,
+      update: (k) => {
+        const h = 4 * (0.4 + easeOut(Math.min(1, k * 2.5)) * 0.6);
+        m.scale.set(radius * (1 - k * 0.5), h, radius * (1 - k * 0.5));
+        m.position.y = h / 2;
+        mat.opacity = 0.75 * (1 - k);
+        if (k >= 1) mat.dispose();
+      },
+    });
   }
 
   deploySplash(x: number, z: number, radius: number, color: number): void {
@@ -532,6 +722,17 @@ export class Effects {
         add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), std(0xff6040, 0xff3020)));
         g.userData.trail = 0xffd040;
         break;
+    }
+    const glowColor: Partial<Record<ProjectileLook, number>> = {
+      fireball: 0xff9a30, bigfireball: 0xff8a20, magic: 0xb070ff, darkorb: 0x9050ff, healorb: 0xffe066,
+      zapbeam: 0x8fe0ff, iceball: 0xbfe8ff, snowball: 0xe0f4ff, firework: 0xffb040, rocket: 0xffa040,
+    };
+    const gc = glowColor[look];
+    if (gc !== undefined) {
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.texGlow, color: color ?? gc, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      const s = look === 'bigfireball' ? 3.2 : look === 'rocket' ? 1.6 : 1.1;
+      halo.scale.set(s, s, 1);
+      g.add(halo);
     }
     g.traverse((o) => ((o as THREE.Mesh).isMesh ? ((o as THREE.Mesh).castShadow = false) : null));
     return g;

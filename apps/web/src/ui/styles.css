@@ -439,52 +439,46 @@ select {
 .card {
   position: relative;
   aspect-ratio: 0.8;
-  border-radius: 10px;
+  border-radius: 9px;
   overflow: visible;
-  background: #2b3f74;
-  border: 3px solid #8ab4e8;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45);
+  background: transparent;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.45));
   transition: transform 0.12s, filter 0.12s;
   touch-action: none;
 }
 
+/* the frame, background and portrait are all in the generated card image (CardArt) */
 .card img {
   width: 100%;
   height: 100%;
-  border-radius: 7px;
+  border-radius: 9px;
   display: block;
   object-fit: cover;
   pointer-events: none;
 }
 
-.card.rare {
-  border-color: #ffb347;
-}
-
-.card.epic {
-  border-color: #c77dff;
-}
-
 .card.legendary {
-  border-color: #6ff0ff;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45), 0 0 12px rgba(111, 240, 255, 0.5);
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.45)) drop-shadow(0 0 6px rgba(127, 240, 224, 0.6));
 }
 
+/* elixir drop */
 .card .cost {
   position: absolute;
-  top: -8px;
+  top: -9px;
   left: -8px;
-  width: 26px;
-  height: 26px;
+  width: 27px;
+  height: 27px;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
-  background: radial-gradient(circle at 35% 35%, #ff9df0, var(--elixir));
-  border: 2px solid #fff;
+  background: radial-gradient(circle at 30% 30%, #ffe0ff 0%, #f07cf0 22%, #b83ad8 60%, #6a1490 100%);
+  border: 2px solid #1a0a2a;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55), 0 2px 3px rgba(0, 0, 0, 0.55);
   display: grid;
   place-items: center;
   font-weight: 900;
-  font-size: 13px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 1px 0 #3a0a50, 0 0 3px #3a0a50;
 }
 
 .card .cost span {
@@ -493,7 +487,6 @@ select {
 
 .card.small {
   width: 82%;
-  border-width: 2px;
 }
 
 .card.small .cost {

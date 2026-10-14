@@ -134,9 +134,9 @@ function mat(color: number): THREE.MeshLambertMaterial {
   return m;
 }
 
-const STONE = 0xb5a990;
+const STONE = 0xa89c82;
 const STONE_DARK = 0x887c66;
-const STONE_LIGHT = 0xcfc3ab;
+const STONE_LIGHT = 0xc2b59a;
 const WOOD = 0x8a5a32;
 
 function put(g: THREE.Group, geo: THREE.BufferGeometry, color: number, x: number, y: number, z: number, ry = 0): THREE.Mesh {

@@ -233,6 +233,7 @@ export class BattleView {
         if (flags & F.DEPLOYING || kind === 'B') {
           v.spawn();
           this.fx.deploySplash(pos.x, pos.z, Math.max(0.6, eb[12] / 1000), TEAM_COLORS[side]);
+          this.fx.deployBeam(pos.x, pos.z, Math.max(0.55, (eb[12] / 1000) * 1.2), TEAM_COLORS[side]);
         }
       }
       const info = this.unitInfo.get(id)!;
@@ -463,9 +464,9 @@ export class BattleView {
       if (b.projectiles.has(id)) continue;
       this.projectiles.delete(id);
       if (st.key === 'ElectroWizard' || st.key === 'ZapMachine' || st.key === 'MiniZapMachine' || st.key === 'ElectroDragon' || st.key === 'ElectroSpirit') {
-        this.fx.sparks(st.obj.position.x, st.obj.position.y, st.obj.position.z, 0x9fe0ff, 8);
+        this.fx.impact(st.obj.position.x, st.obj.position.y, st.obj.position.z, 0x9fe0ff, 1.0);
       } else {
-        this.fx.sparks(st.obj.position.x, st.obj.position.y, st.obj.position.z, 0xffe0a0, 4);
+        this.fx.impact(st.obj.position.x, st.obj.position.y, st.obj.position.z, 0xffe0a0, 0.8);
       }
       this.fx.releaseProjectile(st.obj);
     }
@@ -553,7 +554,9 @@ export class BattleView {
         const name = info.name;
         if (cards.isMelee(name)) {
           if (targetPos) {
-            this.fx.sparks(targetPos.x, 0.8, targetPos.z, 0xffffff, 6);
+            const y = this.towers.has(targetId) ? 1.6 : 0.9;
+            this.fx.impact(targetPos.x, y, targetPos.z, 0xfff2c0, 1.1);
+            this.fx.slash(targetPos.x, y, targetPos.z, 1.3);
             if (this.towers.has(targetId)) audio.play('towerHit', { pan: this.pan(targetPos.x), volume: 0.6 });
           }
           audio.play(meleeSound(name), { pan: this.pan(info.lastPos.x), volume: 0.6 });
@@ -587,6 +590,10 @@ export class BattleView {
           const isBuilding = this.unitInfo.get(id)?.kind === 'B';
           audio.play(isBuilding ? 'buildingDeath' : skel ? 'skeletonDeath' : 'death', { pan: this.pan(p.x), volume: 0.5 });
           this.fx.dust(p.x, p.z, isBuilding ? 30 : 8);
+          if (!isBuilding) {
+            const v = this.units.get(id);
+            this.fx.deathPoof(p.x, v ? v.root.position.y : 0, p.z, v ? Math.min(1.6, 0.7 + v.height * 0.25) : 1);
+          }
         }
         break;
       }

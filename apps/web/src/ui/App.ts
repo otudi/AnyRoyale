@@ -468,7 +468,7 @@ export class App {
        <div class="mm-grid">${list
          .map(
            (c) =>
-             `<button class="mm-tile ${c.rarity.toLowerCase()}" data-card="${c.id}"><img class="art" alt="" data-art="${c.id}" /><span class="mm-cost">${c.cost}</span><span class="nm">${esc(cardName(c))}</span></button>`,
+             `<button class="mm-tile ${c.rarity.toLowerCase()}" data-card="${c.id}"><img class="art" alt="" data-art="${c.id}" /><span class="mm-cost"><span>${c.cost}</span></span><span class="nm">${esc(cardName(c))}</span></button>`,
          )
          .join('')}</div>`,
     );
@@ -804,7 +804,7 @@ export class App {
          <div class="mm-deck">${m.deck
            .map((id) => {
              const c = cards.get(id);
-             return c ? `<div class="mm-tile ${c.rarity.toLowerCase()}" title="${esc(cardName(c))}"><img class="art" src="${this.art.get(c)}" alt="" /><span class="mm-cost">${c.cost}</span></div>` : '';
+             return c ? `<div class="mm-tile ${c.rarity.toLowerCase()}" title="${esc(cardName(c))}"><img class="art" src="${this.art.get(c)}" alt="" /><span class="mm-cost"><span>${c.cost}</span></span></div>` : '';
            })
            .join('')}</div>
          <h2 class="mm-header" data-countdown style="margin:10px 0 0">${t('loading')}</h2>

@@ -18,6 +18,7 @@ export class Renderer3D {
   readonly cameraRig = new THREE.Group();
   readonly renderer: THREE.WebGLRenderer;
   readonly sun: THREE.DirectionalLight;
+  readonly rim: THREE.DirectionalLight;
   readonly hemi: THREE.HemisphereLight;
   private updaters = new Set<(dt: number, t: number) => void>();
   private running = false;
@@ -44,7 +45,7 @@ export class Renderer3D {
     });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 0.96;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.domElement.className = 'game-canvas';
     container.appendChild(this.renderer.domElement);
@@ -53,7 +54,7 @@ export class Renderer3D {
     this.cameraRig.add(this.camera);
     this.scene.add(this.cameraRig);
 
-    this.hemi = new THREE.HemisphereLight(0xdfefff, 0x5d4a33, 1.25);
+    this.hemi = new THREE.HemisphereLight(0xdfefff, 0x5d4a33, 1.0);
     this.scene.add(this.hemi);
     this.sun = new THREE.DirectionalLight(0xfff1d6, 2.4);
     this.sun.position.set(-9, 22, 10);
@@ -67,6 +68,10 @@ export class Renderer3D {
     this.sun.shadow.bias = -0.0008;
     this.sun.shadow.normalBias = 0.02;
     this.scene.add(this.sun, this.sun.target);
+    // Back light from the far side of the arena: bright edges that lift units off the ground.
+    this.rim = new THREE.DirectionalLight(0xd6e8ff, 1.2);
+    this.rim.position.set(3, 7, -16);
+    this.scene.add(this.rim);
 
     this.applyQuality(getSettings().quality, caps);
     onSettings((s) => this.applyQuality(s.quality, caps));
@@ -110,6 +115,7 @@ export class Renderer3D {
   /** Places the camera behind the given seat's own side. */
   setPerspective(team: 'BLUE' | 'RED'): void {
     this.side = team === 'RED' ? -1 : 1;
+    this.rim.position.set(3 * this.side, 7, -16 * this.side);
     this.layoutCamera();
   }
 
