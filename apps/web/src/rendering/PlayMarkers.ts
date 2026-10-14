@@ -3,8 +3,6 @@ import type { CardInfo } from '../network/protocol';
 import { TEAM_COLORS, UnitVisual, type Side } from './UnitFactory';
 import { visualFor } from './visualCatalog';
 
-/** Seconds between a play and the units appearing (crforge DeploymentSystem.PLACEMENT_SYNC_DELAY). */
-export const PLACEMENT_SYNC_DELAY = 1.0;
 
 interface Marker {
   card: CardInfo;
@@ -32,7 +30,8 @@ export class PlayMarkers {
   private discGeo = new THREE.CircleGeometry(1, SEGMENTS);
   private ringGeo = new THREE.RingGeometry(0.86, 1, SEGMENTS);
 
-  constructor() {
+  /** @param delay seconds between a play and its units appearing (from matchStart). */
+  constructor(private readonly delay = 1.0) {
     this.discGeo.rotateX(-Math.PI / 2);
     this.ringGeo.rotateX(-Math.PI / 2);
   }
@@ -73,12 +72,12 @@ export class PlayMarkers {
       root.add(ghost.root);
     }
     this.root.add(root);
-    this.markers.push({ card, side, x, z, age: 0, life: PLACEMENT_SYNC_DELAY + (spell ? 0.25 : 0.6), root, timer, ghost, local });
+    this.markers.push({ card, side, x, z, age: 0, life: this.delay + (spell ? 0.25 : 0.6), root, timer, ghost, local });
   }
 
   /** A real unit appeared: drop the marker it replaces. */
   unitAppeared(side: Side, x: number, z: number): void {
-    const i = this.markers.findIndex((m) => m.side === side && m.card.type !== 'SPELL' && m.age > 0.3 && Math.hypot(m.x - x, m.z - z) < 3);
+    const i = this.markers.findIndex((m) => m.side === side && m.card.type !== 'SPELL' && m.age > Math.min(0.3, this.delay * 0.5) && Math.hypot(m.x - x, m.z - z) < 3);
     if (i >= 0) this.remove(i);
   }
 
@@ -97,7 +96,7 @@ export class PlayMarkers {
         continue;
       }
       // countdown: the filled disc shrinks as a pie until the units land
-      const k = Math.min(1, m.age / PLACEMENT_SYNC_DELAY);
+      const k = Math.min(1, m.age / Math.max(0.05, this.delay));
       const tris = Math.max(1, Math.round(SEGMENTS * (1 - k)));
       m.timer.geometry.setDrawRange(0, tris * 3);
       if (m.ghost) {

@@ -12,7 +12,7 @@ Browser (Safari / Chrome / Firefox)                        Render web service (o
 │  audio/     Web Audio SFX + music      │   WebSocket /ws  │  websocket/   GameGateway (JSON protocol)   │
 │                                         │ ◀══════════════▶ │  sessions/    guest ids (HMAC tokens)       │
 │ sends intents: play(slot, card, x, y)   │  intents ▲       │  matchmaking/ online queue (no bot fill)    │
-│ receives full snapshots @10 Hz          │  snapshots ▼     │  rooms/       private rooms (5-char codes)  │
+│ receives full snapshots @20 Hz          │  snapshots ▼     │  rooms/       private rooms (5-char codes)  │
 └───────────────────────────────────────┘                  │  match/       MatchSession × N (20 TPS)     │
                                                              │  bots/        HeuristicBot (4 levels)       │
                                                              │  cards/       pool, traits, shared deck     │
@@ -30,7 +30,7 @@ Browser (Safari / Chrome / Firefox)                        Render web service (o
 - Elixir, damage, health, deaths, crowns, timers and the winner exist only on the server.
 - At most one accepted play per player per tick (the hand cycles inside the tick, so a second
   play would be validated against a stale hand).
-- Snapshots (10 Hz) are **full state**, not deltas, so any snapshot fully resynchronises a client.
+- Snapshots (20 Hz) are **full state**, not deltas, so any snapshot fully resynchronises a client.
   The opponent's hand and elixir are never sent; invisible enemy troops (Royal Ghost, Suspicious
   Bush) are omitted from the opponent's snapshots.
 - Threading: each match is a fixed-rate task on a shared `ScheduledExecutorService`; network
@@ -50,7 +50,7 @@ Browser (Safari / Chrome / Firefox)                        Render web service (o
   forfeits; if both are gone the match is abandoned. The opponent sees a countdown while the
   seat is empty.
 - Dead-connection detection: the client re-dials on the browser `offline` event or after 12 s
-  without any server message (it pings every 4 s; snapshots arrive at 10 Hz), with exponential
+  without any server message (it pings every 4 s; snapshots arrive at 20 Hz), with exponential
   backoff; the server pings every 5 s and drops sockets idle for 20 s. After a reconnect the client
   re-joins the online queue if it was searching; a hosted room is kept for 30 s while the host
   reconnects.

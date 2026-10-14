@@ -24,6 +24,10 @@ Upstream tests are kept and run in CI (`./gradlew :crforge-core:test :crforge-da
    enemy side. Now only `spellAsDeploy` spells without `canDeployOnEnemySide` (Log, Barbarian
    Barrel, Heal Spirit, Royal Delivery) are restricted. Regression test:
    `server/app/src/test/java/com/anyroyale/server/match/SpellPlacementRegressionTest.java`.
+3. **Configurable placement delay** — `engine/DeploymentSystem.java` and `engine/GameEngine.java`:
+   the 1.0 s `PLACEMENT_SYNC_DELAY` between a play and its deploy timer is now a per-engine value
+   (`GameEngine.setPlacementSyncDelay`), default unchanged so upstream tests are unaffected.
+   AnyRoyale uses 0.3 s (`BattleSetup.PLACEMENT_DELAY`), identical for both players.
 
 The build no longer applies upstream's Spotless formatter or the Gradle JDK-17 toolchain
 download; bytecode still targets Java 17 (`options.release = 17`).

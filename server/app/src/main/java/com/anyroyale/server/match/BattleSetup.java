@@ -24,6 +24,13 @@ public final class BattleSetup {
   /** Card and tower level for every match (the classic tournament standard). */
   public static final int LEVEL = 11;
 
+  /**
+   * Seconds between a play and its units appearing (crforge's default is 1.0, a server-latency
+   * buffer). 0.3 s still covers typical network latency, so the opponent sees the play before the
+   * units act, while deploys feel immediate. Same for both seats.
+   */
+  public static final float PLACEMENT_DELAY = 0.3f;
+
   public final GameEngine engine;
   public final Standard1v1Match match;
   public final Player blue;
@@ -50,6 +57,7 @@ public final class BattleSetup {
     match.addPlayer(red);
     GameEngine engine = new GameEngine();
     engine.useIsolatedEntityIds();
+    engine.setPlacementSyncDelay(PLACEMENT_DELAY);
     engine.setMatch(match);
     engine.initMatch();
     return new BattleSetup(engine, match, blue, red);

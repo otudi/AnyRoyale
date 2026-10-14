@@ -86,7 +86,7 @@ export class BattleView {
   private arena: ArenaBuilder;
   private fx: Effects;
   private bars = new HpBars();
-  private markers = new PlayMarkers();
+  private markers: PlayMarkers;
   private blobs = new BlobShadows();
   private snaps: SnapState[] = [];
   private renderTick = -1;
@@ -115,7 +115,9 @@ export class BattleView {
     private readonly r: Renderer3D,
     readonly myTeam: TeamName,
     arenaId: string,
+    placementDelay = 1.0,
   ) {
+    this.markers = new PlayMarkers(placementDelay);
     const mine: 0 | 1 = myTeam === 'BLUE' ? 0 : 1;
     this.side = { 0: mine === 0 ? 'own' : 'enemy', 1: mine === 1 ? 'own' : 'enemy' };
     const theme = themeFor(arenaId);

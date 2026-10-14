@@ -101,6 +101,14 @@ public class GameEngine {
    * several engines tick concurrently (AnyRoyale server). Every entity of this engine must then be
    * created through the engine (ticks, match init, queued actions).
    */
+  /**
+   * Modified by AnyRoyale: shortens (or lengthens) the delay between a play and the units appearing.
+   * Applies to both players equally.
+   */
+  public void setPlacementSyncDelay(float seconds) {
+    deploymentSystem.setPlacementSyncDelay(seconds);
+  }
+
   public void useIsolatedEntityIds() {
     this.idAllocator = new EntityIds.Allocator();
   }

@@ -42,7 +42,7 @@ export class BattleSession {
     art: CardArt,
     stage: HTMLElement,
   ) {
-    this.view = new BattleView(r, start.you, start.arena.id);
+    this.view = new BattleView(r, start.you, start.arena.id, start.placementDelay ?? 1.0);
     this.hud = new Hud(hudRoot, art);
     this.hud.reset();
     this.hud.setOpponent(start.opponent.name);

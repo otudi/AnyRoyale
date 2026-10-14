@@ -249,8 +249,9 @@ export class Renderer3D {
       this.highFpsSeconds++;
       this.lowFpsSeconds = 0;
     }
-    if (this.lowFpsSeconds >= 2 && this.pixelRatio > 0.75) {
-      this.pixelRatio = Math.max(0.75, this.pixelRatio - 0.25);
+    // Never go below 1 CSS pixel per pixel: lower looks blurry, which players notice more than FPS.
+    if (this.lowFpsSeconds >= 2 && this.pixelRatio > 1) {
+      this.pixelRatio = Math.max(1, this.pixelRatio - 0.25);
       this.renderer.setPixelRatio(this.pixelRatio);
       this.resize();
       this.lowFpsSeconds = 0;

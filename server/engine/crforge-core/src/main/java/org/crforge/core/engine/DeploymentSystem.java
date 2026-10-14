@@ -30,6 +30,18 @@ public class DeploymentSystem {
 
   private final EntityFactory entityFactory;
 
+  // Modified by AnyRoyale: the sync delay is configurable per engine (default unchanged).
+  private float placementSyncDelay = PLACEMENT_SYNC_DELAY;
+
+  /** Sets the delay between a play and its deploy timer starting (seconds, >= 0). */
+  public void setPlacementSyncDelay(float seconds) {
+    this.placementSyncDelay = Math.max(0f, seconds);
+  }
+
+  public float getPlacementSyncDelay() {
+    return placementSyncDelay;
+  }
+
   // Internal queue to hold requests associated with the player who made them
   private final Queue<DeploymentRequest> requestQueue = new ConcurrentLinkedQueue<>();
 
@@ -197,7 +209,7 @@ public class DeploymentSystem {
               action.getX(),
               action.getY(),
               cardLevel,
-              PLACEMENT_SYNC_DELAY));
+              placementSyncDelay));
     }
   }
 

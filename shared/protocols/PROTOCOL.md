@@ -43,7 +43,7 @@ y 0..32000 (blue's king tower at the bottom). TypeScript types: `apps/web/src/ne
 | `serverShutdown` | `reason` |
 | `error` | `code`, `message` |
 
-## Snapshot (`snap`, 10 Hz, full state per player)
+## Snapshot (`snap`, 20 Hz, full state per player)
 
 ```json
 { "type":"snap", "tick":1234, "timeLeft":118.3, "phase":"regular|double|overtime|triple", "elixirRate":1,

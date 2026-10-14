@@ -56,7 +56,8 @@ public final class MatchSession {
   private static final Logger log = LoggerFactory.getLogger(MatchSession.class);
 
   public static final int TICK_MS = 1000 / GameEngine.TICKS_PER_SECOND;
-  private static final int SNAPSHOT_EVERY_TICKS = 2;
+  // Every tick (20 Hz): with the client rendering 150 ms behind, a late packet no longer freezes units.
+  private static final int SNAPSHOT_EVERY_TICKS = 1;
   private static final int INTRO_TICKS = 3 * GameEngine.TICKS_PER_SECOND;
   private static final int REMATCH_WINDOW_TICKS = 60 * GameEngine.TICKS_PER_SECOND;
   private static final int MAX_PENDING_PLAYS = 6;
@@ -842,6 +843,7 @@ public final class MatchSession {
     }
     msg.put("state", state.name());
     msg.put("durationSeconds", Standard1v1Match.MATCH_DURATION_TICKS / GameEngine.TICKS_PER_SECOND);
+    msg.put("placementDelay", BattleSetup.PLACEMENT_DELAY);
     msg.put(
         "overtimeSeconds", Standard1v1Match.OVERTIME_DURATION_TICKS / GameEngine.TICKS_PER_SECOND);
     return msg;

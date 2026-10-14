@@ -43,15 +43,15 @@ the current code:
 
 | Pairing | Wins | Required |
 |---|---|---|
-| Expert vs Hard | 16-14 | Expert > Hard |
-| Hard vs Normal | 20-10 | Hard > Normal |
-| Normal vs Easy | 21-9 | Normal > Easy |
-| Expert vs Easy | 25-5 | ≥ 75 % |
+| Expert vs Hard | 19-11 | Expert > Hard |
+| Hard vs Normal | 17-13 | Hard > Normal |
+| Normal vs Easy | 24-6 | Normal > Easy |
+| Expert vs Easy | 30-0 | ≥ 75 % |
 
 The levels differ only in `BotProfile` decision parameters. Card stats and levels are identical.
-Expert vs Hard is close (16-14). With random shared decks the deck draw matters a lot, so this
-margin can move by a few matches with another seed set. Expert's edge over Hard is small; the
-other gaps are clear.
+Results with the 0.3 s placement delay (they were 16-14, 20-10, 21-9 and 25-5 with crforge's
+default 1.0 s). Hard vs Normal is the closest pairing (17-13); with random shared decks the deck
+draw matters a lot, so that margin can move by a few matches with another seed set.
 
 Before the last fix, the Expert bot could stall with a hand of only buildings and spells (4 plays
 in 3 minutes). It now spends elixir before it leaks, with any card type. In a full real-time
@@ -121,7 +121,8 @@ about 150 draw calls and 70k triangles; particles take 2 draw calls and health b
 120 full bot-vs-bot matches (engine + both bots) in 11.6 s on the dev container, far faster than
 real time. Live, in the 0.5-CPU container during real browser matches (`/api/stats`, sampled
 every 2 s): average match loop 0.6-0.8 ms per tick (budget 50 ms at 20 TPS), worst single loop
-20 ms (JIT warm-up/GC), outbound snapshot traffic about 7 KB/s per player (405 KB in 57 s). The 512 MB / 0.5 CPU
+20 ms (JIT warm-up/GC), outbound snapshot traffic about 7 KB/s per player (405 KB in 57 s) at the former 10 Hz;
+snapshots are now sent at 20 Hz, so roughly double that (~14 KB/s per player). The 512 MB / 0.5 CPU
 container ran the whole browser suite, several matches at a time included, without errors.
 
 ## 6. CI

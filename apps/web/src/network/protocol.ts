@@ -84,6 +84,8 @@ export interface MatchStart {
   state: 'WAITING_READY' | 'INTRO' | 'RUNNING' | 'ENDED' | 'CLOSED';
   durationSeconds: number;
   overtimeSeconds: number;
+  /** Seconds between a play and its units appearing (server setting). */
+  placementDelay?: number;
 }
 
 export interface MatchEnd {
