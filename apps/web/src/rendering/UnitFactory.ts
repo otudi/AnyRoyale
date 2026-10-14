@@ -176,6 +176,7 @@ export class UnitVisual {
   private moving = 0;
   private time = Math.random() * 10;
   private frozen = false;
+  private flashT = 0;
   private materials: THREE.MeshStandardMaterial[] = [];
   private baseEmissive = new Map<THREE.MeshStandardMaterial, THREE.Color>();
   private effectsMaterials = false;
@@ -403,6 +404,12 @@ export class UnitVisual {
     }
   }
 
+  /** Brief white flash when the unit takes damage. */
+  hitFlash(): void {
+    this.ensureOwnMaterials();
+    this.flashT = 0.14;
+  }
+
   setOpacity(alpha: number): void {
     this.ensureOwnMaterials();
     for (const m of this.materials) {
@@ -465,6 +472,15 @@ export class UnitVisual {
   /** Returns false when the death animation finished and the visual can be removed. */
   update(dt: number, moveSpeed: number, flags: { frozen: boolean }): boolean {
     this.time += dt;
+    if (this.flashT > 0) {
+      // setStatus() restores the normal emissive on the next frame once the flash is over
+      this.flashT -= dt;
+      const k = Math.max(0, this.flashT / 0.14);
+      for (const m of this.materials) {
+        m.emissive.setHex(0xffffff);
+        m.emissiveIntensity = 0.65 * k;
+      }
+    }
     const frozen = flags.frozen || this.frozen;
     if (this.spawnTime > 0) {
       this.spawnTime += dt;

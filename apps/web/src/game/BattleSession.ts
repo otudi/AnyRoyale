@@ -6,6 +6,7 @@ import type { MatchStart, ServerMessage, Snapshot } from '../network/protocol';
 import type { CardArt } from '../rendering/CardArt';
 import { DeployPreview } from '../rendering/DeployPreview';
 import type { Renderer3D } from '../rendering/Renderer3D';
+import { DamageNumbers } from '../ui/DamageNumbers';
 import { Hud } from '../ui/Hud';
 import { getSettings } from '../ui/settings';
 import { BattleView } from './BattleView';
@@ -22,6 +23,7 @@ export class BattleSession {
   readonly hud: Hud;
   private input: DragDeploy;
   private preview: DeployPreview;
+  private damage: DamageNumbers;
   private seq = Date.now() % 1_000_000;
   private pending = new Map<number, { slot: number; cost: number; cardId: string }>();
   private towers: TowerState = {
@@ -44,6 +46,7 @@ export class BattleSession {
   ) {
     this.view = new BattleView(r, start.you, start.arena.id, start.placementDelay ?? 1.0);
     this.hud = new Hud(hudRoot, art);
+    this.damage = new DamageNumbers(hudRoot);
     this.hud.reset();
     this.hud.setOpponent(start.opponent.name);
     this.preview = new DeployPreview();
@@ -61,6 +64,7 @@ export class BattleSession {
       audio.play('battleStart', { volume: 0.5 });
     };
     this.view.onTowerDestroyed = () => this.updateTowerState();
+    this.view.onDamage = (x, y, amount, victim, big) => this.damage.show(x, y, amount, victim, big);
     this.removeUpdater = r.addUpdater((dt) => {
       this.preview.update(dt);
       this.hud.setTowers(this.view.towerLabels());
@@ -209,6 +213,7 @@ export class BattleSession {
     this.input.dispose();
     this.preview.dispose();
     this.view.dispose();
+    this.damage.dispose();
     this.hud.reset();
     this.hud.hide();
   }

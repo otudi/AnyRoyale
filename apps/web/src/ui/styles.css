@@ -850,3 +850,62 @@ select {
 [dir='rtl'] .row {
   flex-direction: row-reverse;
 }
+
+/* Floating damage / heal numbers */
+.dmg-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 6;
+}
+
+.dmg {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  -webkit-text-stroke: 3px #1a1020;
+  paint-order: stroke fill;
+  animation: dmg-float 0.85s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+.dmg.enemy {
+  color: #fff6c8;
+}
+
+.dmg.own {
+  color: #ff8a8a;
+}
+
+.dmg.heal {
+  color: #8dff8a;
+}
+
+.dmg.big {
+  font-size: 23px;
+  animation-duration: 1s;
+}
+
+@keyframes dmg-float {
+  0% {
+    transform: translate(-50%, -100%) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(-50%, -120%) scale(1.25);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(-50%, -140%) scale(1);
+  }
+  100% {
+    transform: translate(-50%, -260%) scale(0.95);
+    opacity: 0;
+  }
+}

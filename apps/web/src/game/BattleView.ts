@@ -92,7 +92,10 @@ export class BattleView {
   private renderTick = -1;
   private latestTick = -1;
   private units = new Map<number, UnitVisual>();
-  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string; lag: number }>();
+  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string; lag: number; lastHp: number; acc: number; lastEmit: number }>();
+  /** Tick of the snapshot whose health values were last compared (damage numbers). */
+  private hpTick = -1;
+  private towerDmg = new Map<number, { acc: number; last: number }>();
   private towers = new Map<number, TowerVisual>();
   private towerData = new Map<number, TowerLabel>();
   private areas = new Map<number, AreaVisual>();
@@ -110,6 +113,8 @@ export class BattleView {
   onPhase: (p: Phase) => void = () => {};
   onTowerDestroyed: (side: Side, kind: 'K' | 'P') => void = () => {};
   onOpponentPlay: (cardId: string) => void = () => {};
+  /** Damage (positive) or healing (negative) shown as a floating number at screen x/y. */
+  onDamage: (sx: number, sy: number, amount: number, victim: Side, big: boolean) => void = () => {};
 
   constructor(
     private readonly r: Renderer3D,
@@ -197,6 +202,8 @@ export class BattleView {
     const cam = this.r.camera;
     this.bars.begin(cam);
     this.blobs.begin();
+    const freshHp = b.tick !== this.hpTick;
+    this.hpTick = b.tick;
     for (const [id, eb] of b.entities) {
       const ea = a.entities.get(id) ?? eb;
       const x = ea[5] + (eb[5] - ea[5]) * alpha;
@@ -221,7 +228,7 @@ export class BattleView {
         this.world.add(v.root);
         v.root.position.copy(pos);
         v.root.rotation.y = side === 'own' ? (this.myTeam === 'BLUE' ? Math.PI : 0) : this.myTeam === 'BLUE' ? 0 : Math.PI;
-        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind, lag: eb[8] > 0 ? eb[7] / eb[8] : 1 });
+        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind, lag: eb[8] > 0 ? eb[7] / eb[8] : 1, lastHp: eb[7] + eb[9], acc: 0, lastEmit: 0 });
         this.markers.unitAppeared(side, pos.x, pos.z);
         if (flags & F.DEPLOYING || kind === 'B') {
           v.spawn();
@@ -276,6 +283,25 @@ export class BattleView {
       const hp = eb[7];
       const max = eb[8];
       const shield = eb[9];
+      // Damage numbers: compare health (+shield) once per new snapshot, sum hits over 0.2 s.
+      if (freshHp) {
+        const now = hp + shield;
+        const diff = info.lastHp - now;
+        info.lastHp = now;
+        // buildings lose a little health every tick by design: ignore that decay
+        const threshold = kind === 'B' ? Math.max(8, max * 0.02) : 0;
+        if (diff > threshold || diff < -2) {
+          info.acc += diff;
+          if (diff > 0) v.hitFlash();
+        }
+      }
+      if (info.acc !== 0 && this.time - info.lastEmit >= 0.2) {
+        this.tmp2.set(pos.x, yOff + v.height + 0.9, pos.z);
+        const sp = this.r.project(this.tmp2);
+        this.onDamage(sp.x, sp.y, info.acc, side, info.acc >= 400);
+        info.acc = 0;
+        info.lastEmit = this.time;
+      }
       // Every unit always shows its health (team-coloured), so fights are readable.
       const ratio = max > 0 ? hp / max : 0;
       if (ratio > info.lag) info.lag = ratio;
@@ -341,6 +367,20 @@ export class BattleView {
       this.fx.sparks(pos.x, tw.height + 1, pos.z, 0xffd040, 20);
     }
     const prev = this.towerData.get(id);
+    if (prev && e[7] !== prev.hp) {
+      const d = this.towerDmg.get(id) ?? { acc: 0, last: 0 };
+      d.acc += prev.hp - e[7];
+      this.towerDmg.set(id, d);
+    }
+    const td = this.towerDmg.get(id);
+    if (td && td.acc !== 0 && this.time - td.last >= 0.2) {
+      // start just above the tower's health bar (which is anchored at height + 0.9)
+      this.tmp2.set(pos.x, tw.height + 0.9, pos.z);
+      const sp = this.r.project(this.tmp2);
+      this.onDamage(sp.x, sp.y - 26, td.acc, side, true);
+      td.acc = 0;
+      td.last = this.time;
+    }
     if (flags & F.ATTACKING && !(prev && prev.flags & F.ATTACKING)) {
       tw.top.startAttack(kind === 'K' ? 1.0 : 0.8);
     }
