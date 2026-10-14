@@ -122,8 +122,8 @@ export class Hud {
     const card = cards.get(id);
     if (!card) return;
     img.src = this.art.get(card);
-    img.alt = card.name;
-    el.title = card.name;
+    img.alt = cardName(card);
+    el.title = cardName(card);
     el.dataset.card = id;
     cost.textContent = String(card.cost);
     el.classList.add(card.rarity.toLowerCase());

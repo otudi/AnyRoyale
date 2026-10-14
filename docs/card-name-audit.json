@@ -1,0 +1,1192 @@
+[
+  {
+    "id": "knight",
+    "oldEn": "Knight",
+    "oldAr": "الفارس",
+    "en": "Knight",
+    "ar": "الفارس",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Knight"
+  },
+  {
+    "id": "archer",
+    "oldEn": "Archer",
+    "oldAr": "الرماة",
+    "en": "Archer",
+    "ar": "الرماة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Archers"
+  },
+  {
+    "id": "goblins",
+    "oldEn": "Goblins",
+    "oldAr": "العفاريت",
+    "en": "Goblins",
+    "ar": "العفاريت",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Goblins"
+  },
+  {
+    "id": "giant",
+    "oldEn": "Giant",
+    "oldAr": "العملاق",
+    "en": "Giant",
+    "ar": "العملاق",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Giant"
+  },
+  {
+    "id": "pekka",
+    "oldEn": "Pekka",
+    "oldAr": "بيكا",
+    "en": "Iron Sentinel",
+    "ar": "الحارس الحديدي",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "P.E.K.K.A"
+  },
+  {
+    "id": "minions",
+    "oldEn": "Minions",
+    "oldAr": "التوابع",
+    "en": "Minions",
+    "ar": "التوابع",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Minions"
+  },
+  {
+    "id": "balloon",
+    "oldEn": "Balloon",
+    "oldAr": "المنطاد",
+    "en": "Balloon",
+    "ar": "المنطاد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Balloon"
+  },
+  {
+    "id": "witch",
+    "oldEn": "Witch",
+    "oldAr": "الساحرة",
+    "en": "Witch",
+    "ar": "الساحرة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Witch"
+  },
+  {
+    "id": "barbarians",
+    "oldEn": "Barbarians",
+    "oldAr": "البرابرة",
+    "en": "Barbarians",
+    "ar": "البرابرة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Barbarians"
+  },
+  {
+    "id": "golem",
+    "oldEn": "Golem",
+    "oldAr": "الغولم",
+    "en": "Golem",
+    "ar": "الغولم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Golem"
+  },
+  {
+    "id": "skeletons",
+    "oldEn": "Skeletons",
+    "oldAr": "الهياكل",
+    "en": "Skeletons",
+    "ar": "الهياكل",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Skeletons"
+  },
+  {
+    "id": "valkyrie",
+    "oldEn": "Valkyrie",
+    "oldAr": "الفالكيري",
+    "en": "Valkyrie",
+    "ar": "الفالكيري",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Valkyrie"
+  },
+  {
+    "id": "skeletonarmy",
+    "oldEn": "Skeleton Army",
+    "oldAr": "جيش الهياكل",
+    "en": "Bone Legion",
+    "ar": "فيلق العظام",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Skeleton Army"
+  },
+  {
+    "id": "bomber",
+    "oldEn": "Bomber",
+    "oldAr": "المفجّر",
+    "en": "Bomber",
+    "ar": "المفجّر",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Bomber"
+  },
+  {
+    "id": "musketeer",
+    "oldEn": "Musketeer",
+    "oldAr": "الفرسانة",
+    "en": "Musketeer",
+    "ar": "الفرسانة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Musketeer"
+  },
+  {
+    "id": "babydragon",
+    "oldEn": "Baby Dragon",
+    "oldAr": "التنين الصغير",
+    "en": "Ember Drake",
+    "ar": "التنين الجمري",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Baby Dragon"
+  },
+  {
+    "id": "prince",
+    "oldEn": "Prince",
+    "oldAr": "الأمير",
+    "en": "Prince",
+    "ar": "الأمير",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Prince"
+  },
+  {
+    "id": "wizard",
+    "oldEn": "Wizard",
+    "oldAr": "الساحر",
+    "en": "Wizard",
+    "ar": "الساحر",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Wizard"
+  },
+  {
+    "id": "minipekka",
+    "oldEn": "Mini Pekka",
+    "oldAr": "بيكا الصغير",
+    "en": "Iron Squire",
+    "ar": "الفارس الحديدي الصغير",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Mini P.E.K.K.A"
+  },
+  {
+    "id": "speargoblins",
+    "oldEn": "Spear Goblins",
+    "oldAr": "عفاريت الرماح",
+    "en": "Spear Goblins",
+    "ar": "عفاريت الرماح",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Spear Goblins"
+  },
+  {
+    "id": "giantskeleton",
+    "oldEn": "Giant Skeleton",
+    "oldAr": "الهيكل العملاق",
+    "en": "Giant Skeleton",
+    "ar": "الهيكل العملاق",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Giant Skeleton"
+  },
+  {
+    "id": "hogrider",
+    "oldEn": "Hog Rider",
+    "oldAr": "راكب الخنزير",
+    "en": "Boar Raider",
+    "ar": "مغير الخنزير البري",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Hog Rider"
+  },
+  {
+    "id": "minionhorde",
+    "oldEn": "Minion Horde",
+    "oldAr": "حشد التوابع",
+    "en": "Minion Horde",
+    "ar": "حشد التوابع",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Minion Horde"
+  },
+  {
+    "id": "icewizard",
+    "oldEn": "Ice Wizard",
+    "oldAr": "ساحر الجليد",
+    "en": "Ice Wizard",
+    "ar": "ساحر الجليد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Ice Wizard"
+  },
+  {
+    "id": "royalgiant",
+    "oldEn": "Royal Giant",
+    "oldAr": "العملاق الملكي",
+    "en": "Siege Giant",
+    "ar": "عملاق الحصار",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Royal Giant"
+  },
+  {
+    "id": "skeletonwarriors",
+    "oldEn": "Skeleton Warriors",
+    "oldAr": "محاربو الهياكل",
+    "en": "Skeleton Warriors",
+    "ar": "محاربو الهياكل",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Guards"
+  },
+  {
+    "id": "princess",
+    "oldEn": "Princess",
+    "oldAr": "الأميرة",
+    "en": "Princess",
+    "ar": "الأميرة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Princess"
+  },
+  {
+    "id": "darkprince",
+    "oldEn": "Dark Prince",
+    "oldAr": "الأمير الأسود",
+    "en": "Shadow Lancer",
+    "ar": "رمّاح الظلال",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Dark Prince"
+  },
+  {
+    "id": "lavahound",
+    "oldEn": "Lava Hound",
+    "oldAr": "كلب الحمم",
+    "en": "Magma Beast",
+    "ar": "وحش الحمم",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Lava Hound"
+  },
+  {
+    "id": "icespirits",
+    "oldEn": "Ice Spirits",
+    "oldAr": "روح الجليد",
+    "en": "Ice Spirits",
+    "ar": "روح الجليد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Ice Spirit"
+  },
+  {
+    "id": "firespirits",
+    "oldEn": "Fire Spirits",
+    "oldAr": "أرواح النار",
+    "en": "Fire Spirits",
+    "ar": "أرواح النار",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Fire Spirit"
+  },
+  {
+    "id": "miner",
+    "oldEn": "Miner",
+    "oldAr": "المنقّب",
+    "en": "Miner",
+    "ar": "المنقّب",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Miner"
+  },
+  {
+    "id": "zapmachine",
+    "oldEn": "Zap Machine",
+    "oldAr": "سباركي",
+    "en": "Arc Cannon",
+    "ar": "مدفع الصواعق",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Sparky"
+  },
+  {
+    "id": "bowler",
+    "oldEn": "Bowler",
+    "oldAr": "رامي الصخور",
+    "en": "Bowler",
+    "ar": "رامي الصخور",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Bowler"
+  },
+  {
+    "id": "ragebarbarian",
+    "oldEn": "Rage Barbarian",
+    "oldAr": "البربري الغاضب",
+    "en": "Rage Barbarian",
+    "ar": "البربري الغاضب",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Lumberjack"
+  },
+  {
+    "id": "battleram",
+    "oldEn": "Battle Ram",
+    "oldAr": "كبش المعركة",
+    "en": "Battle Ram",
+    "ar": "كبش المعركة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Battle Ram"
+  },
+  {
+    "id": "infernodragon",
+    "oldEn": "Inferno Dragon",
+    "oldAr": "تنين الجحيم",
+    "en": "Blazewing",
+    "ar": "جناح اللهب",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Inferno Dragon"
+  },
+  {
+    "id": "icegolemite",
+    "oldEn": "Ice Golemite",
+    "oldAr": "غولم الجليد",
+    "en": "Ice Golemite",
+    "ar": "غولم الجليد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Ice Golem"
+  },
+  {
+    "id": "megaminion",
+    "oldEn": "Mega Minion",
+    "oldAr": "التابع الضخم",
+    "en": "Mega Minion",
+    "ar": "التابع الضخم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Mega Minion"
+  },
+  {
+    "id": "blowdartgoblin",
+    "oldEn": "Blowdart Goblin",
+    "oldAr": "عفريت النفخ",
+    "en": "Blowdart Goblin",
+    "ar": "عفريت النفخ",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Dart Goblin"
+  },
+  {
+    "id": "goblingang",
+    "oldEn": "Goblin Gang",
+    "oldAr": "عصابة العفاريت",
+    "en": "Goblin Gang",
+    "ar": "عصابة العفاريت",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Goblin Gang"
+  },
+  {
+    "id": "electrowizard",
+    "oldEn": "Electro Wizard",
+    "oldAr": "الساحر الكهربائي",
+    "en": "Storm Mage",
+    "ar": "ساحر العواصف",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Electro Wizard"
+  },
+  {
+    "id": "angrybarbarians",
+    "oldEn": "Angry Barbarians",
+    "oldAr": "البرابرة الغاضبون",
+    "en": "Angry Barbarians",
+    "ar": "البرابرة الغاضبون",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Elite Barbarians"
+  },
+  {
+    "id": "hunter",
+    "oldEn": "Hunter",
+    "oldAr": "الصياد",
+    "en": "Hunter",
+    "ar": "الصياد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Hunter"
+  },
+  {
+    "id": "axeman",
+    "oldEn": "Axe Man",
+    "oldAr": "الجلّاد",
+    "en": "Axe Man",
+    "ar": "الجلّاد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Executioner"
+  },
+  {
+    "id": "assassin",
+    "oldEn": "Assassin",
+    "oldAr": "باندت",
+    "en": "Assassin",
+    "ar": "باندت",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Bandit"
+  },
+  {
+    "id": "royalrecruits",
+    "oldEn": "Royal Recruits",
+    "oldAr": "المجندون الملكيون",
+    "en": "Shield Company",
+    "ar": "كتيبة الدروع",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Royal Recruits"
+  },
+  {
+    "id": "darkwitch",
+    "oldEn": "Dark Witch",
+    "oldAr": "الساحرة الليلية",
+    "en": "Dark Witch",
+    "ar": "الساحرة الليلية",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Night Witch"
+  },
+  {
+    "id": "bats",
+    "oldEn": "Bats",
+    "oldAr": "الخفافيش",
+    "en": "Bats",
+    "ar": "الخفافيش",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Bats"
+  },
+  {
+    "id": "ghost",
+    "oldEn": "Ghost",
+    "oldAr": "الشبح الملكي",
+    "en": "Phantom Guard",
+    "ar": "الحارس الشبح",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Royal Ghost"
+  },
+  {
+    "id": "ramrider",
+    "oldEn": "Ram Rider",
+    "oldAr": "راكبة الكبش",
+    "en": "Ram Charger",
+    "ar": "فارسة الكبش",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Ram Rider"
+  },
+  {
+    "id": "minisparkys",
+    "oldEn": "Mini Sparkys",
+    "oldAr": "سباركي الصغيرة",
+    "en": "Arc Sentries",
+    "ar": "حراس الصواعق",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Zappies"
+  },
+  {
+    "id": "rascals",
+    "oldEn": "Rascals",
+    "oldAr": "الأشقياء",
+    "en": "Alley Crew",
+    "ar": "رفاق الأزقة",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Rascals"
+  },
+  {
+    "id": "megaknight",
+    "oldEn": "Mega Knight",
+    "oldAr": "الفارس الضخم",
+    "en": "Titan Guardian",
+    "ar": "الحارس الجبار",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Mega Knight"
+  },
+  {
+    "id": "skeletonballoon",
+    "oldEn": "Skeleton Balloon",
+    "oldAr": "منطاد الهياكل",
+    "en": "Skeleton Balloon",
+    "ar": "منطاد الهياكل",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Skeleton Barrel"
+  },
+  {
+    "id": "dartbarrell",
+    "oldEn": "Dart Barrell",
+    "oldAr": "برميل السهام",
+    "en": "Dart Barrell",
+    "ar": "برميل السهام",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Flying Machine"
+  },
+  {
+    "id": "wallbreakers",
+    "oldEn": "Wallbreakers",
+    "oldAr": "محطمو الجدران",
+    "en": "Wallbreakers",
+    "ar": "محطمو الجدران",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Wall Breakers"
+  },
+  {
+    "id": "royalhogs",
+    "oldEn": "Royal Hogs",
+    "oldAr": "الخنازير الملكية",
+    "en": "Siege Boars",
+    "ar": "خنازير الحصار",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Royal Hogs"
+  },
+  {
+    "id": "goblingiant",
+    "oldEn": "Goblin Giant",
+    "oldAr": "العملاق العفريت",
+    "en": "Brute Carrier",
+    "ar": "العملاق الحامل",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Goblin Giant"
+  },
+  {
+    "id": "fisherman",
+    "oldEn": "Fisherman",
+    "oldAr": "الصيّاد البحري",
+    "en": "Fisherman",
+    "ar": "الصيّاد البحري",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Fisherman"
+  },
+  {
+    "id": "elitearcher",
+    "oldEn": "Elite Archer",
+    "oldAr": "الرماة النخبة",
+    "en": "Elite Archer",
+    "ar": "الرماة النخبة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Magic Archer"
+  },
+  {
+    "id": "electrodragon",
+    "oldEn": "Electro Dragon",
+    "oldAr": "التنين الكهربائي",
+    "en": "Storm Drake",
+    "ar": "تنين العواصف",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Electro Dragon"
+  },
+  {
+    "id": "firecracker",
+    "oldEn": "Firecracker",
+    "oldAr": "المفرقعات",
+    "en": "Blast Ranger",
+    "ar": "رامية المتفجرات",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Firecracker"
+  },
+  {
+    "id": "elixirgolem",
+    "oldEn": "Elixir Golem",
+    "oldAr": "غولم الإكسير",
+    "en": "Elixir Golem",
+    "ar": "غولم الإكسير",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Elixir Golem"
+  },
+  {
+    "id": "battlehealer",
+    "oldEn": "Battle Healer",
+    "oldAr": "المعالجة",
+    "en": "Dawn Healer",
+    "ar": "معالجة الفجر",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Battle Healer"
+  },
+  {
+    "id": "skeletondragons",
+    "oldEn": "Skeleton Dragons",
+    "oldAr": "تنانين الهياكل",
+    "en": "Skeleton Dragons",
+    "ar": "تنانين الهياكل",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Skeleton Dragons"
+  },
+  {
+    "id": "witchmother",
+    "oldEn": "Witch Mother",
+    "oldAr": "الأم الساحرة",
+    "en": "Hex Matron",
+    "ar": "سيدة اللعنات",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Mother Witch"
+  },
+  {
+    "id": "electrospirit",
+    "oldEn": "Electro Spirit",
+    "oldAr": "الروح الكهربائية",
+    "en": "Electro Spirit",
+    "ar": "الروح الكهربائية",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Electro Spirit"
+  },
+  {
+    "id": "electrogiant",
+    "oldEn": "Electro Giant",
+    "oldAr": "العملاق الكهربائي",
+    "en": "Thunder Colossus",
+    "ar": "الجبار الرعدي",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Electro Giant"
+  },
+  {
+    "id": "phoenix",
+    "oldEn": "Phoenix",
+    "oldAr": "العنقاء",
+    "en": "Phoenix",
+    "ar": "العنقاء",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Phoenix"
+  },
+  {
+    "id": "suspiciousbush",
+    "oldEn": "Suspicious Bush",
+    "oldAr": "الشجيرة المريبة",
+    "en": "Bramble Ambush",
+    "ar": "كمين الأشواك",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Suspicious Bush"
+  },
+  {
+    "id": "berserker",
+    "oldEn": "Berserker",
+    "oldAr": "المحاربة الهائجة",
+    "en": "Berserker",
+    "ar": "المحاربة الهائجة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Berserker"
+  },
+  {
+    "id": "goblindemolisher",
+    "oldEn": "Goblin Demolisher",
+    "oldAr": "هادم العفاريت",
+    "en": "Fuse Raider",
+    "ar": "مغير المتفجرات",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Goblin Demolisher"
+  },
+  {
+    "id": "giantbuffer",
+    "oldEn": "Giant Buffer",
+    "oldAr": "عملاق الدعم",
+    "en": "Warhorn Giant",
+    "ar": "عملاق بوق الحرب",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Rune Giant"
+  },
+  {
+    "id": "goblinmachine",
+    "oldEn": "Goblin Machine",
+    "oldAr": "آلة العفاريت",
+    "en": "Scrap Walker",
+    "ar": "آلة الخردة",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Goblin Machine"
+  },
+  {
+    "id": "mergemaiden",
+    "oldEn": "Merge Maiden",
+    "oldAr": "فتاة الدمج",
+    "en": "Skybound Maiden",
+    "ar": "فارسة السماء",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Spirit Empress"
+  },
+  {
+    "id": "fireball",
+    "oldEn": "Fireball",
+    "oldAr": "كرة النار",
+    "en": "Fireball",
+    "ar": "كرة النار",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Fireball"
+  },
+  {
+    "id": "arrows",
+    "oldEn": "Arrows",
+    "oldAr": "الأسهم",
+    "en": "Arrows",
+    "ar": "الأسهم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Arrows"
+  },
+  {
+    "id": "rage",
+    "oldEn": "Rage",
+    "oldAr": "الغضب",
+    "en": "Rage",
+    "ar": "الغضب",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Rage"
+  },
+  {
+    "id": "rocket",
+    "oldEn": "Rocket",
+    "oldAr": "الصاروخ",
+    "en": "Rocket",
+    "ar": "الصاروخ",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Rocket"
+  },
+  {
+    "id": "goblinbarrel",
+    "oldEn": "Goblin Barrel",
+    "oldAr": "برميل العفاريت",
+    "en": "Raider Barrel",
+    "ar": "برميل المغيرين",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Goblin Barrel"
+  },
+  {
+    "id": "freeze",
+    "oldEn": "Freeze",
+    "oldAr": "التجميد",
+    "en": "Freeze",
+    "ar": "التجميد",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Freeze"
+  },
+  {
+    "id": "mirror",
+    "oldEn": "Mirror",
+    "oldAr": "المرآة",
+    "en": "Mirror",
+    "ar": "المرآة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Mirror"
+  },
+  {
+    "id": "lightning",
+    "oldEn": "Lightning",
+    "oldAr": "البرق",
+    "en": "Lightning",
+    "ar": "البرق",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Lightning"
+  },
+  {
+    "id": "zap",
+    "oldEn": "Zap",
+    "oldAr": "الصعقة",
+    "en": "Zap",
+    "ar": "الصعقة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Zap"
+  },
+  {
+    "id": "poison",
+    "oldEn": "Poison",
+    "oldAr": "السم",
+    "en": "Poison",
+    "ar": "السم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Poison"
+  },
+  {
+    "id": "graveyard",
+    "oldEn": "Graveyard",
+    "oldAr": "المقبرة",
+    "en": "Graveyard",
+    "ar": "المقبرة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Graveyard"
+  },
+  {
+    "id": "log",
+    "oldEn": "Log",
+    "oldAr": "الجذع",
+    "en": "Log",
+    "ar": "الجذع",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "The Log"
+  },
+  {
+    "id": "tornado",
+    "oldEn": "Tornado",
+    "oldAr": "الإعصار",
+    "en": "Tornado",
+    "ar": "الإعصار",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Tornado"
+  },
+  {
+    "id": "clone",
+    "oldEn": "Clone",
+    "oldAr": "الاستنساخ",
+    "en": "Clone",
+    "ar": "الاستنساخ",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Clone"
+  },
+  {
+    "id": "earthquake",
+    "oldEn": "Earthquake",
+    "oldAr": "الزلزال",
+    "en": "Earthquake",
+    "ar": "الزلزال",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Earthquake"
+  },
+  {
+    "id": "barblog",
+    "oldEn": "Barb Log",
+    "oldAr": "برميل البربري",
+    "en": "Barb Log",
+    "ar": "برميل البربري",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Barbarian Barrel"
+  },
+  {
+    "id": "heal",
+    "oldEn": "Heal",
+    "oldAr": "روح الشفاء",
+    "en": "Heal",
+    "ar": "روح الشفاء",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Heal Spirit"
+  },
+  {
+    "id": "snowball",
+    "oldEn": "Snowball",
+    "oldAr": "كرة الثلج",
+    "en": "Snowball",
+    "ar": "كرة الثلج",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Snowball"
+  },
+  {
+    "id": "royaldelivery",
+    "oldEn": "Royal Delivery",
+    "oldAr": "التوصيل الملكي",
+    "en": "Guard Drop",
+    "ar": "إنزال الحارس",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Royal Delivery"
+  },
+  {
+    "id": "darkmagic",
+    "oldEn": "Dark Magic",
+    "oldAr": "السحر الأسود",
+    "en": "Dark Magic",
+    "ar": "السحر الأسود",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Void"
+  },
+  {
+    "id": "goblincurse",
+    "oldEn": "Goblin Curse",
+    "oldAr": "لعنة العفاريت",
+    "en": "Goblin Curse",
+    "ar": "لعنة العفاريت",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Goblin Curse"
+  },
+  {
+    "id": "vines",
+    "oldEn": "Vines",
+    "oldAr": "الكروم",
+    "en": "Vines",
+    "ar": "الكروم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Vines"
+  },
+  {
+    "id": "cannon",
+    "oldEn": "Cannon",
+    "oldAr": "المدفع",
+    "en": "Cannon",
+    "ar": "المدفع",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Cannon"
+  },
+  {
+    "id": "goblinhut_rework",
+    "oldEn": "Goblin Hut Rework",
+    "oldAr": "كوخ العفاريت",
+    "en": "Goblin Hut",
+    "ar": "كوخ العفاريت",
+    "decision": "display-cleanup",
+    "playable": true,
+    "comparisonName": "Goblin Hut"
+  },
+  {
+    "id": "mortar",
+    "oldEn": "Mortar",
+    "oldAr": "الهاون",
+    "en": "Mortar",
+    "ar": "الهاون",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Mortar"
+  },
+  {
+    "id": "infernotower",
+    "oldEn": "Inferno Tower",
+    "oldAr": "برج الجحيم",
+    "en": "Ember Spire",
+    "ar": "برج الجمر",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Inferno Tower"
+  },
+  {
+    "id": "bombtower",
+    "oldEn": "Bomb Tower",
+    "oldAr": "برج القنابل",
+    "en": "Bomb Tower",
+    "ar": "برج القنابل",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Bomb Tower"
+  },
+  {
+    "id": "barbarianhut",
+    "oldEn": "Barbarian Hut",
+    "oldAr": "كوخ البرابرة",
+    "en": "Barbarian Hut",
+    "ar": "كوخ البرابرة",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Barbarian Hut"
+  },
+  {
+    "id": "tesla",
+    "oldEn": "Tesla",
+    "oldAr": "تسلا",
+    "en": "Tesla",
+    "ar": "تسلا",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Tesla"
+  },
+  {
+    "id": "elixircollector",
+    "oldEn": "Elixir Collector",
+    "oldAr": "جامع الإكسير",
+    "en": "Elixir Collector",
+    "ar": "جامع الإكسير",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Elixir Collector"
+  },
+  {
+    "id": "xbow",
+    "oldEn": "Xbow",
+    "oldAr": "القوس الضخم",
+    "en": "Xbow",
+    "ar": "القوس الضخم",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "X-Bow"
+  },
+  {
+    "id": "tombstone",
+    "oldEn": "Tombstone",
+    "oldAr": "شاهد القبر",
+    "en": "Tombstone",
+    "ar": "شاهد القبر",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Tombstone"
+  },
+  {
+    "id": "firespirithut",
+    "oldEn": "Firespirit Hut",
+    "oldAr": "كوخ أرواح النار",
+    "en": "Firespirit Hut",
+    "ar": "كوخ أرواح النار",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Furnace"
+  },
+  {
+    "id": "goblincage",
+    "oldEn": "Goblin Cage",
+    "oldAr": "قفص العفريت",
+    "en": "Goblin Cage",
+    "ar": "قفص العفريت",
+    "decision": "keep",
+    "playable": true,
+    "comparisonName": "Goblin Cage"
+  },
+  {
+    "id": "goblindrill",
+    "oldEn": "Goblin Drill",
+    "oldAr": "مثقاب العفاريت",
+    "en": "Burrow Drill",
+    "ar": "مثقاب الأنفاق",
+    "decision": "rename",
+    "playable": true,
+    "comparisonName": "Goblin Drill"
+  },
+  {
+    "id": "mightyminer",
+    "oldEn": "Mighty Miner",
+    "oldAr": null,
+    "en": "Deepcore Champion",
+    "ar": "بطل الأعماق",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Mighty Miner"
+  },
+  {
+    "id": "skeletonking",
+    "oldEn": "Skeleton King",
+    "oldAr": null,
+    "en": "Bone Sovereign",
+    "ar": "سيد العظام",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Skeleton King"
+  },
+  {
+    "id": "archerqueen",
+    "oldEn": "Archer Queen",
+    "oldAr": null,
+    "en": "Eagle Matriarch",
+    "ar": "سيدة النسور",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Archer Queen"
+  },
+  {
+    "id": "goldenknight",
+    "oldEn": "Golden Knight",
+    "oldAr": null,
+    "en": "Sunsteel Knight",
+    "ar": "فارس الشمس",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Golden Knight"
+  },
+  {
+    "id": "littleprince",
+    "oldEn": "Little Prince",
+    "oldAr": null,
+    "en": "Young Commander",
+    "ar": "القائد الشاب",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Little Prince"
+  },
+  {
+    "id": "goblinstein",
+    "oldEn": "Goblinstein",
+    "oldAr": null,
+    "en": "Volt Alchemist",
+    "ar": "كيميائي الصواعق",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Goblinstein"
+  },
+  {
+    "id": "bossbandit",
+    "oldEn": "Boss Bandit",
+    "oldAr": null,
+    "en": "Outlaw Captain",
+    "ar": "قائدة الخارجين",
+    "decision": "rename",
+    "playable": false,
+    "comparisonName": "Boss Bandit"
+  },
+  {
+    "id": "monk",
+    "oldEn": "Monk",
+    "oldAr": null,
+    "en": "Monk",
+    "ar": "الراهب",
+    "decision": "keep",
+    "playable": false,
+    "comparisonName": "Monk"
+  }
+]
