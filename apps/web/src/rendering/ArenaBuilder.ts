@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { assets } from '../assets/AssetLoader';
 import type { ArenaTheme } from './arenaThemes';
+import { mergeStatic } from './mergeStatic';
 
 export function seededRandom(seedText: string): () => number {
   let h = 2166136261;
@@ -69,6 +70,11 @@ export class ArenaBuilder {
     this.buildOuter();
     this.scatterProps();
     this.buildExtras();
+    // Everything above is static: bake it into a few meshes (one per material).
+    mergeStatic(this.root);
+    this.root.traverse((o) => {
+      if (o.name === 'merged') this.track((o as THREE.Mesh).geometry);
+    });
   }
 
   private track<T extends { dispose(): void }>(x: T): T {
@@ -127,7 +133,7 @@ export class ArenaBuilder {
 
   private buildFloor(): void {
     const tex = this.floorTexture();
-    const mat = this.track(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.95, metalness: 0 }));
+    const mat = this.track(new THREE.MeshLambertMaterial({ map: tex }));
     // Two halves (blue: rows 0..14, red: rows 17..31); the river channel sits between them.
     for (const [z0, z1, v0, v1] of [
       [1, 16, 0, 15 / 32],
@@ -151,8 +157,8 @@ export class ArenaBuilder {
   private buildRiver(): void {
     const t = this.theme;
     // Channel walls and bed
-    const bank = this.track(new THREE.MeshStandardMaterial({ color: shade(t.border, 0.8), roughness: 1 }));
-    const bed = this.track(new THREE.MeshStandardMaterial({ color: t.waterDeep, roughness: 1 }));
+    const bank = this.track(new THREE.MeshLambertMaterial({ color: shade(t.border, 0.8) }));
+    const bed = this.track(new THREE.MeshLambertMaterial({ color: t.waterDeep }));
     const bedGeo = this.track(new THREE.PlaneGeometry(18, 2.2));
     bedGeo.rotateX(-Math.PI / 2);
     const bedMesh = new THREE.Mesh(bedGeo, bed);
@@ -188,7 +194,7 @@ export class ArenaBuilder {
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(4, 1);
     const mat = this.track(
-      new THREE.MeshStandardMaterial({ map: tex, roughness: 0.25, metalness: 0.1, transparent: true, opacity: 0.92 }),
+      new THREE.MeshLambertMaterial({ map: tex, transparent: true, opacity: 0.92 }),
     );
     const geo = this.track(new THREE.PlaneGeometry(18, 2));
     geo.rotateX(-Math.PI / 2);
@@ -213,8 +219,8 @@ export class ArenaBuilder {
   }
 
   private buildBridges(): void {
-    const wood = this.track(new THREE.MeshStandardMaterial({ color: this.theme.bridge, roughness: 0.85, flatShading: true }));
-    const dark = this.track(new THREE.MeshStandardMaterial({ color: shade(this.theme.bridge, 0.7), roughness: 0.9, flatShading: true }));
+    const wood = this.track(new THREE.MeshLambertMaterial({ color: this.theme.bridge, flatShading: true }));
+    const dark = this.track(new THREE.MeshLambertMaterial({ color: shade(this.theme.bridge, 0.7), flatShading: true }));
     const plankGeo = this.track(new THREE.BoxGeometry(3.1, 0.12, 0.34));
     const railGeo = this.track(new THREE.BoxGeometry(0.14, 0.14, 2.9));
     const postGeo = this.track(new THREE.BoxGeometry(0.2, 0.55, 0.2));
@@ -246,7 +252,7 @@ export class ArenaBuilder {
 
   private buildRim(): void {
     const t = this.theme;
-    const rimMat = this.track(new THREE.MeshStandardMaterial({ color: t.border, roughness: 0.95, flatShading: true }));
+    const rimMat = this.track(new THREE.MeshLambertMaterial({ color: t.border, flatShading: true }));
     const sideGeo = this.track(new THREE.BoxGeometry(0.6, 0.35, 32.6));
     const endGeo = this.track(new THREE.BoxGeometry(19.2, 0.35, 0.6));
     for (const x of [-9.3, 9.3]) {
@@ -301,7 +307,7 @@ export class ArenaBuilder {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(10, 14);
-    const mat = this.track(new THREE.MeshStandardMaterial({ map: tex, roughness: 1 }));
+    const mat = this.track(new THREE.MeshLambertMaterial({ map: tex }));
     // A frame of terrain around the 18x32 arena (a single plane would cover the river channel).
     const W = 90;
     const H = 120;
@@ -326,7 +332,7 @@ export class ArenaBuilder {
       this.root.add(ground);
     }
     // Skirt under the arena so the river channel never shows the void.
-    const skirtMat = this.track(new THREE.MeshStandardMaterial({ color: shade(t.border, 0.7), roughness: 1 }));
+    const skirtMat = this.track(new THREE.MeshLambertMaterial({ color: shade(t.border, 0.7) }));
     const skirt = new THREE.Mesh(this.track(new THREE.BoxGeometry(18.6, 0.6, 32.6)), skirtMat);
     skirt.position.y = -1.0;
     this.root.add(skirt);
@@ -385,11 +391,10 @@ export class ArenaBuilder {
     if (extras.includes('crystals')) {
       const geo = this.track(new THREE.OctahedronGeometry(0.5, 0));
       const mat = this.track(
-        new THREE.MeshStandardMaterial({
+        new THREE.MeshLambertMaterial({
           color: this.theme.id === 'frost' ? 0xbfe8ff : 0xb48cff,
           emissive: this.theme.id === 'frost' ? 0x3aa0ff : 0x7a3cff,
           emissiveIntensity: 0.6,
-          roughness: 0.2,
           flatShading: true,
         }),
       );
@@ -436,7 +441,7 @@ export class ArenaBuilder {
   update(dt: number): void {
     this.extrasTime += dt;
     for (const w of this.water) {
-      const map = (w.material as THREE.MeshStandardMaterial).map!;
+      const map = (w.material as THREE.MeshLambertMaterial).map!;
       map.offset.x = (map.offset.x + dt * 0.05) % 1;
       map.offset.y = Math.sin(this.extrasTime * 0.6) * 0.02;
     }

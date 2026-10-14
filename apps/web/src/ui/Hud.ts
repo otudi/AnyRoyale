@@ -164,7 +164,8 @@ export class Hud {
       let el = this.towerEls.get(l.id);
       if (!el) {
         el = document.createElement('div');
-        el.className = `tower-label ${l.side}`;
+        el.className = `tower-label ${l.side} ${l.kind === 'K' ? 'king' : 'princess'}`;
+        el.innerHTML = '<div class="tl-bar"><div class="tl-lag"></div><div class="tl-fill"></div><span class="tl-num"></span></div>';
         container.appendChild(el);
         this.towerEls.set(l.id, el);
       }
@@ -173,10 +174,23 @@ export class Hud {
         continue;
       }
       el.style.display = '';
-      el.style.left = `${l.sx}px`;
-      el.style.top = `${l.sy}px`;
+      el.style.transform = `translate(${l.sx}px, ${l.sy}px) translate(-50%, -100%)`;
+      const ratio = l.max > 0 ? Math.max(0, l.hp) / l.max : 0;
+      const pct = `${(ratio * 100).toFixed(1)}%`;
+      const fill = el.querySelector<HTMLElement>('.tl-fill')!;
+      if (fill.style.width !== pct) {
+        fill.style.width = pct;
+        // the light "lag" segment stays for a moment, then shrinks: every hit is visible
+        const lag = el.querySelector<HTMLElement>('.tl-lag')!;
+        window.setTimeout(() => (lag.style.width = pct), 350);
+        el.classList.remove('hit');
+        void el.offsetWidth;
+        el.classList.add('hit');
+      }
+      const num = el.querySelector<HTMLElement>('.tl-num')!;
       const text = String(Math.max(0, l.hp));
-      if (el.textContent !== text) el.textContent = text;
+      if (num.textContent !== text) num.textContent = text;
+      el.classList.toggle('sleeping', l.kind === 'K' && (l.flags & 1024) !== 0);
     }
   }
 

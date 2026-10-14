@@ -36,7 +36,8 @@ export class Renderer3D {
   constructor(private readonly container: HTMLElement) {
     const caps = Renderer3D.detectCaps();
     this.renderer = new THREE.WebGLRenderer({
-      antialias: caps.strong,
+      // MSAA costs a lot of fill rate on phones, whose pixel density hides aliasing anyway.
+      antialias: caps.strong && !caps.mobile,
       powerPreference: 'high-performance',
       alpha: false,
       stencil: false,
@@ -67,30 +68,40 @@ export class Renderer3D {
     this.sun.shadow.normalBias = 0.02;
     this.scene.add(this.sun, this.sun.target);
 
-    this.applyQuality(getSettings().quality, caps.strong);
-    onSettings((s) => this.applyQuality(s.quality, caps.strong));
+    this.applyQuality(getSettings().quality, caps);
+    onSettings((s) => this.applyQuality(s.quality, caps));
     window.addEventListener('resize', () => this.resize());
     window.visualViewport?.addEventListener('resize', () => this.resize());
     this.resize();
     this.setPerspective('BLUE');
   }
 
-  static detectCaps(): { strong: boolean } {
+  static detectCaps(): { strong: boolean; mobile: boolean } {
     const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
     const cores = navigator.hardwareConcurrency ?? 4;
     const small = Math.min(screen.width, screen.height) < 400;
-    return { strong: mem >= 4 && cores >= 4 && !small };
+    const mobile = window.matchMedia?.('(pointer: coarse)').matches ?? false;
+    return { strong: mem >= 4 && cores >= 4 && !small, mobile };
   }
 
-  private applyQuality(q: Quality, strong: boolean): void {
-    const high = q === 'high' || (q === 'auto' && strong);
+  /** True when the sun casts real-time shadows; otherwise units get blob shadows. */
+  get realShadows(): boolean {
+    return this.renderer.shadowMap.enabled;
+  }
+
+  private applyQuality(q: Quality, caps: { strong: boolean; mobile: boolean }): void {
+    const high = q === 'high' || (q === 'auto' && caps.strong);
     this.quality = high ? 'high' : 'low';
-    this.renderer.shadowMap.enabled = high;
-    this.sun.castShadow = high;
-    this.sun.shadow.mapSize.set(high ? 2048 : 512, high ? 2048 : 512);
+    // Phones: no shadow map (a second render pass of every caster); units use blob shadows.
+    const shadows = q === 'high' || (q === 'auto' && caps.strong && !caps.mobile);
+    this.renderer.shadowMap.enabled = shadows;
+    this.sun.castShadow = shadows;
+    this.sun.shadow.mapSize.set(shadows ? 2048 : 512, shadows ? 2048 : 512);
     this.sun.shadow.map?.dispose();
     this.sun.shadow.map = null;
-    this.maxPixelRatio = high ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    // Fill rate dominates on phones: 1.5x density looks sharp and costs ~45% fewer pixels than 2x.
+    const dpr = window.devicePixelRatio || 1;
+    this.maxPixelRatio = q === 'low' ? 1 : q === 'high' ? Math.min(dpr, 2) : Math.min(dpr, caps.mobile ? 1.5 : 2);
     this.pixelRatio = this.maxPixelRatio;
     this.renderer.setPixelRatio(this.pixelRatio);
     this.resize();
@@ -238,7 +249,7 @@ export class Renderer3D {
       this.highFpsSeconds++;
       this.lowFpsSeconds = 0;
     }
-    if (this.lowFpsSeconds >= 3 && this.pixelRatio > 0.75) {
+    if (this.lowFpsSeconds >= 2 && this.pixelRatio > 0.75) {
       this.pixelRatio = Math.max(0.75, this.pixelRatio - 0.25);
       this.renderer.setPixelRatio(this.pixelRatio);
       this.resize();

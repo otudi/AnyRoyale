@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 import { assets } from '../assets/AssetLoader';
+import { mergeStatic } from './mergeStatic';
 import { towerTopCharacter, type Side, UnitVisual } from './UnitFactory';
 
 /**
- * Princess tower (3x3 tiles) or King tower (4x4 tiles) built from the CC0 medieval kit, with an
- * animated character on top: an archer on princess towers and the king on the king tower. The
- * king sleeps until the server reports the tower active.
+ * Princess tower (3x3 tiles) or King tower (4x4 tiles) in the reference game's proportions: a
+ * short round stone tower with a battlement and team banner for princesses, a wide square fortress
+ * with four team-roofed turrets for the king. Built from primitives (our own geometry) and merged
+ * into a few draw calls, with an animated character on top: an archer on princess towers and the
+ * king on the king tower. The king sleeps until the server reports the tower active.
  */
 export class TowerVisual {
   readonly root = new THREE.Group();
@@ -22,53 +25,21 @@ export class TowerVisual {
     readonly kind: 'K' | 'P',
     readonly side: Side,
   ) {
-    const color = side === 'own' ? 'blue' : 'red';
-    const key = kind === 'K' ? `castle_${color}` : `tower_${color}`;
-    const width = kind === 'K' ? 4.1 : 3.1;
-    const src = assets.node('env_core.glb', key);
-    let topY = kind === 'K' ? 3.2 : 3.6;
-    // Stone base plate matching the footprint
-    const base = new THREE.Mesh(
-      new THREE.CylinderGeometry(width * 0.62, width * 0.68, 0.35, kind === 'K' ? 8 : 6),
-      new THREE.MeshStandardMaterial({ color: 0x9a948a, roughness: 0.95, flatShading: true }),
-    );
-    base.position.y = 0.17;
-    base.receiveShadow = true;
-    base.castShadow = true;
-    this.root.add(base);
-    if (src) {
-      const b = src.clone();
-      const box = new THREE.Box3().setFromObject(b);
-      const w = Math.max(box.max.x - box.min.x, box.max.z - box.min.z);
-      const s = (width * (kind === 'K' ? 0.95 : 0.85)) / w;
-      b.scale.multiplyScalar(s);
-      const box2 = new THREE.Box3().setFromObject(b);
-      b.position.y += 0.3 - box2.min.y;
-      b.position.x -= (box2.min.x + box2.max.x) / 2;
-      b.position.z -= (box2.min.z + box2.max.z) / 2;
-      b.traverse((o) => {
-        const m = o as THREE.Mesh;
-        if (m.isMesh) {
-          m.castShadow = true;
-          m.receiveShadow = true;
-        }
-      });
-      this.root.add(b);
-      this.building = b;
-      topY = box2.max.y - box2.min.y + 0.3;
-      if (kind === 'P') topY *= 0.86; // archer stands inside the battlement
-    } else {
-      const fallback = new THREE.Mesh(
-        new THREE.CylinderGeometry(width * 0.4, width * 0.48, topY, 8),
-        new THREE.MeshStandardMaterial({ color: side === 'own' ? 0x5a7ac8 : 0xc85a5a }),
-      );
-      fallback.position.y = topY / 2;
-      this.root.add(fallback);
-      this.building = fallback;
-    }
-    this.height = topY;
+    const team = side === 'own' ? 0x2f7fe8 : 0xe23b3b;
+    const b = kind === 'K' ? buildKingTower(team) : buildPrincessTower(team);
+    mergeStatic(b.group);
+    b.group.traverse((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh) {
+        m.castShadow = true;
+        m.receiveShadow = true;
+      }
+    });
+    this.root.add(b.group);
+    this.building = b.group;
+    this.height = b.topY;
     this.top = towerTopCharacter(kind === 'K' ? 'king' : 'archer', side);
-    this.top.root.position.y = topY - (kind === 'K' ? 0.6 : 0.35);
+    this.top.root.position.y = b.topY - (kind === 'K' ? 0.25 : 0.15);
     this.root.add(this.top.root);
   }
 
@@ -149,4 +120,94 @@ function makeZzz(): THREE.Sprite {
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
   s.scale.set(1.4, 0.7, 1);
   return s;
+}
+
+// --- Procedural tower geometry --------------------------------------------------------------------
+
+const MATS = new Map<number, THREE.MeshLambertMaterial>();
+function mat(color: number): THREE.MeshLambertMaterial {
+  let m = MATS.get(color);
+  if (!m) {
+    m = new THREE.MeshLambertMaterial({ color, flatShading: true });
+    MATS.set(color, m);
+  }
+  return m;
+}
+
+const STONE = 0xb5a990;
+const STONE_DARK = 0x887c66;
+const STONE_LIGHT = 0xcfc3ab;
+const WOOD = 0x8a5a32;
+
+function put(g: THREE.Group, geo: THREE.BufferGeometry, color: number, x: number, y: number, z: number, ry = 0): THREE.Mesh {
+  const m = new THREE.Mesh(geo, mat(color));
+  m.position.set(x, y, z);
+  m.rotation.y = ry;
+  g.add(m);
+  return m;
+}
+
+function battlement(g: THREE.Group, radius: number, y: number, count: number, size: number): void {
+  const geo = new THREE.BoxGeometry(size, size * 0.9, size * 0.7);
+  for (let i = 0; i < count; i++) {
+    const a = (i / count) * Math.PI * 2;
+    put(g, geo, STONE_LIGHT, Math.sin(a) * radius, y, Math.cos(a) * radius, a);
+  }
+}
+
+function buildPrincessTower(team: number): { group: THREE.Group; topY: number } {
+  const g = new THREE.Group();
+  // square plinth on the 3x3 footprint
+  put(g, new THREE.BoxGeometry(3.0, 0.3, 3.0), STONE_DARK, 0, 0.15, 0);
+  put(g, new THREE.BoxGeometry(2.7, 0.18, 2.7), STONE, 0, 0.39, 0);
+  // round body, slightly tapered, with two darker courses
+  put(g, new THREE.CylinderGeometry(1.08, 1.22, 1.9, 10), STONE, 0, 1.43, 0);
+  put(g, new THREE.CylinderGeometry(1.25, 1.25, 0.14, 10), STONE_DARK, 0, 0.9, 0);
+  put(g, new THREE.CylinderGeometry(1.14, 1.14, 0.12, 10), STONE_DARK, 0, 1.75, 0);
+  // team-coloured band under the parapet
+  put(g, new THREE.CylinderGeometry(1.32, 1.12, 0.32, 10), team, 0, 2.48, 0);
+  // parapet platform + crenellations
+  put(g, new THREE.CylinderGeometry(1.42, 1.32, 0.26, 10), STONE_LIGHT, 0, 2.77, 0);
+  battlement(g, 1.3, 3.05, 8, 0.36);
+  // banner on the front (towards the river) and the door at the back
+  put(g, new THREE.BoxGeometry(0.62, 0.9, 0.06), team, 0, 1.55, 1.2);
+  put(g, new THREE.BoxGeometry(0.66, 0.1, 0.08), WOOD, 0, 2.03, 1.2);
+  put(g, new THREE.BoxGeometry(0.5, 0.7, 0.08), WOOD, 0, 0.82, -1.18);
+  return { group: g, topY: 2.92 };
+}
+
+function buildKingTower(team: number): { group: THREE.Group; topY: number } {
+  const g = new THREE.Group();
+  put(g, new THREE.BoxGeometry(4.1, 0.3, 4.1), STONE_DARK, 0, 0.15, 0);
+  // square keep
+  put(g, new THREE.BoxGeometry(3.3, 1.8, 3.3), STONE, 0, 1.2, 0);
+  put(g, new THREE.BoxGeometry(3.45, 0.14, 3.45), STONE_DARK, 0, 0.72, 0);
+  put(g, new THREE.BoxGeometry(3.6, 0.26, 3.6), STONE_LIGHT, 0, 2.2, 0);
+  // crenellations along the edges
+  const merlon = new THREE.BoxGeometry(0.36, 0.34, 0.36);
+  for (let i = -2; i <= 2; i++) {
+    if (Math.abs(i) === 2) continue;
+    const o = i * 0.7;
+    put(g, merlon, STONE_LIGHT, o, 2.5, 1.62);
+    put(g, merlon, STONE_LIGHT, o, 2.5, -1.62);
+    put(g, merlon, STONE_LIGHT, 1.62, 2.5, o);
+    put(g, merlon, STONE_LIGHT, -1.62, 2.5, o);
+  }
+  // four corner turrets with team roofs
+  const turret = new THREE.CylinderGeometry(0.5, 0.56, 2.7, 8);
+  const roof = new THREE.ConeGeometry(0.66, 0.85, 8);
+  for (const x of [-1.62, 1.62]) {
+    for (const z of [-1.62, 1.62]) {
+      put(g, turret, STONE, x, 1.55, z);
+      put(g, roof, team, x, 3.32, z);
+    }
+  }
+  // gate and banners towards the river
+  put(g, new THREE.BoxGeometry(0.9, 1.0, 0.08), WOOD, 0, 0.85, 1.68);
+  put(g, new THREE.BoxGeometry(0.7, 1.0, 0.06), team, -0.95, 1.45, 1.68);
+  put(g, new THREE.BoxGeometry(0.7, 1.0, 0.06), team, 0.95, 1.45, 1.68);
+  // the king's cannon
+  const barrel = put(g, new THREE.CylinderGeometry(0.16, 0.22, 1.0, 8), 0x3a3a42, 0, 2.62, 0.75);
+  barrel.rotation.x = Math.PI / 2.4;
+  return { group: g, topY: 2.42 };
 }

@@ -23,7 +23,7 @@ export class BattleSession {
   private input: DragDeploy;
   private preview: DeployPreview;
   private seq = Date.now() % 1_000_000;
-  private pending = new Map<number, { slot: number; cost: number }>();
+  private pending = new Map<number, { slot: number; cost: number; cardId: string }>();
   private towers: TowerState = {
     princessDown: { BLUE: { left: false, right: false }, RED: { left: false, right: false } },
   };
@@ -116,6 +116,7 @@ export class BattleSession {
           this.hud.unreserve(p.cost);
           this.hud.markPending(p.slot, false);
           this.hud.shake(p.slot);
+          this.view.cancelLocalPlay(p.cardId);
         }
         audio.play('reject', { volume: 0.6 });
         this.hud.toast(msg.reason === 'elixir' ? t('notEnoughElixir') : t('invalidPlacement'));
@@ -170,7 +171,7 @@ export class BattleSession {
     const seq = ++this.seq;
     const card = cards.get(cardId);
     const effectiveCost = card?.mirror ? 0 : cost;
-    this.pending.set(seq, { slot, cost: effectiveCost });
+    this.pending.set(seq, { slot, cost: effectiveCost, cardId });
     this.hud.reserve(effectiveCost);
     this.hud.markPending(slot, true);
     const sent = this.conn.send({ type: 'play', matchId: this.matchId, seq, slot, card: cardId, x: gx, y: gy }, false);
@@ -182,6 +183,7 @@ export class BattleSession {
       return;
     }
     audio.play('click', { volume: 0.4 });
+    this.view.markLocalPlay(cardId, gx, gy);
     setTimeout(() => {
       // Safety net: never leave a card dimmed if a reply got lost.
       const p = this.pending.get(seq);

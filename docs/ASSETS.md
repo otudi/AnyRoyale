@@ -5,8 +5,8 @@ card art or logos. Everything you see or hear comes from one of three sources:
 
 | Source | What | Licence |
 |---|---|---|
-| KayKit packs by Kay Lousberg (pinned commits, below) | rigged humanoid characters, skeletons, medieval buildings/towers, props, weapons, one shared animation library | CC0 1.0 |
-| Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, arena terrain, river, bridges, particles, projectiles, card icons | this repository |
+| KayKit packs by Kay Lousberg (pinned commits, below) | rigged humanoid characters, skeletons, medieval buildings (card buildings, tower ruins), props, weapons, one shared animation library | CC0 1.0 |
+| Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, arena terrain, river, bridges, particles, projectiles, card icons | this repository |
 | Code in `apps/web/src/audio/` | every sound effect and both music tracks, synthesised with Web Audio at load time | this repository |
 
 None of these is the original artwork, and none is presented as identical to it. Unit names come

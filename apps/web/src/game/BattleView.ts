@@ -6,7 +6,9 @@ import { ArenaBuilder } from '../rendering/ArenaBuilder';
 import { themeFor } from '../rendering/arenaThemes';
 import { toWorld } from '../rendering/coords';
 import { AreaVisual, Effects } from '../rendering/Effects';
+import { BlobShadows } from '../rendering/BlobShadows';
 import { HpBars } from '../rendering/HpBars';
+import { PlayMarkers } from '../rendering/PlayMarkers';
 import type { Renderer3D } from '../rendering/Renderer3D';
 import { TowerVisual } from '../rendering/TowerVisual';
 import { TEAM_COLORS, UnitVisual, type Side } from '../rendering/UnitFactory';
@@ -84,11 +86,13 @@ export class BattleView {
   private arena: ArenaBuilder;
   private fx: Effects;
   private bars = new HpBars();
+  private markers = new PlayMarkers();
+  private blobs = new BlobShadows();
   private snaps: SnapState[] = [];
   private renderTick = -1;
   private latestTick = -1;
   private units = new Map<number, UnitVisual>();
-  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string }>();
+  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string; lag: number }>();
   private towers = new Map<number, TowerVisual>();
   private towerData = new Map<number, TowerLabel>();
   private areas = new Map<number, AreaVisual>();
@@ -117,7 +121,7 @@ export class BattleView {
     const theme = themeFor(arenaId);
     this.arena = new ArenaBuilder(theme, r.quality);
     this.fx = new Effects(r.quality);
-    this.world.add(this.arena.root, this.fx.root, this.bars.root);
+    this.world.add(this.arena.root, this.fx.root, this.bars.root, this.markers.root, this.blobs.mesh);
     r.scene.add(this.world);
     r.scene.background = skyTexture(theme.sky, theme.skyHorizon);
     r.scene.fog = new THREE.Fog(theme.fog, r.cameraDistance * 1.35, r.cameraDistance * 3.2);
@@ -152,6 +156,7 @@ export class BattleView {
     this.time += dt;
     this.arena.update(dt);
     this.fx.update(dt);
+    this.markers.update(dt, this.r.camera.quaternion);
     if (this.snaps.length === 0) return;
     // Advance render time at real-time rate, steering towards (latest - delay).
     this.renderTick += dt * 20;
@@ -189,6 +194,7 @@ export class BattleView {
   private syncEntities(a: SnapState, b: SnapState, alpha: number, dt: number): void {
     const cam = this.r.camera;
     this.bars.begin(cam);
+    this.blobs.begin();
     for (const [id, eb] of b.entities) {
       const ea = a.entities.get(id) ?? eb;
       const x = ea[5] + (eb[5] - ea[5]) * alpha;
@@ -213,7 +219,8 @@ export class BattleView {
         this.world.add(v.root);
         v.root.position.copy(pos);
         v.root.rotation.y = side === 'own' ? (this.myTeam === 'BLUE' ? Math.PI : 0) : this.myTeam === 'BLUE' ? 0 : Math.PI;
-        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind });
+        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind, lag: eb[8] > 0 ? eb[7] / eb[8] : 1 });
+        this.markers.unitAppeared(side, pos.x, pos.z);
         if (flags & F.DEPLOYING || kind === 'B') {
           v.spawn();
           this.fx.deploySplash(pos.x, pos.z, Math.max(0.6, eb[12] / 1000), TEAM_COLORS[side]);
@@ -239,6 +246,7 @@ export class BattleView {
       }
       if (flags & F.HIDDEN_BUILDING) yOff -= v.height * 0.85;
       v.root.position.set(pos.x, yOff, pos.z);
+      if (!(flags & F.TUNNELING)) this.blobs.add(pos.x, pos.z, Math.max(0.8, (eb[12] / 1000) * (kind === 'B' ? 2.4 : 2.2)) * (flying ? 0.75 : 1));
       // facing
       const targetId = eb[11];
       const targetPos = targetId ? this.positionOf(targetId, b) : null;
@@ -266,10 +274,14 @@ export class BattleView {
       const hp = eb[7];
       const max = eb[8];
       const shield = eb[9];
-      if ((hp < max || shield > 0 || kind === 'B') && !(flags & F.TUNNELING) && !(flags & F.DEPLOYING) && max > 10) {
-        const w = Math.max(0.7, Math.min(1.7, (eb[12] / 1000) * 1.5));
-        this.tmp2.set(pos.x, yOff + v.height + 0.35, pos.z);
-        this.bars.add(this.tmp2, w, hp / max, TEAM_COLORS[side], shield > 0 ? 1 : 0);
+      // Every unit always shows its health (team-coloured), so fights are readable.
+      const ratio = max > 0 ? hp / max : 0;
+      if (ratio > info.lag) info.lag = ratio;
+      else info.lag = Math.max(ratio, info.lag - dt * 0.6);
+      if (!(flags & F.TUNNELING) && !(flags & F.HIDDEN_BUILDING) && max > 10) {
+        const w = kind === 'B' ? 1.9 : Math.max(1.05, Math.min(2.2, 0.9 + (eb[12] / 1000) * 0.9 + (max > 2500 ? 0.4 : 0)));
+        this.tmp2.set(pos.x, yOff + v.height + 0.5, pos.z);
+        this.bars.add(this.tmp2, w, ratio, TEAM_COLORS[side], shield > 0 ? 1 : 0, info.lag, 0.24);
       }
     }
     // Removals
@@ -307,6 +319,7 @@ export class BattleView {
       tw.update(dt, false);
     }
     this.bars.end();
+    this.blobs.end(!this.r.realShadows);
   }
 
   private syncTower(id: number, e: EntityTuple, pos: THREE.Vector3, side: Side, flags: number, dt: number): void {
@@ -346,10 +359,6 @@ export class BattleView {
       alive: true,
       flags,
     });
-    if (e[7] < e[8]) {
-      this.tmp2.set(pos.x, tw.height + 0.55, pos.z);
-      this.bars.add(this.tmp2, kind === 'K' ? 2.4 : 1.9, e[7] / e[8], TEAM_COLORS[side]);
-    }
     void dt;
   }
 
@@ -394,7 +403,9 @@ export class BattleView {
       const prev = st.obj.position.clone();
       st.obj.position.set(pos.x, h, pos.z);
       const dir = st.obj.position.clone().sub(prev);
-      if (dir.lengthSq() > 1e-6) {
+      if (st.obj.userData.volley) {
+        this.fx.layoutVolley(st.obj, p, Math.max(1, Math.max(pb[7], cards.get(st.key)?.spell?.radius ?? 0) / 1000), dir);
+      } else if (dir.lengthSq() > 1e-6) {
         if (st.obj.userData.roll) {
           st.obj.rotation.y = Math.atan2(dir.x, dir.z);
           st.obj.children[0].rotation.x += dir.length() * 1.5;
@@ -445,6 +456,7 @@ export class BattleView {
         const p = toWorld(gx, gy);
         const card = cards.get(cardId);
         const side = this.side[team];
+        if (card) this.markers.add(card, p.x, p.z, side, false);
         if (card?.type === 'SPELL') {
           audio.play(SFX_FOR_SPELL[cardId] ?? 'magic', { pan: this.pan(p.x) });
           this.recentSpells.push({ card: cardId, x: p.x, z: p.z, t: this.time });
@@ -469,7 +481,10 @@ export class BattleView {
         } else if (card === 'snowball' || card === 'freeze') {
           this.fx.explosion(p.x, p.z, r, 0xdff4ff);
           audio.play('freeze', { pan: this.pan(p.x), volume: 0.7 });
-        } else if (card === 'arrows' || card === 'log' || card === 'barblog' || card === 'earthquake') {
+        } else if (card === 'arrows') {
+          this.fx.volleyImpact(p.x, p.z, r);
+          audio.play('arrowHit', { pan: this.pan(p.x) });
+        } else if (card === 'log' || card === 'barblog' || card === 'earthquake') {
           this.fx.dust(p.x, p.z, 18);
           this.fx.shockwave(p.x, p.z, r, 0xd8c8a0);
           audio.play('arrowHit', { pan: this.pan(p.x) });
@@ -540,6 +555,18 @@ export class BattleView {
   }
 
   /** Tower labels in screen space for the HUD. */
+  /** Shows this player's own play immediately, before the server echoes it. */
+  markLocalPlay(cardId: string, gx: number, gy: number): void {
+    const card = cards.get(cardId);
+    if (!card) return;
+    const p = toWorld(gx, gy);
+    this.markers.add(card, p.x, p.z, 'own', true);
+  }
+
+  cancelLocalPlay(cardId: string): void {
+    this.markers.cancelLocal(cardId);
+  }
+
   towerLabels(): (TowerLabel & { sx: number; sy: number })[] {
     const out: (TowerLabel & { sx: number; sy: number })[] = [];
     for (const d of this.towerData.values()) {
@@ -575,6 +602,8 @@ export class BattleView {
     this.areas.clear();
     this.projectiles.clear();
     this.fx.clear();
+    this.markers.dispose();
+    this.blobs.dispose();
     this.arena.dispose();
     this.world.removeFromParent();
     const bg = this.r.scene.background as THREE.Texture | null;

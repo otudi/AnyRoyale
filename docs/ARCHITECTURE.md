@@ -86,13 +86,23 @@ Expert > Hard > Normal > Easy on fixed seeds.
 - Characters: CC0 KayKit skinned models cloned with `SkeletonUtils`, one shared animation
   library (26 clips) bound by bone name; team colour on capes/hats; status tints (freeze, rage,
   poison...). Creatures/machines without CC0 models are procedural low-poly meshes with
-  procedural animation. Buildings and towers use the CC0 medieval kit in blue/red variants.
+  procedural animation. Card buildings use the CC0 medieval kit; crown towers are our own
+  procedural models in the reference game's proportions (short round princess towers, square king
+  fortress), merged into a few draw calls.
 - Effects: one `THREE.Points` particle field per blend mode (2 draw calls for all particles),
   pooled projectiles, pooled shockwave rings, instanced health bars (3 draw calls for all bars).
 - Camera: solved per screen shape so the arena fits between the HUD and the card tray; the red
   player's camera is mirrored, so everyone defends at the bottom.
-- Quality: `auto` lowers pixel ratio (and drops shadows) after 3 s under 45 FPS and raises it
-  after 8 s above 57 FPS; `low` = no shadows, pixel ratio 1.
+- Quality: on phones `auto` caps the pixel ratio at 1.5, disables MSAA and the shadow map (units
+  get instanced blob shadows instead); it lowers the pixel ratio after 2 s under 45 FPS and raises
+  it after 8 s above 57 FPS. `low` = no shadows, pixel ratio 1; `high` = shadow map, ratio up to 2.
+- The static arena (floor, river, bridges, rim, fences, decorations) is merged into one mesh per
+  material at load (`mergeStatic`), ~120 meshes → ~16 draw calls; arena surfaces use Lambert
+  shading.
+- Deploy feedback: a play shows the unit's translucent silhouette (or the spell's radius) with a
+  countdown at the drop point immediately, covering the engine's 1 s placement delay.
+- Health: every unit shows a team-coloured bar with a light segment that trails each hit; towers
+  show a bar with the number inside.
 
 ## Assets
 

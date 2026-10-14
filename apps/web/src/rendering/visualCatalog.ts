@@ -264,6 +264,7 @@ export function visualFor(name: string, kind: string, movement: number, radius: 
 
 /** Projectile looks, keyed by the projectile's visual key (source entity name or spell card id). */
 export type ProjectileLook =
+  | 'volley'
   | 'arrow'
   | 'bolt'
   | 'bullet'
@@ -332,7 +333,7 @@ export const PROJECTILES: Record<string, { look: ProjectileLook; arc: number; co
   GoblinMachine: { look: 'rocket', arc: 0.3 },
   // spells (keyed by card id)
   fireball: { look: 'bigfireball', arc: 0.35 },
-  arrows: { look: 'arrow', arc: 0.45 },
+  arrows: { look: 'volley', arc: 0.35 },
   rocket: { look: 'rocket', arc: 0.4 },
   goblinbarrel: { look: 'barrel', arc: 0.5 },
   log: { look: 'log', arc: 0 },

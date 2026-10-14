@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { assets } from '../assets/AssetLoader';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { centeredClone } from './ArenaBuilder';
 import { PROJECTILES, type AreaSpec, type ProjectileLook } from './visualCatalog';
 
@@ -220,6 +221,25 @@ export class Effects {
     }
     this.shockwave(x, z, radius, 0xffc870);
     this.flash(x, z, radius * 1.2, color);
+    if (big) this.scorch(x, z, radius);
+  }
+
+  /** Dark burn mark left on the ground by explosions; fades out. */
+  scorch(x: number, z: number, radius: number): void {
+    const m = new THREE.Mesh(this.discGeo, new THREE.MeshBasicMaterial({ color: 0x1a120a, transparent: true, depthWrite: false }));
+    m.position.set(x, 0.035, z);
+    m.scale.setScalar(radius * 0.9);
+    m.renderOrder = 1;
+    this.root.add(m);
+    this.transients.push({
+      obj: m,
+      life: 2.2,
+      max: 2.2,
+      update: (k) => {
+        (m.material as THREE.MeshBasicMaterial).opacity = 0.5 * (1 - k * k);
+        if (k >= 1) (m.material as THREE.Material).dispose();
+      },
+    });
   }
 
   flash(x: number, z: number, radius: number, color: number): void {
@@ -381,6 +401,30 @@ export class Effects {
       return m;
     };
     switch (look) {
+      case 'volley': {
+        // One wave of the Arrows spell: a cloud of arrows that fans out over the spell radius.
+        const shaft = new THREE.CylinderGeometry(0.07, 0.07, 1.25, 4);
+        shaft.rotateX(Math.PI / 2);
+        const tip = new THREE.ConeGeometry(0.16, 0.34, 4);
+        tip.rotateX(Math.PI / 2);
+        tip.translate(0, 0, 0.78);
+        const fletch = new THREE.BoxGeometry(0.3, 0.04, 0.3);
+        fletch.translate(0, 0, -0.55);
+        const geo = mergeGeometries([shaft.toNonIndexed(), tip.toNonIndexed(), fletch.toNonIndexed()]);
+        const count = 16;
+        const im = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: 0xf4d9a0, roughness: 0.5, emissive: 0x6a4a18 }), count);
+        im.frustumCulled = false;
+        const offsets: [number, number, number][] = [];
+        for (let i = 0; i < count; i++) {
+          // even spread over a disc (sunflower pattern) with a little jitter
+          const r = Math.sqrt((i + 0.5) / count);
+          const a = i * 2.39996 + Math.random() * 0.3;
+          offsets.push([Math.cos(a) * r, (Math.random() - 0.5) * 0.6, Math.sin(a) * r]);
+        }
+        g.add(im);
+        g.userData.volley = offsets;
+        break;
+      }
       case 'arrow':
       case 'bolt':
       case 'spear':
@@ -411,7 +455,12 @@ export class Effects {
         break;
       case 'fireball':
       case 'bigfireball':
-        add(new THREE.Mesh(new THREE.IcosahedronGeometry(look === 'bigfireball' ? 0.55 : 0.22, 1), std(color ?? 0xff8a20, color ?? 0xff5000)));
+        add(new THREE.Mesh(new THREE.IcosahedronGeometry(look === 'bigfireball' ? 0.8 : 0.22, 1), std(color ?? 0xff8a20, color ?? 0xff5000)));
+        if (look === 'bigfireball') {
+          const glow = add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.25, 1), new THREE.MeshBasicMaterial({ color: 0xffb040, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false })));
+          glow.renderOrder = 4;
+          g.userData.trailCount = 4;
+        }
         g.userData.trail = color ?? 0xff7a20;
         break;
       case 'iceball':
@@ -515,12 +564,52 @@ export class Effects {
     (this.projPool.get(key) ?? this.projPool.set(key, []).get(key)!).push(obj);
   }
 
+  private vm = new THREE.Matrix4();
+  private vq = new THREE.Quaternion();
+  private vp = new THREE.Vector3();
+  private vs = new THREE.Vector3(1, 1, 1);
+  private vz = new THREE.Vector3(0, 0, 1);
+
+  /**
+   * Places the arrows of a volley: they leave the tower bunched together and spread to cover the
+   * spell area ({@code radius}, world units) as they arrive ({@code progress} 0..1).
+   */
+  layoutVolley(obj: THREE.Object3D, progress: number, radius: number, dir: THREE.Vector3): void {
+    const offsets = obj.userData.volley as [number, number, number][];
+    const im = obj.children[0] as THREE.InstancedMesh;
+    if (dir.lengthSq() > 1e-8) this.vq.setFromUnitVectors(this.vz, this.vp.copy(dir).normalize());
+    const spread = radius * (0.15 + 0.85 * progress);
+    for (let i = 0; i < offsets.length; i++) {
+      const [ox, oy, oz] = offsets[i];
+      this.vp.set(ox * spread, oy * (1 - progress), oz * spread);
+      this.vm.compose(this.vp, this.vq, this.vs);
+      im.setMatrixAt(i, this.vm);
+    }
+    im.instanceMatrix.needsUpdate = true;
+  }
+
+  /** Arrows landing: puffs and sparks all over the area, not just one ring. */
+  volleyImpact(x: number, z: number, radius: number): void {
+    for (let i = 0; i < 14; i++) {
+      const r = Math.sqrt(Math.random()) * radius;
+      const a = Math.random() * Math.PI * 2;
+      const px = x + Math.cos(a) * r;
+      const pz = z + Math.sin(a) * r;
+      this.smoke.emit(px, 0.12, pz, { color: 0xd8c8a0, spread: 1, speed: 0.8, up: 0.5, gravity: 0.2, max: 0.6, size0: 0.35, size1: 0.8, a0: 0.7, drag: 3 });
+      this.additive.emit(px, 0.3, pz, { color: 0xfff0c0, spread: 1, speed: 1.6, up: 1.2, gravity: 6, max: 0.25, size0: 0.25, size1: 0.05 });
+    }
+    this.shockwave(x, z, radius, 0xf0dca0, 0.35);
+  }
+
   trail(obj: THREE.Object3D): void {
     const c = obj.userData.trail as number | undefined;
     if (c) {
-      this.additive.emit(obj.position.x, obj.position.y, obj.position.z, {
-        color: c, vx: 0, vy: 0.2, vz: 0, gravity: 0, drag: 0, max: 0.35, size0: 0.45, size1: 0.05, a0: 0.8,
-      });
+      const n = (obj.userData.trailCount as number | undefined) ?? 1;
+      for (let i = 0; i < n; i++) {
+        this.additive.emit(obj.position.x + (Math.random() - 0.5) * 0.3 * (n - 1), obj.position.y, obj.position.z + (Math.random() - 0.5) * 0.3 * (n - 1), {
+          color: c, vx: 0, vy: 0.2, vz: 0, gravity: 0, drag: 0, max: 0.35 + 0.1 * (n - 1), size0: 0.45 + 0.25 * (n - 1), size1: 0.05, a0: 0.8,
+        });
+      }
     }
   }
 

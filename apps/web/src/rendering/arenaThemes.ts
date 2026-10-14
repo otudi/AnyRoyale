@@ -1,5 +1,6 @@
 // Visual themes for the arenas the server can pick (server/.../arenas/ArenaCatalog.java).
-// Every theme uses the identical battle layout; only colours, sky, light and decorations change.
+// Every theme uses the identical battle layout and the same bright green field (as in the reference
+// game); only the surroundings, sky, light and decorations change.
 // tests/browser verifies the ids here match the server's /api/arenas.
 
 export interface PropRef {
@@ -41,8 +42,8 @@ const dungeon = 'props_dungeon.glb';
 export const ARENA_THEMES: Record<string, ArenaTheme> = {
   meadow: {
     id: 'meadow',
-    grassA: 0x7fc65a,
-    grassB: 0x74bb50,
+    grassA: 0x8fd16a,
+    grassB: 0x84c55f,
     border: 0x5d9e3f,
     outer: 0x5f9a42,
     path: 0xd8c08a,
@@ -69,8 +70,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   goblin: {
     id: 'goblin',
-    grassA: 0x9ccc5c,
-    grassB: 0x8fbf52,
+    grassA: 0x94d06a,
+    grassB: 0x89c45f,
     border: 0x7a6a3c,
     outer: 0x8a7444,
     path: 0xc9a46a,
@@ -98,8 +99,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   bones: {
     id: 'bones',
-    grassA: 0x7b8a62,
-    grassB: 0x707f58,
+    grassA: 0x8acb68,
+    grassB: 0x7fbf5d,
     border: 0x55503f,
     outer: 0x4a463a,
     path: 0xa49478,
@@ -127,8 +128,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   sands: {
     id: 'sands',
-    grassA: 0xe2c98a,
-    grassB: 0xd8bd7c,
+    grassA: 0x9bd26c,
+    grassB: 0x90c661,
     border: 0xb9935a,
     outer: 0xcfa96a,
     path: 0xf0dcae,
@@ -155,8 +156,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   arcane: {
     id: 'arcane',
-    grassA: 0x7fb889,
-    grassB: 0x74ad80,
+    grassA: 0x8bcf72,
+    grassB: 0x80c367,
     border: 0x5b5a8c,
     outer: 0x4f4f7d,
     path: 0xb8a6d8,
@@ -181,8 +182,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   frost: {
     id: 'frost',
-    grassA: 0xe9f3fa,
-    grassB: 0xdbe9f3,
+    grassA: 0x92d27a,
+    grassB: 0x87c66f,
     border: 0xaecbe0,
     outer: 0xc9dceb,
     path: 0xb7cfe0,
@@ -207,8 +208,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   jungle: {
     id: 'jungle',
-    grassA: 0x5fae49,
-    grassB: 0x55a242,
+    grassA: 0x86cc63,
+    grassB: 0x7bc058,
     border: 0x3f7a33,
     outer: 0x2f6a2b,
     path: 0xa98a55,
@@ -235,8 +236,8 @@ export const ARENA_THEMES: Record<string, ArenaTheme> = {
   },
   highlands: {
     id: 'highlands',
-    grassA: 0x93b866,
-    grassB: 0x87ad5b,
+    grassA: 0x95d06b,
+    grassB: 0x8ac460,
     border: 0x7d7a6a,
     outer: 0x8e8a76,
     path: 0xc2b291,

@@ -588,22 +588,85 @@ select {
 
 .tower-label {
   position: absolute;
-  transform: translate(-50%, -100%);
-  font-weight: 900;
-  font-size: 13px;
-  padding: 1px 6px;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.tl-bar {
+  position: relative;
+  width: 76px;
+  height: 17px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.55);
-  white-space: nowrap;
+  background: #15151f;
+  border: 2px solid rgba(0, 0, 0, 0.85);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.tower-label.king .tl-bar {
+  width: 96px;
+  height: 19px;
+}
+
+.tl-lag,
+.tl-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.tl-lag {
+  background: #fff1c4;
+  transition: width 0.45s ease-out;
+}
+
+.tower-label.own .tl-fill {
+  background: linear-gradient(#6fb6ff, #2f7fe8);
+}
+
+.tower-label.enemy .tl-fill {
+  background: linear-gradient(#ff8a8a, #e23b3b);
+}
+
+.tl-num {
+  position: relative;
+  display: block;
+  text-align: center;
+  font-weight: 900;
+  font-size: 12.5px;
+  line-height: 15px;
+  color: #fff;
+  text-shadow: 0 1px 0 #000, 0 0 3px #000;
   font-variant-numeric: tabular-nums;
 }
 
-.tower-label.own {
-  color: #9fd0ff;
+.tower-label.king .tl-num {
+  line-height: 17px;
+  font-size: 13.5px;
 }
 
-.tower-label.enemy {
-  color: #ffb0b0;
+.tower-label.sleeping .tl-num::before {
+  content: '👑 ';
+  font-size: 11px;
+}
+
+.tower-label.hit .tl-bar {
+  animation: tower-hit 0.25s ease-out;
+}
+
+@keyframes tower-hit {
+  0% {
+    filter: brightness(1.8);
+    transform: scale(1.06);
+  }
+  100% {
+    filter: none;
+    transform: none;
+  }
 }
 
 .banner {
