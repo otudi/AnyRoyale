@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { addOutlines } from './outline';
 import { assets } from '../assets/AssetLoader';
 import { mergeStatic } from './mergeStatic';
 import { towerTopCharacter, type Side, UnitVisual } from './UnitFactory';
@@ -35,6 +36,7 @@ export class TowerVisual {
         m.receiveShadow = true;
       }
     });
+    addOutlines(b.group);
     this.root.add(b.group);
     this.building = b.group;
     this.height = b.topY;

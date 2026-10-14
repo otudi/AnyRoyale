@@ -66,6 +66,8 @@ export interface CharSpec {
   mount?: Mount;
   ghost?: boolean;
   crown?: boolean;
+  /** Procedural accessories attached to bones, so look-alike bodies read as different units. */
+  extras?: ('goblinEars' | 'spear' | 'tiara')[];
 }
 
 export interface ProcSpec {
@@ -139,31 +141,31 @@ export const VISUALS: Record<string, VisualSpec> = {
   Fisherman: char('barbarian', 1.45, '1H_Melee_Attack_Chop', { gear: ['1H_Axe', 'Barbarian_Hat'], tint: 0xa0c8e0 }),
   RascalBoy: char('barbarian', 1.55, 'Unarmed_Melee_Attack_Punch_A', { gear: ['Barbarian_Hat'] }),
   Miner: char('barbarian', 1.35, '1H_Melee_Attack_Chop', { gear: ['1H_Axe', 'Barbarian_Hat'], tint: 0xc8a070 }),
-  GoblinBrawler: char('barbarian', 1.25, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN }),
+  GoblinBrawler: char('barbarian', 1.25, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN, extras: ['goblinEars'] }),
   Giant: char('barbarian', 2.6, 'Unarmed_Melee_Attack_Punch_A', { tint: 0xffd8b0 }),
   RoyalGiant: char('barbarian', 2.5, 'Throw', { gear: ['Barbarian_Cape'], tint: 0xfff0c8 }),
   ElectroGiant: char('barbarian', 2.6, 'Unarmed_Melee_Attack_Punch_A', { gear: ['Barbarian_Cape'], tint: 0x9fd8ff }),
-  GoblinGiant: char('barbarian', 2.5, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN }),
+  GoblinGiant: char('barbarian', 2.5, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN, extras: ['goblinEars'] }),
   GiantBuffer: char('barbarian', 2.4, 'Unarmed_Melee_Attack_Punch_A', { gear: ['Barbarian_Cape'], tint: 0xc8a8ff }),
   Bowler: char('barbarian', 1.9, 'Throw', { tint: 0x8fb0e0 }),
   HogRider: char('barbarian', 1.4, '1H_Melee_Attack_Chop', { gear: ['1H_Axe', 'Barbarian_Hat'], mount: 'hog' }),
   Hunter: char('barbarian', 1.6, '2H_Ranged_Shoot', { gear: ['Barbarian_Hat'], weapons: [{ key: 'skel_crossbow', hand: 'r' }] }),
   Archer: char('rogue', 1.3, '2H_Ranged_Shoot', { gear: ['2H_Crossbow', 'Rogue_Cape'] }),
   Musketeer: char('rogue_hooded', 1.4, '2H_Ranged_Shoot', { gear: ['2H_Crossbow', 'Rogue_Cape'], tint: 0xd8c8ff }),
-  Princess: char('rogue', 1.3, '1H_Ranged_Shoot', { gear: ['1H_Crossbow', 'Rogue_Cape'], tint: 0xffc8e8 }),
+  Princess: char('rogue', 1.3, '1H_Ranged_Shoot', { gear: ['1H_Crossbow', 'Rogue_Cape'], tint: 0xffc8e8, extras: ['tiara'] }),
   EliteArcher: char('rogue_hooded', 1.4, '2H_Ranged_Shoot', { gear: ['2H_Crossbow', 'Rogue_Cape'], tint: 0xa8d8ff }),
   Firecracker: char('rogue', 1.3, '2H_Ranged_Shoot', { gear: ['2H_Crossbow'], tint: 0xffb0a0 }),
   RascalGirl: char('rogue', 1.2, 'Throw', { gear: ['Throwable'] }),
   Assassin: char('rogue_hooded', 1.35, 'Dualwield_Melee_Attack_Slice', { gear: ['Knife', 'Knife_Offhand', 'Rogue_Cape'], tint: 0xb0b0c8 }),
   RamRider: char('rogue', 1.25, 'Throw', { gear: ['Throwable', 'Rogue_Cape'] }),
-  Goblin: char('rogue_hooded', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN }),
-  Goblin_Stab: char('rogue_hooded', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN }),
-  BushGoblin: char('rogue_hooded', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN }),
-  SpearGoblin: char('rogue_hooded', 1.0, 'Throw', { gear: ['Throwable'], tint: GREEN_SKIN }),
-  SpearGoblinGiant: char('rogue_hooded', 0.9, 'Throw', { gear: ['Throwable'], tint: GREEN_SKIN }),
-  BlowdartGoblin: char('rogue_hooded', 1.05, '1H_Ranged_Shoot', { gear: ['1H_Crossbow'], tint: GREEN_SKIN }),
-  GoblinDemolisher: char('barbarian', 1.4, 'Throw', { gear: ['Barbarian_Hat'], tint: GREEN_SKIN, weapons: [{ key: 'smokebomb', hand: 'r', scale: 1.4 }] }),
-  GoblinDemolisher_kamikaze_form: char('barbarian', 1.4, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN, weapons: [{ key: 'smokebomb', hand: 'r', scale: 2 }] }),
+  Goblin: char('rogue', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN, extras: ['goblinEars'] }),
+  Goblin_Stab: char('rogue', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN, extras: ['goblinEars'] }),
+  BushGoblin: char('rogue', 1.0, '1H_Melee_Attack_Stab', { gear: ['Knife'], tint: GREEN_SKIN, extras: ['goblinEars'] }),
+  SpearGoblin: char('rogue', 1.0, 'Throw', { tint: GREEN_SKIN, extras: ['goblinEars', 'spear'] }),
+  SpearGoblinGiant: char('rogue', 0.9, 'Throw', { tint: GREEN_SKIN, extras: ['goblinEars', 'spear'] }),
+  BlowdartGoblin: char('rogue', 1.05, '1H_Ranged_Shoot', { gear: ['1H_Crossbow'], tint: GREEN_SKIN, extras: ['goblinEars'] }),
+  GoblinDemolisher: char('barbarian', 1.4, 'Throw', { gear: ['Barbarian_Hat'], tint: GREEN_SKIN, extras: ['goblinEars'], weapons: [{ key: 'smokebomb', hand: 'r', scale: 1.4 }] }),
+  GoblinDemolisher_kamikaze_form: char('barbarian', 1.4, 'Unarmed_Melee_Attack_Punch_A', { tint: GREEN_SKIN, extras: ['goblinEars'], weapons: [{ key: 'smokebomb', hand: 'r', scale: 2 }] }),
   Wizard: char('mage', 1.45, 'Spellcast_Shoot', { gear: ['2H_Staff', 'Mage_Hat', 'Mage_Cape'], tint: 0xffd0a0 }),
   IceWizard: char('mage', 1.45, 'Spellcast_Shoot', { gear: ['1H_Wand', 'Mage_Hat', 'Mage_Cape'], tint: 0xc8ecff }),
   ElectroWizard: char('mage', 1.45, 'Spellcast_Shoot', { gear: ['1H_Wand', 'Spellbook_open', 'Mage_Hat'], tint: 0xa0d0ff }),

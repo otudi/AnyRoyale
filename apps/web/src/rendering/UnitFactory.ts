@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { addOutlines, setOutlinesVisible } from './outline';
 import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { assets } from '../assets/AssetLoader';
 import { buildMount, buildProc, type ProcModel } from './procedural';
@@ -54,7 +55,7 @@ function charFile(model: string): string {
  * Units are created by cloning this template with SkeletonUtils (shares geometry, own skeleton).
  */
 function characterTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
-  const key = `${spec.model}|${(spec.gear ?? []).join(',')}|${(spec.weapons ?? []).map((w) => w.key + w.hand).join(',')}|${spec.tint ?? 0}|${side}|${spec.ghost ? 1 : 0}`;
+  const key = `${spec.model}|${(spec.extras ?? []).join(',')}|${(spec.gear ?? []).join(',')}|${(spec.weapons ?? []).map((w) => w.key + w.hand).join(',')}|${spec.tint ?? 0}|${side}|${spec.ghost ? 1 : 0}`;
   const cached = templates.get(key);
   if (cached) return cached;
   const gltf = assets.get(charFile(spec.model));
@@ -117,8 +118,64 @@ function characterTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
     const box = new THREE.Box3().setFromObject(gltf.scene);
     nativeHeight.set(spec.model, Math.max(0.5, box.max.y - box.min.y));
   }
+  attachExtras(tpl, spec);
+  if (!spec.ghost) addOutlines(tpl);
   templates.set(key, tpl);
   return tpl;
+}
+
+const extraMats = new Map<number, THREE.MeshStandardMaterial>();
+function extraMat(color: number, metal = 0): THREE.MeshStandardMaterial {
+  let m = extraMats.get(color);
+  if (!m) {
+    m = new THREE.MeshStandardMaterial({ color, roughness: metal ? 0.35 : 0.75, metalness: metal, flatShading: true });
+    extraMats.set(color, m);
+  }
+  return m;
+}
+
+/** Procedural accessories on bones (ears, spear, tiara) so units sharing a body look different. */
+function attachExtras(tpl: THREE.Object3D, spec: CharSpec): void {
+  const extras = spec.extras ?? [];
+  if (!extras.length) return;
+  const head = findBone(tpl, 'head');
+  const hand = findBone(tpl, 'handslotr');
+  if (head && extras.includes('goblinEars')) {
+    const skin = extraMat(0x7cc04a);
+    for (const sx of [-1, 1]) {
+      const ear = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.62, 5), skin);
+      ear.position.set(sx * 0.5, 0.52, -0.02);
+      ear.rotation.z = -sx * 1.25;
+      ear.rotation.y = sx * 0.35;
+      ear.castShadow = true;
+      head.add(ear);
+    }
+  }
+  if (head && extras.includes('tiara')) {
+    const gold = extraMat(0xffd24a, 0.6);
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.05, 5, 18), gold);
+    band.rotation.x = Math.PI / 2;
+    band.position.y = 0.74;
+    head.add(band);
+    for (let i = -1; i <= 1; i++) {
+      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.07, i === 0 ? 0.3 : 0.2, 4), gold);
+      spike.position.set(i * 0.2, 0.86 + (i === 0 ? 0.05 : 0), 0.4);
+      head.add(spike);
+    }
+    const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.07, 0), extraMat(0xff4a8a, 0.3));
+    gem.position.set(0, 0.77, 0.47);
+    head.add(gem);
+  }
+  if (hand && extras.includes('spear')) {
+    const spear = new THREE.Group();
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.6, 6), extraMat(0x8a5a2c));
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.3, 4), extraMat(0xd8dde8, 0.7));
+    tip.position.y = 0.95;
+    spear.add(shaft, tip);
+    spear.rotation.x = Math.PI / 2;
+    spear.position.z = 0.1;
+    hand.add(spear);
+  }
 }
 
 function findBone(root: THREE.Object3D, sanitized: string): THREE.Object3D | undefined {
@@ -157,6 +214,7 @@ function propTemplate(spec: PropSpec, side: Side): THREE.Object3D | null {
     }
   });
   tpl.add(inner);
+  addOutlines(tpl);
   tpl.userData.height = box2.max.y - box2.min.y;
   propTemplates.set(cacheKey, tpl);
   return tpl;
@@ -222,6 +280,7 @@ export class UnitVisual {
     this.height = spec.height * UNIT_SCALE;
     if (spec.mount) {
       this.mount = buildMount(spec.mount);
+      addOutlines(this.mount.root);
       this.body.add(this.mount.root);
       model.position.y = this.mount.top * 0.62;
       model.position.z = -0.05;
@@ -236,6 +295,7 @@ export class UnitVisual {
 
   private buildProcedural(spec: Extract<VisualSpec, { kind: 'proc' }>): void {
     this.proc = buildProc(spec.shape, spec.height * UNIT_SCALE, spec.color, spec.color2);
+    addOutlines(this.proc.root);
     this.body.add(this.proc.root);
     this.height = this.proc.top;
     this.flying = this.proc.flying;
@@ -412,6 +472,7 @@ export class UnitVisual {
 
   setOpacity(alpha: number): void {
     this.ensureOwnMaterials();
+    setOutlinesVisible(this.root, alpha >= 0.999);
     for (const m of this.materials) {
       m.transparent = alpha < 1;
       m.opacity = alpha;
