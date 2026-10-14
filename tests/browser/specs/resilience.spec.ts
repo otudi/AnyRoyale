@@ -21,7 +21,9 @@ test('losing the network shows the reconnect banner, the opponent is told, and p
   test.setTimeout(240_000);
   const A = await openPlayer(browser);
   const B = await openPlayer(browser);
+  await A.page.locator('[data-act="play"]').click();
   await A.page.locator('[data-act="online"]').click();
+  await B.page.locator('[data-act="play"]').click();
   await B.page.locator('[data-act="online"]').click();
   const sa = await waitRunning(A.page);
   await waitRunning(B.page);
@@ -48,7 +50,9 @@ test('a player who stays disconnected past the grace period forfeits', async ({ 
   test.setTimeout(240_000);
   const A = await openPlayer(browser);
   const B = await openPlayer(browser);
+  await A.page.locator('[data-act="play"]').click();
   await A.page.locator('[data-act="online"]').click();
+  await B.page.locator('[data-act="play"]').click();
   await B.page.locator('[data-act="online"]').click();
   await waitRunning(A.page);
   await waitRunning(B.page);

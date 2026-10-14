@@ -73,8 +73,9 @@ export class AudioManager {
   private applyVolumes(): void {
     if (!this.ctx) return;
     const s = getSettings();
-    this.musicBus.gain.value = s.music * 0.6;
-    this.sfxBus.gain.value = s.sfx;
+    const on = s.muted ? 0 : 1;
+    this.musicBus.gain.value = s.music * 0.6 * on;
+    this.sfxBus.gain.value = s.sfx * on;
   }
 
   playMusic(track: Track): void {
@@ -94,7 +95,7 @@ export class AudioManager {
   play(name: SfxName, opts: { pan?: number; volume?: number; rate?: number } = {}): void {
     const ctx = this.ctx;
     const buf = this.buffers.get(name);
-    if (!ctx || !buf || ctx.state !== 'running' || getSettings().sfx <= 0) return;
+    if (!ctx || !buf || ctx.state !== 'running' || getSettings().sfx <= 0 || getSettings().muted) return;
     const now = ctx.currentTime;
     const last = this.lastPlay.get(name) ?? -1;
     if (now - last < 0.035) return;

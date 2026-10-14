@@ -32,11 +32,13 @@ test('two browsers: matchmaking, identical deck and arena, synchronised battle, 
   test.setTimeout(240_000);
   const A = await openPlayer(browser);
   const B = await openPlayer(browser);
+  await A.page.locator('[data-act="play"]').click();
   await A.page.locator('[data-act="online"]').click();
   await expect(A.page.locator('[data-screen="queue"]')).toBeVisible();
   // Alone in the queue: no bot is ever substituted.
   await A.page.waitForTimeout(3000);
   expect((await state(A.page)).match).toBeNull();
+  await B.page.locator('[data-act="play"]').click();
   await B.page.locator('[data-act="online"]').click();
 
   const sa = await waitRunning(A.page);
@@ -104,12 +106,15 @@ test('two browsers: matchmaking, identical deck and arena, synchronised battle, 
 
 test('queue can be cancelled', async ({ browser }) => {
   const A = await openPlayer(browser);
+  await A.page.locator('[data-act="play"]').click();
   await A.page.locator('[data-act="online"]').click();
   await expect(A.page.locator('[data-screen="queue"]')).toBeVisible();
   await A.page.locator('[data-act="cancel"]').click();
-  await expect(A.page.locator('[data-screen="home"]')).toBeVisible();
+  // cancelling returns to the game-mode menu (quick match / private room)
+  await expect(A.page.locator('[data-screen="mode"]')).toBeVisible();
   // A second player now must not be matched with the cancelled one.
   const B = await openPlayer(browser);
+  await B.page.locator('[data-act="play"]').click();
   await B.page.locator('[data-act="online"]').click();
   await B.page.waitForTimeout(3000);
   expect((await state(B.page)).match).toBeNull();

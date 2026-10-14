@@ -1,9 +1,16 @@
+import '@fontsource/tajawal/500.css';
+import '@fontsource/tajawal/700.css';
+import '@fontsource/tajawal/900.css';
+import 'material-icons/iconfont/filled.css';
 import './ui/styles.css';
+import './ui/menu.css';
 import { audio } from './audio/AudioManager';
 import { applyDocumentLang, t } from './i18n/strings';
 import { App } from './ui/App';
+import { applyTheme } from './ui/theme';
 
 applyDocumentLang();
+applyTheme();
 
 // Browsers only start audio after a user gesture (Safari is strict): unlock on the first one.
 const unlock = () => audio.unlock();
@@ -22,9 +29,10 @@ try {
   // Almost always: WebGL is unavailable (disabled, blocklisted GPU, or lost at start-up).
   console.error(e);
   const screens = document.getElementById('screens')!;
-  screens.innerHTML = `<div class="screen backdrop" data-screen="error"><div class="logo">AnyRoyale</div>
-    <div class="panel"><p></p><button class="btn" data-act="retry"></button></div></div>`;
-  screens.querySelector('p')!.textContent = t('noWebgl');
+  screens.innerHTML = `<div class="mm mm-solid" data-screen="error"><div class="mm-col"><div class="mm-content" style="justify-content:center;flex:1">
+    <h1 class="mm-title" style="text-align:center;margin-bottom:18px">AnyRoyale</h1>
+    <div class="mm-card"><div class="mm-card-label"></div><button class="mm-btn hero center" data-act="retry"></button></div></div></div></div>`;
+  screens.querySelector('.mm-card-label')!.textContent = t('noWebgl');
   const retry = screens.querySelector<HTMLButtonElement>('[data-act="retry"]')!;
   retry.textContent = t('retry');
   retry.addEventListener('click', () => location.reload());

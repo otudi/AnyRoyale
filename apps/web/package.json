@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/tajawal": "5.2.7",
+    "material-icons": "1.13.14",
     "three": "0.186.1"
   },
   "devDependencies": {

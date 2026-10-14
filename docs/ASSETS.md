@@ -7,6 +7,7 @@ card art or logos. Everything you see or hear comes from one of three sources:
 |---|---|---|
 | KayKit packs by Kay Lousberg (pinned commits, below) | rigged humanoid characters, skeletons, medieval buildings (card buildings, tower ruins), props, weapons, one shared animation library | CC0 1.0 |
 | Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, arena terrain, river, bridges, particles, projectiles, card icons | this repository |
+| npm packages `@fontsource/tajawal` 5.2.7, `material-icons` 1.13.14 (bundled at build time) | Tajawal font (Arabic + Latin) and Material Icons used by the menus | OFL-1.1 / Apache-2.0 |
 | Code in `apps/web/src/audio/` | every sound effect and both music tracks, synthesised with Web Audio at load time | this repository |
 
 None of these is the original artwork, and none is presented as identical to it. Unit names come
@@ -92,3 +93,10 @@ If licensed replacement assets become available, the integration points are:
 `apps/web/src/rendering/visualCatalog.ts` (entity → model/visual), `tools/asset-pipeline/manifest.json`
 (which meshes to build) and `apps/web/src/audio/AudioManager.ts` (swap synthesised buffers for
 decoded files; provide AAC/MP3 next to OGG for Safari).
+
+## Menu design
+
+The menu screens (layout, pressed-3D buttons, circle buttons, setup cards, code boxes, help
+overlay, Arabic/English toggle) follow the owner's own menu design from their game, recoloured
+for AnyRoyale (`apps/web/src/ui/menu.css`). Card descriptions on the Cards page are original
+short texts (`apps/web/src/game/cardTexts.ts`); numbers come from the engine.

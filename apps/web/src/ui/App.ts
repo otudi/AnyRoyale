@@ -3,22 +3,65 @@ import { assets } from '../assets/AssetLoader';
 import { audio } from '../audio/AudioManager';
 import { BattleSession } from '../game/BattleSession';
 import { cards } from '../game/cards';
-import { getLang, setLang, t, type Lang } from '../i18n/strings';
+import { CARD_TEXTS } from '../game/cardTexts';
+import { getLang, setLang, t, type Lang, type StringKey } from '../i18n/strings';
 import { Connection } from '../network/Connection';
 import { loadIdentity, provisionalName, saveIdentity } from '../network/identity';
-import type { MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
+import type { CardInfo, MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
 import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
 import { Renderer3D } from '../rendering/Renderer3D';
 import { CORE_MODEL_FILES, resetClipCache } from '../rendering/UnitFactory';
 import { getSettings, updateSettings, type Quality } from './settings';
+import { isDark } from './theme';
 
-type Screen = 'loading' | 'home' | 'queue' | 'bot' | 'friend' | 'room' | 'intro' | 'battle' | 'result';
+type Screen = 'loading' | 'home' | 'mode' | 'queue' | 'bot' | 'friend' | 'room' | 'cards' | 'intro' | 'battle' | 'result';
 
 const EXTRA_BUNDLES = ['card_buildings.glb', 'props_dungeon.glb', 'props_spooky.glb'];
 
 function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+}
+
+/** Material icon (bundled font, ligature name). */
+function ic(name: string, cls = ''): string {
+  return `<span class="material-icons ${cls}" aria-hidden="true">${name}</span>`;
+}
+
+/** "BabyDragon" -> "Baby Dragon" */
+function prettyName(name: string): string {
+  return name.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
+}
+
+function cardName(c: CardInfo): string {
+  return getLang() === 'ar' ? (CARD_TEXTS[c.id]?.ar ?? prettyName(c.name)) : prettyName(c.name);
+}
+
+function speedLabel(speed: number): string {
+  return t(speed <= 800 ? 'speedSlow' : speed <= 1100 ? 'speedMedium' : speed <= 1600 ? 'speedFast' : 'speedVeryFast');
+}
+
+function targetsLabel(c: CardInfo): string {
+  if (c.tags.includes('buildings')) return t('tgtBuildings');
+  const air = c.tags.includes('air');
+  const ground = c.tags.includes('ground');
+  return t(air && ground ? 'tgtBoth' : air ? 'tgtAir' : 'tgtGround');
+}
+
+const HELP_KEY = 'anyroyale.helpSeen';
+function helpSeen(): boolean {
+  try {
+    return localStorage.getItem(HELP_KEY) === '1';
+  } catch {
+    return true;
+  }
+}
+function markHelpSeen(): void {
+  try {
+    localStorage.setItem(HELP_KEY, '1');
+  } catch {
+    // ignore
+  }
 }
 
 /** Screens, lobby flow and match lifecycle. */
@@ -101,32 +144,98 @@ export class App {
   // Screens
   // ------------------------------------------------------------------------------------------
 
-  private set(screen: Screen, html: string, backdrop = true): void {
+  /** Re-renders the current menu screen (after a language, theme or sound switch). */
+  private rerender: () => void = () => {};
+  private searchTimer = 0;
+  private searchStarted = 0;
+  private cardFilter: 'ALL' | 'TROOP' | 'SPELL' | 'BUILDING' = 'ALL';
+
+  private set(screen: Screen, html: string, variant: 'solid' | 'overlay' = 'solid'): void {
     this.screen = screen;
-    this.screens.innerHTML = `<div class="screen ${backdrop ? 'backdrop' : ''}" data-screen="${screen}">${html}</div>`;
+    window.clearInterval(this.searchTimer);
+    const patterns =
+      variant === 'solid'
+        ? `<div class="mm-patterns"><span class="material-icons">emoji_events</span><span class="material-icons">shield</span><span class="material-icons">bolt</span></div>`
+        : '';
+    this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}">${patterns}<div class="mm-col">${html}</div></div>`;
+  }
+
+  /** A 3D menu button: icon + title (+ subtitle) on the start side, chevron on the end side. */
+  private btn(act: string, icon: string, title: string, opts: { cls?: string; sub?: string; chev?: boolean } = {}): string {
+    return `<button class="mm-btn ${opts.cls ?? ''}" data-act="${act}"><span class="start">${icon ? ic(icon) : ''}<span><span class="title">${title}</span>${
+      opts.sub ? `<span class="sub">${opts.sub}</span>` : ''
+    }</span></span>${opts.chev ? ic('chevron_left', 'chev') : ''}</button>`;
+  }
+
+  private backBtn(act = 'back'): string {
+    return `<div class="mm-top inner"><button class="mm-circle" data-act="${act}" aria-label="${t('back')}">${ic(getLang() === 'ar' ? 'arrow_forward' : 'arrow_back')}</button></div>`;
+  }
+
+  private topNav(): string {
+    const s = getSettings();
+    return `<div class="mm-top">
+      <div class="mm-cluster">
+        <button class="mm-circle" data-act="lang" aria-label="${t('language')}">${getLang() === 'ar' ? 'EN' : 'عربي'}</button>
+        <button class="mm-circle" data-act="theme" aria-label="${t('darkMode')}">${ic(isDark() ? 'light_mode' : 'dark_mode')}</button>
+      </div>
+      <div class="mm-cluster">
+        <button class="mm-circle" data-act="settings" aria-label="${t('settings')}">${ic('settings')}</button>
+        <button class="mm-circle blue" data-act="mute" aria-label="${t('mute')}">${ic(s.muted ? 'volume_off' : 'volume_up')}</button>
+        <button class="mm-circle gold ${helpSeen() ? '' : 'pulse'}" data-act="help" aria-label="${t('howTitle')}">${ic('lightbulb')}</button>
+      </div>
+    </div>`;
+  }
+
+  /** Actions of the top navigation, shared by every screen that shows it. */
+  private navActions(): Record<string, () => void> {
+    return {
+      lang: () => {
+        setLang(getLang() === 'ar' ? 'en' : 'ar');
+        this.rerender();
+      },
+      theme: () => {
+        updateSettings({ theme: isDark() ? 'light' : 'dark' });
+        this.rerender();
+      },
+      mute: () => {
+        updateSettings({ muted: !getSettings().muted });
+        this.rerender();
+      },
+      settings: () => this.showSettings(),
+      help: () => this.showHelp(),
+    };
+  }
+
+  private brand(): string {
+    return `<div class="mm-logo-icons">${ic('shield')}${ic('emoji_events', 'center')}${ic('shield', 'red')}</div>
+      <h1 class="mm-title">AnyRoyale</h1><div class="mm-tagline">${t('tagline')}</div>`;
   }
 
   private renderLoading(pct: number, text: string): void {
     if (this.screen !== 'loading') return;
     const existing = this.screens.querySelector<HTMLElement>('[data-screen="loading"]');
     if (existing) {
-      existing.querySelector<HTMLElement>('.progress > div')!.style.width = `${pct}%`;
+      existing.querySelector<HTMLElement>('.mm-progress > div')!.style.width = `${pct}%`;
       existing.querySelector<HTMLElement>('[data-text]')!.textContent = text;
       return;
     }
     this.set(
       'loading',
-      `<div class="logo">AnyRoyale</div><div class="tagline">${t('tagline')}</div>
-       <div class="progress"><div style="width:${pct}%"></div></div>
-       <div class="muted" data-text>${esc(text)}</div>`,
+      `<div class="mm-content" style="justify-content:center;flex:1">
+         <div class="mm-brand" style="margin:0">${this.brand()}</div>
+         <div class="mm-progress"><div style="width:${pct}%"></div></div>
+         <div class="mm-note" data-text>${esc(text)}</div>
+       </div>`,
     );
   }
 
   private renderLoadError(): void {
     this.set(
       'loading',
-      `<div class="logo">AnyRoyale</div><div class="panel"><p>${t('loadFailed')}</p>
-       <button class="btn" data-act="retry">${t('retry')}</button></div>`,
+      `<div class="mm-content" style="justify-content:center;flex:1">
+         <div class="mm-brand" style="margin:0 0 20px">${this.brand()}</div>
+         <div class="mm-card"><div class="mm-card-label">${t('loadFailed')}</div>${this.btn('retry', 'refresh', t('retry'), { cls: 'hero center' })}</div>
+       </div>`,
     );
     this.screens.querySelector('[data-act="retry"]')!.addEventListener('click', () => location.reload());
   }
@@ -135,25 +244,25 @@ export class App {
     this.searching = false;
     this.disposeBattle();
     audio.playMusic('menu');
+    this.rerender = () => this.showHome();
     this.set(
       'home',
-      `<div class="toolbar"><button class="icon-btn" data-act="settings" aria-label="${t('settings')}">⚙️</button></div>
-       <div class="logo">AnyRoyale</div>
-       <div class="tagline">${t('tagline')}</div>
-       <button class="name-chip" data-act="name"><span>👤 ${esc(this.name)}</span><small>✏️ ${t('editName')}</small></button>
-       <div class="menu">
-         <button class="btn" data-act="online">⚔️ ${t('playOnline')}</button>
-         <button class="btn blue" data-act="bot">🤖 ${t('training')}</button>
-         <button class="btn green" data-act="friend">🤝 ${t('friend')}</button>
+      `${this.topNav()}
+       <div class="mm-brand">${this.brand()}
+         <button class="mm-name" data-act="name">${ic('person')}<span>${esc(this.name)}</span>${ic('edit')}</button>
        </div>
-       <div class="muted" style="max-width:320px">${t('howTo')}</div>`,
+       <div class="mm-menu">
+         ${this.btn('play', 'sports_esports', t('startGame'), { cls: 'hero', chev: true })}
+         ${this.btn('bot', 'smart_toy', t('trainingShort'), { chev: true })}
+         ${this.btn('cards', 'style', t('cardsTitle'), { chev: true })}
+       </div>`,
     );
     this.bind({
-      settings: () => this.showSettings(),
+      ...this.navActions(),
       name: () => this.editName(),
-      online: () => this.queueOnline(),
+      play: () => this.showMode(),
       bot: () => this.showBot(),
-      friend: () => this.showFriend(),
+      cards: () => void this.showCards(),
     });
   }
 
@@ -163,50 +272,83 @@ export class App {
       if (actions[act]) {
         el.addEventListener('click', () => {
           audio.play('click', { volume: 0.5 });
+          navigator.vibrate?.(12);
           actions[act]();
         });
       }
     }
   }
 
+  private showMode(): void {
+    this.rerender = () => this.showMode();
+    this.set(
+      'mode',
+      `${this.backBtn()}
+       <div class="mm-content"><h2 class="mm-header">${t('playMode')}</h2>
+         <div class="mm-menu" style="margin-top:0">
+           ${this.btn('online', 'bolt', t('quickMatch'), { cls: 'hero', chev: true })}
+           ${this.btn('friend', 'group', t('privateRoom'), { chev: true })}
+         </div>
+       </div>`,
+    );
+    this.bind({ back: () => this.showHome(), online: () => this.queueOnline(), friend: () => this.showFriend() });
+  }
+
   private queueOnline(): void {
     this.conn.send({ type: 'queue' });
     this.queueWaiting = 1;
     this.searching = true;
+    this.searchStarted = Date.now();
     this.showQueue();
   }
 
   private showQueue(): void {
+    this.rerender = () => this.showQueue();
+    if (!this.searchStarted) this.searchStarted = Date.now();
     this.set(
       'queue',
-      `<div class="spinner"></div><h2>${t('searching')}</h2>
-       <div class="muted" data-waiting>${t('waitingPlayers', { n: this.queueWaiting })}</div>
-       <div class="muted" style="max-width:300px">${t('searchingHint')}</div>
-       <div class="menu"><button class="btn gray" data-act="cancel">${t('cancel')}</button></div>`,
+      `<div class="mm-content" style="justify-content:center;flex:1">
+         <div class="mm-loader"></div>
+         <div class="mm-status">${t('searching')}</div>
+         <div class="mm-timer" data-search-timer>00:00</div>
+         <div class="mm-note" data-waiting style="margin-bottom:4px">${t('waitingPlayers', { n: this.queueWaiting })}</div>
+         <div class="mm-note">${t('searchingHint')}</div>
+         ${this.btn('cancel', 'close', t('cancel'), { cls: 'center' })}
+       </div>`,
     );
+    const tick = () => {
+      const sec = Math.floor((Date.now() - this.searchStarted) / 1000);
+      const el = this.screens.querySelector('[data-search-timer]');
+      if (el) el.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+    };
+    tick();
+    this.searchTimer = window.setInterval(tick, 1000);
     this.bind({
       cancel: () => {
         this.searching = false;
+        this.searchStarted = 0;
         this.conn.send({ type: 'cancelQueue' });
-        this.showHome();
+        this.showMode();
       },
     });
   }
 
   private showBot(): void {
+    this.rerender = () => this.showBot();
     const diffs = ['easy', 'normal', 'hard', 'expert'] as const;
     this.set(
       'bot',
-      `<h2>${t('chooseDifficulty')}</h2>
-       <div class="difficulty-grid panel">
-         ${diffs
-           .map(
-             (d) =>
-               `<button class="btn ${d === 'easy' ? 'green' : d === 'normal' ? 'blue' : d === 'hard' ? '' : 'red'}" data-act="d_${d}">${t(d)}<span class="sub">${t((d + 'Desc') as 'easyDesc')}</span></button>`,
-           )
-           .join('')}
-       </div>
-       <div class="menu"><button class="btn gray" data-act="back">${t('back')}</button></div>`,
+      `${this.backBtn()}
+       <div class="mm-content"><h2 class="mm-header">${t('chooseDifficulty')}</h2>
+         <div class="mm-menu" style="margin-top:0">
+           ${diffs
+             .map(
+               (d) =>
+                 `<button class="mm-btn lvl-${d}" data-act="d_${d}"><span class="start">${ic('fiber_manual_record', 'dot')}<span><span class="title">${t(d)}</span><span class="sub">${t((d + 'Desc') as 'easyDesc')}</span></span></span></button>`,
+             )
+             .join('')}
+         </div>
+       </div>`,
     );
     const actions: Record<string, () => void> = { back: () => this.showHome() };
     for (const d of diffs) actions[`d_${d}`] = () => this.startBot(d, null);
@@ -216,68 +358,235 @@ export class App {
   private startBot(difficulty: string, seed: string | null): void {
     this.lastBotDifficulty = difficulty;
     this.conn.send(seed ? { type: 'startBot', difficulty, seed } : { type: 'startBot', difficulty });
-    this.set('queue', `<div class="spinner"></div><div class="muted">${t('loading')}</div>`);
+    this.rerender = () => {};
+    this.set('queue', `<div class="mm-content" style="justify-content:center;flex:1"><div class="mm-loader"></div><div class="mm-status">${t('loading')}</div></div>`);
   }
 
   private showFriend(): void {
+    this.rerender = () => this.showFriend();
+    const boxes = [0, 1, 2, 3, 4]
+      .map((i) => `<input type="text" class="mm-code-input" data-code-box="${i}" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="${t('roomCode')} ${i + 1}" />`)
+      .join('');
     this.set(
       'friend',
-      `<h2>🤝 ${t('friend')}</h2>
-       <div class="panel">
-         <button class="btn" data-act="create" style="width:100%">${t('createRoom')}</button>
-         <div class="row" style="margin-top:16px"><input type="text" maxlength="6" placeholder="${t('roomCode')}" data-code autocapitalize="characters" autocomplete="off" /></div>
-         <button class="btn blue" data-act="join" style="width:100%">${t('join')}</button>
-       </div>
-       <div class="menu"><button class="btn gray" data-act="back">${t('back')}</button></div>`,
+      `${this.backBtn()}
+       <div class="mm-content"><h2 class="mm-header">${t('privateRoom')}</h2>
+         <div class="mm-card"><div class="mm-card-label">${t('yourRoomCode')}</div>${this.btn('create', 'add_circle', t('createRoom'), { cls: 'hero center' })}</div>
+         <div class="mm-card"><div class="mm-card-label">${t('joinFriend')}</div>
+           <div class="mm-code-inputs">${boxes}</div>
+           ${this.btn('join', 'login', t('join'), { cls: 'gold center' })}
+         </div>
+       </div>`,
     );
+    const inputs = [...this.screens.querySelectorAll<HTMLInputElement>('[data-code-box]')];
+    const join = () => {
+      const code = inputs.map((i) => i.value).join('').toUpperCase();
+      if (code.length >= 4) this.conn.send({ type: 'joinRoom', code });
+    };
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        const chars = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        // typing one character moves on; pasting a whole code spreads it over the boxes
+        input.value = chars.slice(0, 1);
+        for (let k = 1; k < chars.length && index + k < inputs.length; k++) inputs[index + k].value = chars[k];
+        const next = Math.min(inputs.length - 1, index + Math.max(1, chars.length));
+        if (chars.length && next !== index) inputs[next].focus();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && index > 0) inputs[index - 1].focus();
+        if (e.key === 'Enter') join();
+      });
+    });
     this.bind({
-      back: () => this.showHome(),
+      back: () => this.showMode(),
       create: () => this.conn.send({ type: 'createRoom' }),
-      join: () => {
-        const code = this.screens.querySelector<HTMLInputElement>('[data-code]')!.value.trim().toUpperCase();
-        if (code) this.conn.send({ type: 'joinRoom', code });
-      },
+      join,
     });
   }
 
   private showRoom(code: string): void {
     this.roomCode = code;
+    this.rerender = () => this.showRoom(code);
     const link = `${location.origin}/?room=${code}`;
     this.set(
       'room',
-      `<h2>${t('shareCode')}</h2>
-       <div class="code" data-room-code>${esc(code)}</div>
-       <div class="menu">
-         <button class="btn blue" data-act="copy">🔗 ${t('copyLink')}</button>
-         ${'share' in navigator ? `<button class="btn green" data-act="share">📤 ${t('share')}</button>` : ''}
-       </div>
-       <div class="spinner"></div><div class="muted">${t('waitingFriend')}</div>
-       <div class="menu"><button class="btn gray" data-act="cancel">${t('cancel')}</button></div>`,
+      `${this.backBtn()}
+       <div class="mm-content"><h2 class="mm-header">${t('privateRoom')}</h2>
+         <div class="mm-card"><div class="mm-card-label">${t('shareCode')}</div>
+           <div class="mm-code-row"><div class="mm-code" data-room-code>${esc(code)}</div>
+             <button class="mm-circle square" data-act="copy" aria-label="${t('copyLink')}">${ic('content_copy')}</button></div>
+           ${'share' in navigator ? `<div style="margin-top:14px">${this.btn('share', 'share', t('share'), { cls: 'center' })}</div>` : ''}
+         </div>
+         <div class="mm-loader" style="margin:16px auto 8px"></div>
+         <div class="mm-status">${t('waitingFriend')}</div>
+         ${this.btn('cancel', 'close', t('cancel'), { cls: 'center' })}
+       </div>`,
     );
+    const cancel = () => {
+      this.conn.send({ type: 'cancelRoom' });
+      this.roomCode = null;
+      this.showMode();
+    };
     this.bind({
       copy: () => {
         void navigator.clipboard?.writeText(link).then(
-          () => this.toast(t('copied')),
+          () => {
+            this.toast(t('copied'));
+            const icon = this.screens.querySelector('[data-act="copy"] .material-icons');
+            if (icon) {
+              icon.textContent = 'check';
+              setTimeout(() => (icon.textContent = 'content_copy'), 2000);
+            }
+          },
           () => this.toast(link),
         );
       },
       share: () => void navigator.share?.({ title: 'AnyRoyale', text: `AnyRoyale ${code}`, url: link }).catch(() => {}),
-      cancel: () => {
-        this.conn.send({ type: 'cancelRoom' });
-        this.roomCode = null;
-        this.showHome();
-      },
+      cancel,
+      back: cancel,
     });
   }
 
-  private editName(): void {
+  // ---- cards page ----------------------------------------------------------------------------
+
+  private async showCards(): Promise<void> {
+    this.rerender = () => void this.showCards();
+    const order = { TROOP: 0, BUILDING: 1, SPELL: 2 } as const;
+    const list = cards
+      .all()
+      .filter((c) => this.cardFilter === 'ALL' || c.type === this.cardFilter)
+      .sort((a, b) => a.cost - b.cost || order[a.type] - order[b.type] || cardName(a).localeCompare(cardName(b)));
+    const filters = ['ALL', 'TROOP', 'SPELL', 'BUILDING'] as const;
+    this.set(
+      'cards',
+      `${this.backBtn()}
+       <h2 class="mm-header" style="margin-bottom:12px">${t('cardsTitle')} <span style="opacity:.5;font-size:18px">${list.length}</span></h2>
+       <div class="mm-chips">${filters
+         .map((f) => `<button class="mm-chip ${f === this.cardFilter ? 'on' : ''}" data-filter="${f}">${f === 'ALL' ? t('filterAll') : t(`type${f}` as 'typeTROOP')}</button>`)
+         .join('')}</div>
+       <div class="mm-note" style="margin-bottom:14px">${t('levelNote', { n: cards.level })}</div>
+       <div class="mm-grid">${list
+         .map(
+           (c) =>
+             `<button class="mm-tile ${c.rarity.toLowerCase()}" data-card="${c.id}"><img class="art" alt="" data-art="${c.id}" /><span class="mm-cost">${c.cost}</span><span class="nm">${esc(cardName(c))}</span></button>`,
+         )
+         .join('')}</div>`,
+    );
+    this.bind({ back: () => this.showHome() });
+    for (const el of this.screens.querySelectorAll<HTMLElement>('[data-filter]')) {
+      el.addEventListener('click', () => {
+        audio.play('click', { volume: 0.5 });
+        this.cardFilter = el.dataset.filter as typeof this.cardFilter;
+        void this.showCards();
+      });
+    }
+    for (const el of this.screens.querySelectorAll<HTMLElement>('[data-card]')) {
+      el.addEventListener('click', () => {
+        const c = cards.get(el.dataset.card!);
+        if (c) {
+          audio.play('select', { volume: 0.5 });
+          this.showCardDetail(c);
+        }
+      });
+    }
+    // Portraits are rendered from the 3D models: a few per frame so the page never freezes.
+    await assets.loadAll(EXTRA_BUNDLES);
+    const imgs = [...this.screens.querySelectorAll<HTMLImageElement>('img[data-art]')];
+    let i = 0;
+    const step = () => {
+      if (this.screen !== 'cards') return;
+      const t0 = performance.now();
+      while (i < imgs.length && performance.now() - t0 < 12) {
+        const img = imgs[i++];
+        if (!img.isConnected) continue;
+        const c = cards.get(img.dataset.art!);
+        if (c) img.src = this.art.get(c);
+      }
+      if (i < imgs.length) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  private showCardDetail(c: CardInfo): void {
+    const ar = getLang() === 'ar';
+    const tx = CARD_TEXTS[c.id];
+    const r1 = (n: number) => String(Math.round(n * 10) / 10);
+    const stats: [string, string][] = [[t('statCost'), String(c.cost)]];
+    const u = c.unit;
+    if (u) {
+      if (c.count > 1) stats.push([t('statCount'), `×${c.count}`]);
+      stats.push([t('statHp'), String(u.hp)]);
+      if (u.damage > 0) {
+        stats.push([t('statDamage'), String(u.damage)]);
+        if (u.hitSpeed > 0) stats.push([t('statHitSpeed'), t('seconds', { n: r1(u.hitSpeed) })]);
+        stats.push([t('statRange'), u.range < 2000 ? t('melee') : t('tiles', { n: r1(u.range / 1000) })]);
+      }
+      if (c.type === 'TROOP' && u.speed > 0) stats.push([t('statSpeed'), speedLabel(u.speed)]);
+      if (u.damage > 0) stats.push([t('statTargets'), targetsLabel(c)]);
+      if (u.lifetime) stats.push([t('statLifetime'), t('seconds', { n: r1(u.lifetime) })]);
+    }
+    if (c.spell) {
+      if (c.spell.damage > 0) stats.push([t('statDamage'), String(c.spell.damage)]);
+      if (c.spell.radius > 0) stats.push([t('statRadius'), t('tiles', { n: r1(c.spell.radius / 1000) })]);
+      if (c.spell.duration && c.spell.duration >= 0.5) stats.push([t('statDuration'), t('seconds', { n: r1(c.spell.duration) })]);
+    }
+    const modal = this.sheet(
+      `<div class="mm-detail-head"><img src="${this.art.get(c)}" alt="" />
+         <div><div class="nm">${esc(cardName(c))}</div>${ar ? `<div class="en">${esc(prettyName(c.name))}</div>` : ''}
+           <div class="mm-badges"><span class="mm-badge cost">${ic('water_drop', '')} ${c.cost}</span>
+             <span class="mm-badge">${t(`type1${c.type}` as 'type1TROOP')}</span>
+             <span class="mm-badge">${t(`rarity${c.rarity}` as 'rarityCOMMON')}</span></div></div></div>
+       <p class="mm-desc">${esc(tx ? (ar ? tx.da : tx.de) : prettyName(c.name))}</p>
+       <div class="mm-stats">${stats.map(([k, v]) => `<div class="mm-stat"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
+       <div style="margin-top:16px">${this.btn('close', 'close', t('close'), { cls: 'center' })}</div>`,
+    );
+    modal.querySelector('[data-act="close"]')!.addEventListener('click', () => modal.remove());
+  }
+
+  /** Bottom sheet (or centred dialog) over the current screen; tapping outside closes it. */
+  private sheet(html: string, centred = false): HTMLElement {
     const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `<div class="panel"><h2>${t('nameTitle')}</h2>
-      <input type="text" maxlength="16" value="${esc(this.name)}" data-name-input />
-      <div class="row" style="margin-top:14px"><button class="btn gray small" data-m="cancel">${t('cancel')}</button>
-      <button class="btn green small" data-m="save">${t('save')}</button></div></div>`;
+    modal.className = `mm-modal ${centred ? 'center' : ''}`;
+    modal.innerHTML = `<div class="mm-sheet">${html}</div>`;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
     this.stage.appendChild(modal);
+    return modal;
+  }
+
+  private showHelp(): void {
+    markHelpSeen();
+    this.screens.querySelector('[data-act="help"]')?.classList.remove('pulse');
+    const el = document.createElement('div');
+    el.className = 'mm-help';
+    const sections: [string, StringKey, StringKey][] = [
+      ['flag', 'howGoalT', 'howGoal'],
+      ['style', 'howDeckT', 'howDeck'],
+      ['water_drop', 'howElixirT', 'howElixir'],
+      ['touch_app', 'howDeployT', 'howDeploy'],
+      ['lightbulb', 'howTipT', 'howTip'],
+    ];
+    el.innerHTML = `<div class="mm-help-card"><button class="mm-help-close" data-x aria-label="${t('close')}">×</button>
+      <h2>${t('howTitle')}</h2>${sections.map(([i, h, p]) => `<h3>${ic(i)}${t(h)}</h3><p>${t(p)}</p>`).join('')}</div>`;
+    this.stage.appendChild(el);
+    const close = () => {
+      el.remove();
+      window.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
+    window.addEventListener('keydown', onKey);
+    el.querySelector('[data-x]')!.addEventListener('click', close);
+  }
+
+  private editName(): void {
+    const modal = this.sheet(
+      `<h2>${t('nameTitle')}</h2>
+       <input type="text" class="mm-input" maxlength="16" value="${esc(this.name)}" data-name-input />
+       <div class="mm-row">${this.btn('x', '', t('cancel'), { cls: 'center' }).replace('data-act="x"', 'data-m="cancel"')}
+         ${this.btn('x', '', t('save'), { cls: 'hero center' }).replace('data-act="x"', 'data-m="save"')}</div>`,
+      true,
+    );
     const input = modal.querySelector<HTMLInputElement>('[data-name-input]')!;
     input.focus();
     input.select();
@@ -299,21 +608,21 @@ export class App {
 
   showSettings(): void {
     const s = getSettings();
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `<div class="panel"><h2>⚙️ ${t('settings')}</h2>
-      <div class="row"><label>🎵 ${t('music')}</label><input type="range" min="0" max="1" step="0.05" value="${s.music}" data-s="music" /></div>
-      <div class="row"><label>🔊 ${t('sfx')}</label><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" data-s="sfx" /></div>
-      <div class="row"><label>🖥️ ${t('quality')}</label><select data-s="quality">
+    const modal = this.sheet(
+      `<h2>${t('settings')}</h2>
+      <div class="mm-field"><label>${t('music')}</label><input type="range" min="0" max="1" step="0.05" value="${s.music}" data-s="music" /></div>
+      <div class="mm-field"><label>${t('sfx')}</label><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" data-s="sfx" /></div>
+      <div class="mm-field"><label>${t('quality')}</label><select data-s="quality">
         <option value="auto" ${s.quality === 'auto' ? 'selected' : ''}>${t('qualityAuto')}</option>
         <option value="high" ${s.quality === 'high' ? 'selected' : ''}>${t('qualityHigh')}</option>
         <option value="low" ${s.quality === 'low' ? 'selected' : ''}>${t('qualityLow')}</option></select></div>
-      <div class="row"><label>🌐 ${t('language')}</label><select data-s="lang">
+      <div class="mm-field"><label>${t('language')}</label><select data-s="lang">
         <option value="ar" ${getLang() === 'ar' ? 'selected' : ''}>العربية</option>
         <option value="en" ${getLang() === 'en' ? 'selected' : ''}>English</option></select></div>
-      <div class="row"><label>📈 ${t('showFps')}</label><input type="checkbox" ${s.showFps ? 'checked' : ''} data-s="fps" /></div>
-      <button class="btn small" data-m="close" style="width:100%;margin-top:8px">${t('close')}</button></div>`;
-    this.stage.appendChild(modal);
+      <div class="mm-field"><label>${t('showFps')}</label><input type="checkbox" ${s.showFps ? 'checked' : ''} data-s="fps" /></div>
+      <div style="margin-top:16px">${this.btn('x', '', t('close'), { cls: 'center' }).replace('data-act="x"', 'data-m="close"')}</div>`,
+      true,
+    );
     modal.querySelector<HTMLInputElement>('[data-s="music"]')!.addEventListener('input', (e) => updateSettings({ music: Number((e.target as HTMLInputElement).value) }));
     modal.querySelector<HTMLInputElement>('[data-s="sfx"]')!.addEventListener('input', (e) => {
       updateSettings({ sfx: Number((e.target as HTMLInputElement).value) });
@@ -324,7 +633,7 @@ export class App {
     modal.querySelector<HTMLSelectElement>('[data-s="lang"]')!.addEventListener('change', (e) => {
       setLang((e.target as HTMLSelectElement).value as Lang);
       modal.remove();
-      if (this.screen === 'home') this.showHome();
+      this.rerender();
     });
     modal.querySelector('[data-m="close"]')!.addEventListener('click', () => modal.remove());
   }
@@ -418,6 +727,7 @@ export class App {
           this.toast(t('opponentNoShow'));
           this.searching = true;
           this.queueWaiting = 1;
+          this.searchStarted = Date.now();
           this.showQueue();
         } else {
           this.toast(m.reason === 'youNotReady' ? t('youNotReady') : t('matchCancelled'));
@@ -427,7 +737,7 @@ export class App {
       case 'replaced':
         this.toast(t('replaced'));
         this.conn.close();
-        this.set('home', `<div class="logo">AnyRoyale</div><div class="panel">${t('replaced')}</div>`);
+        this.set('home', `<div class="mm-content" style="justify-content:center;flex:1"><div class="mm-brand" style="margin:0 0 20px">${this.brand()}</div><div class="mm-card">${t('replaced')}</div></div>`);
         break;
       case 'serverShutdown':
         this.toast(t('serverRestart'));
@@ -450,7 +760,7 @@ export class App {
     }
     const known = ['roomNotFound', 'ownRoom', 'serverFull', 'inMatch'];
     this.toast(known.includes(code) ? t(code as 'roomNotFound') : message);
-    if (['roomNotFound', 'serverFull'].includes(code) && (this.screen === 'queue' || this.screen === 'friend')) this.showHome();
+    if (['roomNotFound', 'serverFull'].includes(code) && this.screen === 'queue') this.showHome();
   }
 
   private async onMatchStart(m: MatchStart): Promise<void> {
@@ -483,19 +793,23 @@ export class App {
 
   private showIntro(m: MatchStart): void {
     const arenaName = getLang() === 'ar' ? m.arena.nameAr : m.arena.name;
+    this.rerender = () => {};
     this.set(
       'intro',
-      `<div class="muted">${t('arena')} ${m.arena.number} · ${esc(arenaName)}</div>
-       <div class="vs"><div class="player enemy">${esc(m.opponent.name)}${m.opponent.bot ? ' 🤖' : ''}</div>
-       <div class="x">${t('vs')}</div><div class="player own">${esc(this.name)}</div></div>
-       <div class="muted">${t('sharedDeck')}</div>
-       <div class="deck-preview">${m.deck
-         .map((id) => {
-           const c = cards.get(id);
-           return c ? `<div class="card ${c.rarity.toLowerCase()}" title="${esc(c.name)}"><img src="${this.art.get(c)}" alt="${esc(c.name)}" /><div class="cost"><span>${c.cost}</span></div></div>` : '';
-         })
-         .join('')}</div>
-       <h2 data-countdown>${t('loading')}</h2>`,
+      `<div class="mm-content" style="justify-content:center;flex:1">
+         <div class="mm-note" style="margin-bottom:0">${t('arena')} ${m.arena.number} · ${esc(arenaName)}</div>
+         <div class="mm-vs"><div class="p enemy">${esc(m.opponent.name)}${m.opponent.bot ? ' 🤖' : ''}</div>
+           <div class="x">${t('vs')}</div><div class="p own">${esc(this.name)}</div></div>
+         <div class="mm-note" style="margin-bottom:0">${t('sharedDeck')}</div>
+         <div class="mm-deck">${m.deck
+           .map((id) => {
+             const c = cards.get(id);
+             return c ? `<div class="mm-tile ${c.rarity.toLowerCase()}" title="${esc(cardName(c))}"><img class="art" src="${this.art.get(c)}" alt="" /><span class="mm-cost">${c.cost}</span></div>` : '';
+           })
+           .join('')}</div>
+         <h2 class="mm-header" data-countdown style="margin:10px 0 0">${t('loading')}</h2>
+       </div>`,
+      'overlay',
     );
   }
 
@@ -506,11 +820,12 @@ export class App {
 
   private confirmSurrender(): void {
     if (!this.battle) return;
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `<div class="panel"><h2>${t('surrenderConfirm')}</h2><div class="row">
-      <button class="btn gray small" data-m="no">${t('no')}</button><button class="btn red small" data-m="yes">${t('yes')}</button></div></div>`;
-    this.stage.appendChild(modal);
+    const modal = this.sheet(
+      `<h2>${t('surrenderConfirm')}</h2>
+       <div class="mm-row">${this.btn('x', '', t('no'), { cls: 'center' }).replace('data-act="x"', 'data-m="no"')}
+         ${this.btn('x', '', t('yes'), { cls: 'red center' }).replace('data-act="x"', 'data-m="yes"')}</div>`,
+      true,
+    );
     modal.querySelector('[data-m="no"]')!.addEventListener('click', () => modal.remove());
     modal.querySelector('[data-m="yes"]')!.addEventListener('click', () => {
       modal.remove();
@@ -534,19 +849,22 @@ export class App {
     const opp = you === 'BLUE' ? 'RED' : 'BLUE';
     const title = m.draw ? t('draw') : m.youWon ? t('victory') : t('defeat');
     const isBot = this.battle?.start.mode === 'bot';
+    this.rerender = () => {};
     this.set(
       'result',
-      `<div class="result-title ${m.youWon ? 'win' : 'lose'}" data-result="${m.draw ? 'draw' : m.youWon ? 'win' : 'lose'}">${title}</div>
-       <div class="result-crowns"><span style="color:#8ac0ff">👑 ${m.crowns[you]}</span> — <span style="color:#ff8a8a">${m.crowns[opp]} 👑</span></div>
-       <div class="muted">${t(('reason_' + m.reason) as 'reason_crowns')}</div>
-       <div class="muted" data-rematch-status></div>
-       <div class="menu">
-         ${isBot
-           ? `<button class="btn green" data-act="sameDeck">🔁 ${t('rematchSameDeck')}</button>
-              <button class="btn blue" data-act="newDeck">🎲 ${t('newDeck')}</button>`
-           : `<button class="btn green" data-act="rematch">⚔️ ${t('rematch')}</button>`}
-         <button class="btn gray" data-act="menu">🏠 ${t('menu')}</button>
+      `<div class="mm-content" style="justify-content:center;flex:1">
+         <h1 class="mm-result-title ${m.youWon ? 'win' : 'lose'}" data-result="${m.draw ? 'draw' : m.youWon ? 'win' : 'lose'}">${title}</h1>
+         <div class="mm-result-crowns"><span style="color:#8ac0ff">👑 ${m.crowns[you]}</span> — <span style="color:#ff8a8a">${m.crowns[opp]} 👑</span></div>
+         <div class="mm-note" style="margin-bottom:0">${t(('reason_' + m.reason) as 'reason_crowns')}</div>
+         <div class="mm-note" data-rematch-status></div>
+         <div class="mm-menu" style="margin-top:0">
+           ${isBot
+             ? `${this.btn('sameDeck', 'replay', t('rematchSameDeck'), { cls: 'hero' })}${this.btn('newDeck', 'casino', t('newDeck'))}`
+             : this.btn('rematch', 'replay', t('rematch'), { cls: 'hero' })}
+           ${this.btn('menu', 'home', t('menu'))}
+         </div>
        </div>`,
+      'overlay',
     );
     this.bind({
       rematch: () => {

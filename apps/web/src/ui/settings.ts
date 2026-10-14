@@ -7,10 +7,14 @@ export interface Settings {
   sfx: number; // 0..1
   quality: Quality;
   showFps: boolean;
+  /** Menu colour scheme; 'auto' follows the system. */
+  theme: 'auto' | 'light' | 'dark';
+  /** Master mute (keeps the volume sliders). */
+  muted: boolean;
 }
 
 const KEY = 'anyroyale.settings.v1';
-const defaults: Settings = { music: 0.55, sfx: 0.8, quality: 'auto', showFps: false };
+const defaults: Settings = { music: 0.55, sfx: 0.8, quality: 'auto', showFps: false, theme: 'auto', muted: false };
 
 function read(): Settings {
   try {

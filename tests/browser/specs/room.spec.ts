@@ -4,6 +4,7 @@ import { contextOptions, openPlayer, state, surrender, waitRunning } from './hel
 test('private room: code and invite link start a match; a third player cannot join', async ({ browser }) => {
   test.setTimeout(180_000);
   const host = await openPlayer(browser);
+  await host.page.locator('[data-act="play"]').click();
   await host.page.locator('[data-act="friend"]').click();
   await host.page.locator('[data-act="create"]').click();
   const codeEl = host.page.locator('[data-room-code]');
@@ -23,8 +24,9 @@ test('private room: code and invite link start a match; a third player cannot jo
 
   // A third player with the same code is refused (the room closed when the friend joined).
   const third = await openPlayer(browser);
+  await third.page.locator('[data-act="play"]').click();
   await third.page.locator('[data-act="friend"]').click();
-  await third.page.locator('[data-code]').fill(code);
+  await third.page.locator('[data-code-box="0"]').fill(code);
   await third.page.locator('[data-act="join"]').click();
   await expect(third.page.locator('.toast')).toBeVisible();
   await third.page.waitForTimeout(1500);
@@ -39,8 +41,9 @@ test('private room: code and invite link start a match; a third player cannot jo
 
 test('joining with a wrong code shows an error', async ({ browser }) => {
   const p = await openPlayer(browser);
+  await p.page.locator('[data-act="play"]').click();
   await p.page.locator('[data-act="friend"]').click();
-  await p.page.locator('[data-code]').fill('ZZZZZ');
+  await p.page.locator('[data-code-box="0"]').fill('ZZZZZ');
   await p.page.locator('[data-act="join"]').click();
   await expect(p.page.locator('.toast')).toBeVisible();
   await p.ctx.close();
