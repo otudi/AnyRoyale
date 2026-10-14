@@ -60,6 +60,8 @@ public final class MatchSession {
   private static final int INTRO_TICKS = 3 * GameEngine.TICKS_PER_SECOND;
   private static final int REMATCH_WINDOW_TICKS = 60 * GameEngine.TICKS_PER_SECOND;
   private static final int MAX_PENDING_PLAYS = 6;
+  /** Before the battle, a player whose connection is gone this long cancels the match. */
+  private static final int PREMATCH_DROP_MS = 8000;
 
   public enum State {
     WAITING_READY,
@@ -77,6 +79,13 @@ public final class MatchSession {
     void onRematch(MatchSession session, boolean sameDeck);
 
     void onClosed(MatchSession session);
+
+    /**
+     * The match was cancelled before the battle began because a player never arrived, never
+     * finished loading or left. The listed guests are still here and want to play: an online
+     * match puts them straight back into the queue. Called after {@link #onClosed}.
+     */
+    default void onCancelled(MatchSession session, List<String> requeueGuestIds) {}
   }
 
   /** Read-only clock data handed to the snapshot writer. */
@@ -315,19 +324,29 @@ public final class MatchSession {
 
   private void waitForReady() {
     long now = clockMs.getAsLong();
+    int dropMs = Math.min(reconnectGraceMs, PREMATCH_DROP_MS);
     for (Seat s : seats()) {
-      if (s.isHuman() && !s.connected() && now - createdAtMs > reconnectGraceMs) {
-        // A player never arrived (or vanished before the battle started): cancel without result.
-        Seat other = other(s);
-        sendTo(
-            other,
-            Json.obj().put("type", "matchCancelled").put("reason", "opponentMissing").toString());
-        close();
-        return;
+      if (s.isHuman() && !s.connected()) {
+        long awaySince = s.disconnectedAtMs >= 0 ? s.disconnectedAtMs : createdAtMs;
+        if (now - awaySince > dropMs) {
+          // A player never arrived (or vanished before the battle started): cancel without
+          // result instead of letting the other one play against an empty seat.
+          cancelBeforeBattle(s, "opponentMissing");
+          return;
+        }
       }
     }
     boolean allReady = blue.ready && red.ready;
-    if (allReady || now - createdAtMs > readyTimeoutMs) {
+    if (!allReady && now - createdAtMs > readyTimeoutMs) {
+      Seat notReady = !blue.ready ? blue : red;
+      if (notReady.isHuman() && !other(notReady).isHuman()) {
+        allReady = true; // bot match: the only human is just slow to load; start anyway
+      } else {
+        cancelBeforeBattle(notReady, "opponentNotReady");
+        return;
+      }
+    }
+    if (allReady) {
       state = State.INTRO;
       broadcast(
           Json.obj()
@@ -610,6 +629,35 @@ public final class MatchSession {
     return total;
   }
 
+  /**
+   * Cancels a match that has not started. Everyone except {@code culprit} is told why and, in an
+   * online match, goes straight back into the queue; the culprit (if still connected) is sent back
+   * to the menu.
+   */
+  private void cancelBeforeBattle(Seat culprit, String reason) {
+    boolean requeue = config.mode() == MatchMode.ONLINE;
+    List<String> requeued = new ArrayList<>(2);
+    for (Seat s : seats()) {
+      if (!s.isHuman() || !s.connected()) {
+        continue;
+      }
+      boolean back = s != culprit && requeue;
+      ObjectNode msg = Json.obj().put("type", "matchCancelled");
+      msg.put("matchId", config.matchId());
+      msg.put("reason", s == culprit ? "youNotReady" : reason);
+      msg.put("requeued", back);
+      sendTo(s, msg.toString());
+      if (back) {
+        requeued.add(s.guestId);
+      }
+    }
+    log.info("Match {} cancelled before the battle: {} ({})", config.matchId(), reason, culprit.name);
+    close();
+    if (!requeued.isEmpty()) {
+      listener.onCancelled(this, requeued);
+    }
+  }
+
   private void lingerAfterEnd() {
     endedTicks++;
     boolean humansWant = true;
@@ -621,7 +669,15 @@ public final class MatchSession {
       }
     }
     if (humansWant) {
-      listener.onRematch(this, sameDeck);
+      boolean allHere = true;
+      for (Seat s : seats()) {
+        allHere &= s.connected();
+      }
+      if (allHere) {
+        listener.onRematch(this, sameDeck);
+      } else {
+        broadcast(Json.obj().put("type", "rematchStatus").put("opponentLeft", true).toString());
+      }
       close();
       return;
     }
@@ -632,6 +688,8 @@ public final class MatchSession {
       }
     }
     if (endedTicks > REMATCH_WINDOW_TICKS || !anyoneConnected) {
+      // Never leave a player waiting for a rematch that can no longer happen.
+      broadcast(Json.obj().put("type", "rematchStatus").put("opponentLeft", true).toString());
       close();
     }
   }
@@ -681,13 +739,21 @@ public final class MatchSession {
     s.channel = null;
     s.disconnectedAtMs = clockMs.getAsLong();
     if (state == State.RUNNING || state == State.INTRO || state == State.WAITING_READY) {
+      int grace =
+          state == State.WAITING_READY
+              ? Math.min(reconnectGraceMs, PREMATCH_DROP_MS) / 1000
+              : reconnectGraceMs / 1000;
       sendTo(
           other(s),
           Json.obj()
               .put("type", "opponentStatus")
               .put("connected", false)
-              .put("graceSeconds", reconnectGraceMs / 1000)
+              .put("graceSeconds", grace)
               .toString());
+    } else if (state == State.ENDED) {
+      // The result screen offers a rematch; tell the opponent it will not happen.
+      s.wantsRematch = false;
+      sendTo(other(s), Json.obj().put("type", "rematchStatus").put("opponentLeft", true).toString());
     }
   }
 
@@ -721,12 +787,7 @@ public final class MatchSession {
       return;
     }
     switch (state) {
-      case WAITING_READY, INTRO -> {
-        sendTo(
-            other(s),
-            Json.obj().put("type", "matchCancelled").put("reason", "opponentLeft").toString());
-        close();
-      }
+      case WAITING_READY, INTRO -> cancelBeforeBattle(s, "opponentLeft");
       case RUNNING -> forfeit(s.team, "surrender");
       case ENDED -> {
         // A rematch needs both players, so once one leaves there is nothing left to wait for.

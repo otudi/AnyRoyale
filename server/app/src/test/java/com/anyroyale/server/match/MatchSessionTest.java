@@ -9,6 +9,7 @@ import com.anyroyale.server.match.MatchConfig.MatchMode;
 import com.anyroyale.server.replay.Replay;
 import com.anyroyale.server.replay.ReplayVerifier;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,6 +25,7 @@ class MatchSessionTest {
   private final AtomicReference<Replay> ended = new AtomicReference<>();
   private final AtomicBoolean closed = new AtomicBoolean();
   private final AtomicBoolean rematch = new AtomicBoolean();
+  private final AtomicReference<List<String>> requeued = new AtomicReference<>();
   private FakeChannel a;
   private FakeChannel b;
   private MatchSession session;
@@ -43,6 +45,11 @@ class MatchSessionTest {
         @Override
         public void onClosed(MatchSession s) {
           closed.set(true);
+        }
+
+        @Override
+        public void onCancelled(MatchSession s, List<String> guestIds) {
+          requeued.set(guestIds);
         }
       };
 
@@ -247,6 +254,80 @@ class MatchSessionTest {
     assertThat(s.state()).isEqualTo(MatchSession.State.CLOSED);
     assertThat(c.last("matchCancelled")).isNotNull();
     assertThat(ended.get()).isNull();
+  }
+
+  @Test
+  void opponentWhoNeverFinishesLoadingCancelsAndRequeuesTheReadyPlayer() {
+    step(1);
+    session.ready(a.guestId); // b stays connected but never sends ready
+    step(20 * 19);
+    assertThat(session.state()).isEqualTo(MatchSession.State.WAITING_READY);
+    step(20 * 2);
+    assertThat(session.state()).isEqualTo(MatchSession.State.CLOSED);
+    assertThat(a.last("matchCancelled").get("requeued").asBoolean()).isTrue();
+    assertThat(a.last("matchCancelled").get("matchId").asText()).isEqualTo("m-test");
+    assertThat(b.last("matchCancelled").get("reason").asText()).isEqualTo("youNotReady");
+    assertThat(b.last("matchCancelled").get("requeued").asBoolean()).isFalse();
+    assertThat(requeued.get()).containsExactly(a.guestId);
+    assertThat(ended.get()).isNull();
+  }
+
+  @Test
+  void opponentWhoDropsBeforeTheBattleIsReplacedWithinSeconds() {
+    step(1);
+    session.ready(a.guestId);
+    b.open = false;
+    session.detach(b);
+    step(20 * 7);
+    assertThat(session.state()).isEqualTo(MatchSession.State.WAITING_READY);
+    step(20 * 2);
+    assertThat(session.state()).isEqualTo(MatchSession.State.CLOSED);
+    assertThat(a.last("matchCancelled").get("reason").asText()).isEqualTo("opponentMissing");
+    assertThat(requeued.get()).containsExactly(a.guestId);
+  }
+
+  @Test
+  void opponentWhoRefreshesBeforeTheBattleStillPlays() {
+    step(1);
+    b.open = false;
+    session.detach(b);
+    step(20 * 3);
+    FakeChannel b2 = new FakeChannel(b.guestId, b.name);
+    session.attach(b2);
+    session.ready(a.guestId);
+    session.ready(b.guestId);
+    step(2 + 60);
+    assertThat(session.state()).isEqualTo(MatchSession.State.RUNNING);
+    assertThat(requeued.get()).isNull();
+  }
+
+  @Test
+  void opponentLeavingTheResultScreenEndsTheRematchWait() {
+    startBattle();
+    session.leave(b.guestId);
+    step(2);
+    session.requestRematch(a.guestId, false);
+    b.open = false;
+    session.detach(b);
+    step(2);
+    assertThat(a.last("rematchStatus").get("opponentLeft").asBoolean()).isTrue();
+    assertThat(rematch.get()).isFalse();
+  }
+
+  @Test
+  void slowLoadingPlayerStillStartsABotMatch() {
+    FakeChannel h = new FakeChannel("g_ssssssssssssss", "Slow");
+    long seed = 31;
+    MatchConfig cfg =
+        new MatchConfig("m-slow", seed, new SharedRandomDeckGenerator().generate(seed), ArenaCatalog.pick(seed), MatchMode.BOT, "easy");
+    MatchSession s =
+        new MatchSession(cfg, h.guestId, h.name, null, "bot", "Bot", BotFactory.create("easy", 1), listener, 20, 20, now::get);
+    s.attach(h);
+    for (int i = 0; i < 20 * 25; i++) {
+      now.addAndGet(MatchSession.TICK_MS);
+      s.stepForTests();
+    }
+    assertThat(s.state()).isEqualTo(MatchSession.State.RUNNING);
   }
 
   /** A full bot-vs-human match where the human idles: the bot must win, and the replay verifies. */

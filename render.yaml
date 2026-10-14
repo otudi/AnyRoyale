@@ -13,7 +13,9 @@ services:
       - key: SESSION_SECRET
         generateValue: true  # HMAC key for guest tokens; keep it stable across deploys
       - key: RECONNECT_GRACE_SECONDS
-        value: "30"
+        value: "20"          # a player whose connection is gone this long forfeits
+      - key: READY_TIMEOUT_SECONDS
+        value: "25"          # an online match whose opponent never loads is cancelled and requeued
       - key: MAX_MATCHES
         value: "100"
       - key: TICK_THREADS

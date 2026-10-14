@@ -38,7 +38,7 @@ y 0..32000 (blue's king tower at the bottom). TypeScript types: `apps/web/src/ne
 | `opponentStatus` | `connected`, `graceSeconds?` |
 | `end` | `matchId`, `winner`, `draw`, `youWon`, `reason` (`kingTower`/`crowns`/`towerHp`/`draw`/`surrender`/`disconnect`/`abandoned`), `crowns{BLUE,RED}`, `towerHp{BLUE,RED}`, `seconds`, `canRematch` |
 | `rematchStatus` | `opponentWants?`, `opponentLeft?` |
-| `matchCancelled` | `reason` |
+| `matchCancelled` | `reason` (`opponentMissing`/`opponentNotReady`/`opponentLeft`/`youNotReady`), `matchId`, `requeued` (true: the server already put you back into the online queue) |
 | `replaced` | another tab took over this guest |
 | `serverShutdown` | `reason` |
 | `error` | `code`, `message` |

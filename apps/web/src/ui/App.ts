@@ -40,6 +40,10 @@ export class App {
   private statusEl: HTMLElement | null = null;
   private assetsReady = false;
   private startQueue: MatchStart[] = [];
+  /** True while the player wants an online opponent; the queue is re-joined after a reconnect. */
+  private searching = false;
+  /** Matches the server cancelled while this client was still loading them. */
+  private cancelledMatches = new Set<string>();
   private resultEnd: MatchEnd | null = null;
 
   constructor() {
@@ -128,6 +132,7 @@ export class App {
   }
 
   showHome(): void {
+    this.searching = false;
     this.disposeBattle();
     audio.playMusic('menu');
     this.set(
@@ -167,6 +172,7 @@ export class App {
   private queueOnline(): void {
     this.conn.send({ type: 'queue' });
     this.queueWaiting = 1;
+    this.searching = true;
     this.showQueue();
   }
 
@@ -180,6 +186,7 @@ export class App {
     );
     this.bind({
       cancel: () => {
+        this.searching = false;
         this.conn.send({ type: 'cancelQueue' });
         this.showHome();
       },
@@ -358,6 +365,10 @@ export class App {
           history.replaceState(null, '', location.pathname);
           this.pendingJoin = null;
         }
+        if (!m.activeMatch && this.searching && this.screen === 'queue') {
+          // A reconnect drops us from the server's queue: join it again so the search goes on.
+          this.conn.send({ type: 'queue' });
+        }
         if (!m.activeMatch && this.battle && !this.battle.ended) {
           // The server no longer knows our match (e.g. restarted): return to the menu.
           this.toast(t('matchCancelled'));
@@ -400,8 +411,18 @@ export class App {
         }
         break;
       case 'matchCancelled':
-        this.toast(t('matchCancelled'));
-        this.showHome();
+        if (m.matchId) this.cancelledMatches.add(m.matchId);
+        if (!m.matchId || this.battle?.matchId === m.matchId) this.disposeBattle();
+        if (m.requeued) {
+          // The opponent never showed up: the server already put us back into the queue.
+          this.toast(t('opponentNoShow'));
+          this.searching = true;
+          this.queueWaiting = 1;
+          this.showQueue();
+        } else {
+          this.toast(m.reason === 'youNotReady' ? t('youNotReady') : t('matchCancelled'));
+          this.showHome();
+        }
         break;
       case 'replaced':
         this.toast(t('replaced'));
@@ -420,6 +441,13 @@ export class App {
   }
 
   private onError(code: string, message: string): void {
+    if (code === 'matchCrashed' || (code === 'noMatch' && (this.screen === 'intro' || (this.battle && !this.battle.ended)))) {
+      // The match is gone on the server: never leave the player on a frozen battlefield.
+      this.toast(t('matchCancelled'));
+      this.disposeBattle();
+      this.showHome();
+      return;
+    }
     const known = ['roomNotFound', 'ownRoom', 'serverFull', 'inMatch'];
     this.toast(known.includes(code) ? t(code as 'roomNotFound') : message);
     if (['roomNotFound', 'serverFull'].includes(code) && (this.screen === 'queue' || this.screen === 'friend')) this.showHome();
@@ -435,11 +463,13 @@ export class App {
       }
       return;
     }
+    this.searching = false;
     this.disposeBattle();
     this.lastSeed = m.mode === 'bot' ? m.seed : null;
     this.roomCode = null;
     // Make sure every bundle this arena and deck can use is loaded before building the scene.
     await assets.loadAll([...new Set([...themeBundles(m.arena.id), ...EXTRA_BUNDLES])]);
+    if (this.cancelledMatches.has(m.matchId)) return; // cancelled while we were loading
     if (!ARENA_THEMES[m.arena.id]) console.warn('Unknown arena theme', m.arena.id);
     this.battle = new BattleSession(m, this.conn, this.r, this.hudRoot, this.art, this.stage);
     this.battle.onSurrender = () => this.confirmSurrender();

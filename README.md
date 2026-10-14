@@ -18,7 +18,7 @@ layout and only looks different.
   effects. 111 cards are playable. Champions and evolutions are not implemented in crforge.
   [docs/CARD_SUPPORT.md](docs/CARD_SUPPORT.md) lists every card.
 - **Online:** a matchmaking queue with real players only (never a disguised bot), and private
-  rooms with a 5-character code or an invite link. Reconnecting within 30 s resumes the match,
+  rooms with a 5-character code or an invite link. Reconnecting within 20 s resumes the match,
   and a reload resumes too. Rematch offers the same or a new deck.
 - **Training:** play against bots at Easy, Normal, Hard or Expert. The levels differ in decision
   quality only, never in stats. You can replay the same deck or draw a new one.

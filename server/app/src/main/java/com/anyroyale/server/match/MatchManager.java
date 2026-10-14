@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import org.crforge.core.player.Team;
 import org.slf4j.Logger;
@@ -58,6 +59,7 @@ public final class MatchManager implements MatchSession.Listener {
   private final AtomicLong matchesFinished = new AtomicLong();
   private final AtomicInteger matchCounter = new AtomicInteger();
   private volatile Function<String, ClientChannel> channelLookup = id -> null;
+  private volatile Consumer<String> requeue = id -> {};
 
   public MatchManager(ServerConfig config, ReplayStore replays) {
     this.config = config;
@@ -78,6 +80,11 @@ public final class MatchManager implements MatchSession.Listener {
   /** Lets rematches find the current connection of a guest (set by the WebSocket gateway). */
   public void setChannelLookup(Function<String, ClientChannel> lookup) {
     this.channelLookup = lookup;
+  }
+
+  /** Puts a guest whose online match was cancelled before it began back into the queue. */
+  public void setRequeue(Consumer<String> requeue) {
+    this.requeue = requeue;
   }
 
   public boolean atCapacity() {
@@ -198,6 +205,17 @@ public final class MatchManager implements MatchSession.Listener {
     matches.remove(session.id());
     for (String g : session.humanGuestIds()) {
       matchByGuest.remove(g, session.id());
+    }
+  }
+
+  @Override
+  public void onCancelled(MatchSession session, List<String> requeueGuestIds) {
+    for (String g : requeueGuestIds) {
+      try {
+        requeue.accept(g);
+      } catch (RuntimeException e) {
+        log.warn("Could not requeue {} after match {} was cancelled", g, session.id(), e);
+      }
     }
   }
 

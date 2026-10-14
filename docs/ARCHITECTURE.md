@@ -38,16 +38,22 @@ Browser (Safari / Chrome / Firefox)                        Render web service (o
 
 ## Match lifecycle
 
-`WAITING_READY` (clients load assets; 20 s timeout) → `INTRO` (3 s, both see arena + shared deck)
+`WAITING_READY` (clients load assets; 25 s timeout) → `INTRO` (3 s, both see arena + shared deck)
 → `RUNNING` → `ENDED` (result, 60 s rematch window) → `CLOSED`.
 
-- Disconnect: the seat is kept for `RECONNECT_GRACE_SECONDS` (30). Reconnecting with the same
+- Before the battle: a player gone for 8 s, or not loaded within `READY_TIMEOUT_SECONDS` (25),
+  cancels the match without result (`matchCancelled`). In an online match the other player is
+  put straight back into the queue (`requeued: true`); nobody plays against an empty seat. A bot
+  match starts anyway once the timeout passes.
+- Disconnect: the seat is kept for `RECONNECT_GRACE_SECONDS` (20). Reconnecting with the same
   guest token resumes (`matchStart{resume:true}` + snapshot). Past the grace period the player
   forfeits; if both are gone the match is abandoned. The opponent sees a countdown while the
   seat is empty.
 - Dead-connection detection: the client re-dials on the browser `offline` event or after 12 s
   without any server message (it pings every 4 s; snapshots arrive at 10 Hz), with exponential
-  backoff; the server pings every 15 s and drops sockets idle for 60 s.
+  backoff; the server pings every 5 s and drops sockets idle for 20 s. After a reconnect the client
+  re-joins the online queue if it was searching; a hosted room is kept for 30 s while the host
+  reconnects.
 - A different guest can never act in a match: commands are routed by the authenticated guest id
   and seats are fixed at creation. Rooms hold exactly two seats.
 - Rematch requires both humans (bot matches: one click; "same deck" reuses the seed).

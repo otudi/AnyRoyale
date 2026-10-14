@@ -24,7 +24,8 @@ service and do not touch existing ones.
 | Variable | Value | Why |
 |---|---|---|
 | `SESSION_SECRET` | long random string (keep it stable) | signs guest tokens; if it changes, players get new guest ids |
-| `RECONNECT_GRACE_SECONDS` | `30` | seat kept after a disconnect |
+| `RECONNECT_GRACE_SECONDS` | `20` | seat kept after a disconnect; then the opponent wins |
+| `READY_TIMEOUT_SECONDS` | `25` | an online match whose opponent never finishes loading is cancelled and the other player is requeued |
 | `MAX_MATCHES` | `100` on starter | concurrent match cap |
 | `TICK_THREADS` | `2` | match tick threads |
 | `REPLAY_DIR` | optional, e.g. a mounted disk path | replays are in memory otherwise |
@@ -42,6 +43,11 @@ image sets `/app/web`).
 - Deploys send `SIGTERM`: the server tells players in matches that it is restarting, stops ticking
   and closes sockets with code 1012. Matches in progress at that moment end; there is no state
   hand-over between instances.
+- Stuck-opponent protection: the server drops a connection after 20 s of silence (clients ping
+  every 4 s), so a vanished player forfeits at most ~40 s later. Before the battle, a player who
+  is gone for 8 s or has not loaded after `READY_TIMEOUT_SECONDS` cancels the match and the other
+  player goes straight back into the queue. A network blip during the search re-joins the queue
+  and does not lose a hosted room.
 - Run **one instance**. Matches, queues and rooms live in the process memory; horizontal scaling
   would need sticky routing by match plus a shared queue, which is not implemented.
 
