@@ -36,3 +36,4 @@ tools/asset-pipeline/node_modules/
 __pycache__/
 *.pyc
 tools/audio-pipeline/.cache/
+tools/character-forge/out/

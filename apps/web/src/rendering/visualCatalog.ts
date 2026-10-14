@@ -66,6 +66,8 @@ export interface CharSpec {
   mount?: Mount;
   ghost?: boolean;
   crown?: boolean;
+  /** Own model built by tools/character-forge (forged_<Unit>.glb); the fields above are the fallback. */
+  forged?: string;
   /** Procedural accessories attached to bones, so look-alike bodies read as different units. */
   extras?: ('goblinEars' | 'spear' | 'tiara')[];
 }
@@ -256,6 +258,74 @@ export const VISUALS: Record<string, VisualSpec> = {
   Zap: area(0x8ad8ff, 'bolt'),
   Heal: area(0xffe066, 'ring'),
 };
+
+/**
+ * Units with their own forged model (tools/character-forge/recipes.json). Keep in sync with the
+ * recipes: a listed unit whose file is missing simply keeps its fallback look.
+ */
+export const FORGED_UNITS = [
+  'Knight',
+  'Prince',
+  'DarkPrince',
+  'Recruit',
+  'MiniPekka',
+  'Pekka',
+  'MegaKnight',
+  'BattleHealer',
+  'Barbarian',
+  'AngryBarbarian',
+  'RageBarbarian',
+  'Berserker',
+  'AxeMan',
+  'Fisherman',
+  'RascalBoy',
+  'Miner',
+  'GoblinBrawler',
+  'Giant',
+  'RoyalGiant',
+  'ElectroGiant',
+  'GoblinGiant',
+  'GiantBuffer',
+  'Bowler',
+  'HogRider',
+  'Hunter',
+  'Archer',
+  'Musketeer',
+  'Princess',
+  'EliteArcher',
+  'Firecracker',
+  'RascalGirl',
+  'Assassin',
+  'RamRider',
+  'Goblin',
+  'BushGoblin',
+  'SpearGoblin',
+  'BlowdartGoblin',
+  'GoblinDemolisher',
+  'GoblinDemolisher_kamikaze_form',
+  'Wizard',
+  'IceWizard',
+  'ElectroWizard',
+  'Witch',
+  'DarkWitch',
+  'WitchMother',
+];
+/** Units that reuse another unit's forged model. */
+export const FORGED_ALIASES: Record<string, string> = { 'DeliveryRecruit': 'Recruit', 'Goblin_Stab': 'Goblin', 'SpearGoblinGiant': 'SpearGoblin' };
+for (const name of [...FORGED_UNITS, ...Object.keys(FORGED_ALIASES)]) {
+  const v = VISUALS[name];
+  if (v && v.kind === 'char') v.forged = `forged_${FORGED_ALIASES[name] ?? name}.glb`;
+}
+
+/** The forged model file a card's portrait/unit needs, if any. */
+export function forgedFileFor(unitName: string | undefined): string | null {
+  if (!unitName) return null;
+  const v = VISUALS[unitName];
+  if (!v) return null;
+  if (v.kind === 'char') return v.forged ?? null;
+  if (v.kind === 'proc' && v.rider) return v.rider.forged ?? null;
+  return null;
+}
 
 /** Generic fallback for names not in the table. */
 export function visualFor(name: string, kind: string, movement: number, radius: number): VisualSpec {

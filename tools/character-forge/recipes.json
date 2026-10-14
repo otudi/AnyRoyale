@@ -1,0 +1,2384 @@
+{
+ "units": {
+  "Knight": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Head"
+    ],
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "1H_Sword"
+    ],
+    [
+     "knight",
+     "Round_Shield"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "hair": "#6a3a1e"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mustache",
+     "color": "#6a3a1e"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "Prince": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#e2c36a",
+     "hair": "#f0c850",
+     "leather": "#7a3a8a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#e8cc70",
+     "plume": "team",
+     "visor": true,
+     "visor_color": "#3a2a10"
+    },
+    {
+     "kind": "spear",
+     "color": "#f2e6b8"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "DarkPrince": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "Spike_Shield"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#3a3a4a",
+     "plate": "#2a2a36",
+     "leather": "#4a2a2a",
+     "under": "#2a2a30"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#2e2e3a",
+     "visor": true,
+     "visor_color": "#ff5030",
+     "horns": true,
+     "horn_color": "#1e1e26"
+    },
+    {
+     "kind": "hammer",
+     "color": "#2e2e3a"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#2e2e3a",
+     "spikes": "#8a8a96"
+    }
+   ]
+  },
+  "Recruit": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Head"
+    ],
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "Knight_Helmet"
+    ],
+    [
+     "knight",
+     "Rectangle_Shield"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#a8b4c0",
+     "cape": "#2f6fd8",
+     "hair": "#3a2a1a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "spear"
+    },
+    {
+     "kind": "scarf"
+    }
+   ]
+  },
+  "MiniPekka": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "2H_Sword"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#3d5aa8",
+     "plate": "#2a3a78",
+     "under": "#1e2a50",
+     "leather": "#1e2a50",
+     "gloves": "#1e2a50"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#3d5aa8",
+     "visor": true,
+     "visor_color": "#7ae0ff",
+     "horns": true,
+     "horn_color": "#c8d4e8"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#2a3a78"
+    }
+   ]
+  },
+  "Pekka": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "2H_Sword"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#4a2e7a",
+     "plate": "#2e1e50",
+     "under": "#1e1430",
+     "leather": "#1e1430",
+     "gloves": "#1e1430"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#4a2e7a",
+     "visor": true,
+     "visor_color": "#c86aff",
+     "horns": true,
+     "horn_color": "#2e1e50"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#4a2e7a",
+     "size": 1.3,
+     "spikes": "#c86aff"
+    },
+    {
+     "kind": "chestplate",
+     "color": "#3a2460",
+     "emblem": "#c86aff"
+    }
+   ]
+  },
+  "MegaKnight": {
+   "base": "knight",
+   "parts": [
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "Spike_Shield"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#3a4048",
+     "plate": "#2a2e34",
+     "under": "#1e2024",
+     "leather": "#2a2e34"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#3a4048",
+     "visor": true,
+     "visor_color": "#ffb030"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#3a4048",
+     "size": 1.45,
+     "spikes": "#c8ccd4"
+    },
+    {
+     "kind": "hammer",
+     "color": "#4a5058"
+    },
+    {
+     "kind": "chestplate",
+     "color": "#2e3238",
+     "emblem": "#ffb030"
+    }
+   ]
+  },
+  "BattleHealer": {
+   "base": "knight",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "knight",
+     "Knight_Body"
+    ],
+    [
+     "knight",
+     "Knight_ArmLeft"
+    ],
+    [
+     "knight",
+     "Knight_ArmRight"
+    ],
+    [
+     "knight",
+     "Knight_LegLeft"
+    ],
+    [
+     "knight",
+     "Knight_LegRight"
+    ],
+    [
+     "knight",
+     "Badge_Shield"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "metal": "#f2e6c0",
+     "cape": "#ffffff",
+     "leather": "#c8a050"
+    },
+    "rogue": {
+     "hair": "#ffd86a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "halo"
+    },
+    {
+     "kind": "wings",
+     "color": "#fff8e0"
+    },
+    {
+     "kind": "hammer",
+     "color": "#f2d070"
+    },
+    {
+     "kind": "pigtails",
+     "color": "#ffd86a"
+    }
+   ]
+  },
+  "Barbarian": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Hat"
+    ],
+    [
+     "knight",
+     "1H_Sword"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#f0c040",
+     "fur": "#8a5a2c"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mustache",
+     "color": "#f0c040"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "AngryBarbarian": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ],
+    [
+     "knight",
+     "1H_Sword"
+    ],
+    [
+     "knight",
+     "1H_Sword_Offhand"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#e84a2a",
+     "shirt": "#3a3a48",
+     "fur": "#2a2a30"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mohawk",
+     "color": "#e84a2a"
+    },
+    {
+     "kind": "scarf"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#5a5a66"
+    }
+   ]
+  },
+  "RageBarbarian": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ],
+    [
+     "barbarian",
+     "2H_Axe"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#c8301e",
+     "shirt": "#f0b48a",
+     "fur": "#5a2a1e",
+     "skin": "#f0a080"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#8a3020",
+     "horns": true,
+     "horn_color": "#f2e6c8"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#5a2a1e"
+    }
+   ]
+  },
+  "Berserker": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ],
+    [
+     "barbarian",
+     "1H_Axe"
+    ],
+    [
+     "barbarian",
+     "1H_Axe_Offhand"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#c82a3a"
+    },
+    "barbarian": {
+     "shirt": "#3a2a48",
+     "fur": "#c82a3a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mohawk",
+     "color": "#c82a3a"
+    },
+    {
+     "kind": "scarf"
+    }
+   ]
+  },
+  "AxeMan": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "rogue_hooded",
+     "Rogue_Head_Hooded"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ],
+    [
+     "barbarian",
+     "2H_Axe"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "shirt": "#2a2a32",
+     "fur": "#1e1e24",
+     "pants": "#2a2a32",
+     "leather": "#3a2a20"
+    },
+    "rogue": {
+     "tunic2": "#1e1e24"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mask",
+     "color": "#1e1e24",
+     "eyes": "#ff4030"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "Fisherman": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#f2f2f2",
+     "shirt": "#f0c030",
+     "fur": "#e0a020",
+     "pants": "#2a5a8a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "cap",
+     "color": "#f0c030",
+     "brim": "#e0a020"
+    },
+    {
+     "kind": "rod"
+    },
+    {
+     "kind": "backpack",
+     "color": "#2a5a8a"
+    }
+   ]
+  },
+  "RascalBoy": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "knight",
+     "Knight_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "knight": {
+     "hair": "#c8501e"
+    },
+    "barbarian": {
+     "shirt": "#3a6ad8",
+     "fur": "#8a5a2c",
+     "pants": "#3a4a6a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "cap",
+     "team": true
+    },
+    {
+     "kind": "club"
+    }
+   ]
+  },
+  "Miner": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#8a5a2c",
+     "shirt": "#7a5a3a",
+     "fur": "#5a3a20",
+     "pants": "#4a4a52"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#f0c030"
+    },
+    {
+     "kind": "headlamp"
+    },
+    {
+     "kind": "hammer",
+     "color": "#8a96a8"
+    },
+    {
+     "kind": "backpack",
+     "color": "#6a4a2a"
+    }
+   ]
+  },
+  "GoblinBrawler": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#6a4a2a",
+     "tunic2": "#8a5a2c"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "mohawk",
+     "color": "#3a2a1a"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#8a5a2c"
+    }
+   ]
+  },
+  "Giant": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#e8641e",
+     "shirt": "#8a5a2c",
+     "fur": "#6a4422",
+     "pants": "#6a4a8a",
+     "skin": "#f4b88a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "RoyalGiant": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#f0d070",
+     "shirt": "#2a4a9a",
+     "fur": "#e8c050",
+     "pants": "#1e2e60"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "crown",
+     "size": 0.8
+    },
+    {
+     "kind": "cannon",
+     "color": "#3a3a44"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "ElectroGiant": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#4ad8ff",
+     "shirt": "#1e3a8a",
+     "fur": "#2a6ad8",
+     "pants": "#1e2e60"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "goggles",
+     "lens": "#9af0ff"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#2a6ad8",
+     "spikes": "#ffe04a"
+    },
+    {
+     "kind": "backpack",
+     "color": "#3a4a6a",
+     "roll": "#ffe04a"
+    }
+   ]
+  },
+  "GoblinGiant": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#6a4a2a",
+     "tunic2": "#4a3a20",
+     "pants": "#4a3a20"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "backpack",
+     "color": "#8a5a2c",
+     "roll": "#c8a060"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#8a5a2c"
+    }
+   ]
+  },
+  "GiantBuffer": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "skin": "#c8a8ff",
+     "beard": "#f2f2f2",
+     "shirt": "#4a2a7a",
+     "fur": "#2a1a4a",
+     "pants": "#2a1a4a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "chestplate",
+     "color": "#5a3a8a",
+     "emblem": "#7af0ff"
+    },
+    {
+     "kind": "shoulders",
+     "color": "#5a3a8a",
+     "spikes": "#7af0ff"
+    },
+    {
+     "kind": "hammer",
+     "color": "#7af0ff"
+    }
+   ]
+  },
+  "Bowler": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "skin": "#7aa0e0",
+     "beard": "#e8e8f0",
+     "shirt": "#3a4a7a",
+     "fur": "#2a3a5a",
+     "pants": "#2a3a5a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "bomb",
+     "color": "#8a8a92"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#c8c8d0"
+    }
+   ]
+  },
+  "HogRider": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#4a2a1a",
+     "shirt": "#c8a070",
+     "fur": "#6a4422"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mohawk",
+     "color": "#4a2a1a"
+    },
+    {
+     "kind": "hammer",
+     "color": "#a8b0bc"
+    }
+   ]
+  },
+  "Hunter": {
+   "base": "barbarian",
+   "parts": [
+    [
+     "barbarian",
+     "Barbarian_Head"
+    ],
+    [
+     "barbarian",
+     "Barbarian_Body"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_ArmRight"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegLeft"
+    ],
+    [
+     "barbarian",
+     "Barbarian_LegRight"
+    ]
+   ],
+   "colors": {
+    "barbarian": {
+     "beard": "#d8d8d8",
+     "shirt": "#5a6a3a",
+     "fur": "#3a4a2a",
+     "pants": "#4a3a2a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "cap",
+     "color": "#5a6a3a",
+     "brim": "#3a4a2a"
+    },
+    {
+     "kind": "cannon",
+     "color": "#5a3a20"
+    },
+    {
+     "kind": "backpack",
+     "color": "#6a4a2a"
+    }
+   ]
+  },
+  "Archer": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "2H_Crossbow"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#ff5aa8",
+     "tunic": "#2f8a4a",
+     "tunic2": "#4ab05a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "quiver"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "Musketeer": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "knight",
+     "Knight_Helmet"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#2a1a14",
+     "tunic": "#5a2a7a",
+     "tunic2": "#7a3a9a"
+    },
+    "knight": {
+     "metal": "#c8ccd4"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "cannon",
+     "color": "#4a3a2a"
+    },
+    {
+     "kind": "scarf"
+    }
+   ]
+  },
+  "Princess": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "2H_Crossbow"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#ffd84a",
+     "tunic": "#e86aa8",
+     "tunic2": "#ff9ac8",
+     "pants": "#e86aa8"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "tiara"
+    },
+    {
+     "kind": "skirt",
+     "color": "#e86aa8"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "EliteArcher": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue_hooded",
+     "Rogue_Head_Hooded"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "2H_Crossbow"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "tunic": "#1e4a8a",
+     "tunic2": "#2a6ad8",
+     "pants": "#1e2e50"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mask",
+     "color": "#1e2e50"
+    },
+    {
+     "kind": "quiver",
+     "color": "#3a2a20"
+    }
+   ]
+  },
+  "Firecracker": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#ff6a1a",
+     "tunic": "#c82a2a",
+     "tunic2": "#ffb030"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "goggles",
+     "lens": "#ffcf4a"
+    },
+    {
+     "kind": "cannon",
+     "color": "#c82a2a"
+    },
+    {
+     "kind": "backpack",
+     "color": "#3a3a44",
+     "roll": "#ffb030"
+    }
+   ]
+  },
+  "RascalGirl": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "Throwable"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#6a3a1e",
+     "tunic": "#d8402a",
+     "tunic2": "#ff7a4a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "pigtails",
+     "color": "#6a3a1e"
+    },
+    {
+     "kind": "scarf"
+    }
+   ]
+  },
+  "Assassin": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue_hooded",
+     "Rogue_Head_Hooded"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "Knife"
+    ],
+    [
+     "rogue",
+     "Knife_Offhand"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "tunic": "#24242e",
+     "tunic2": "#36364a",
+     "pants": "#1a1a22",
+     "leather": "#3a2a2a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mask",
+     "color": "#1a1a22",
+     "eyes": "#ff3048"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "RamRider": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "Throwable"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#f2f2f2",
+     "tunic": "#8a5a2c",
+     "tunic2": "#c8a070"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "helmet",
+     "color": "#8a5a2c",
+     "horns": true,
+     "horn_color": "#f2e6c8"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#efe4d0"
+    }
+   ]
+  },
+  "Goblin": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "Knife"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#6a4a2a",
+     "tunic2": "#8a5a2c"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "cap",
+     "team": true
+    }
+   ]
+  },
+  "BushGoblin": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ],
+    [
+     "rogue",
+     "Knife"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#3a7a2a",
+     "tunic2": "#5aa83a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#4a9a3a"
+    }
+   ]
+  },
+  "SpearGoblin": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#8a5a2c",
+     "tunic2": "#c8a070"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "spear"
+    },
+    {
+     "kind": "scarf"
+    }
+   ]
+  },
+  "BlowdartGoblin": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#2a6a4a",
+     "tunic2": "#4a9a6a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "mask",
+     "color": "#c8a060"
+    },
+    {
+     "kind": "staff_orb",
+     "color": "#4ad8a0"
+    },
+    {
+     "kind": "mohawk",
+     "color": "#e84a2a"
+    }
+   ]
+  },
+  "GoblinDemolisher": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#5a3a20",
+     "tunic2": "#8a5a2c"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "goggles",
+     "lens": "#ffcf4a"
+    },
+    {
+     "kind": "belt_bombs"
+    },
+    {
+     "kind": "bomb"
+    }
+   ]
+  },
+  "GoblinDemolisher_kamikaze_form": {
+   "base": "rogue",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "rogue",
+     "Rogue_Body"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_ArmRight"
+    ],
+    [
+     "rogue",
+     "Rogue_LegLeft"
+    ],
+    [
+     "rogue",
+     "Rogue_LegRight"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "skin": "#7cc04a",
+     "hair": "#3a2a1a",
+     "tunic": "#5a3a20",
+     "tunic2": "#8a5a2c"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "ears"
+    },
+    {
+     "kind": "goggles",
+     "lens": "#ff6a3a"
+    },
+    {
+     "kind": "belt_bombs"
+    },
+    {
+     "kind": "bomb",
+     "color": "#c82a2a"
+    }
+   ]
+  },
+  "Wizard": {
+   "base": "mage",
+   "parts": [
+    [
+     "mage",
+     "Mage_Head"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "Mage_Hat",
+     {
+      "team": true
+     }
+    ],
+    [
+     "mage",
+     "2H_Staff"
+    ]
+   ],
+   "colors": {
+    "mage": {
+     "robe": "#b8322a",
+     "robe_dark": "#7a1e1a",
+     "sash": "#ffb020",
+     "hair": "#e8e0d0",
+     "crystal": "#ff7a1e"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "beard",
+     "color": "#ece6da"
+    }
+   ]
+  },
+  "IceWizard": {
+   "base": "mage",
+   "parts": [
+    [
+     "rogue_hooded",
+     "Rogue_Head_Hooded"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "2H_Staff"
+    ]
+   ],
+   "colors": {
+    "mage": {
+     "robe": "#4a8ad8",
+     "robe_dark": "#2a5aa8",
+     "sash": "#c8ecff",
+     "crystal": "#9af0ff",
+     "skin": "#d8e8f8"
+    },
+    "rogue": {
+     "tunic2": "#2a6ad8",
+     "skin": "#d8e8f8"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "beard",
+     "color": "#f2f8ff",
+     "long": 1.3
+    },
+    {
+     "kind": "fur_collar",
+     "color": "#e8f4ff"
+    }
+   ]
+  },
+  "ElectroWizard": {
+   "base": "mage",
+   "parts": [
+    [
+     "mage",
+     "Mage_Head"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "1H_Wand"
+    ]
+   ],
+   "colors": {
+    "mage": {
+     "robe": "#1e3a8a",
+     "robe_dark": "#12245a",
+     "sash": "#ffe04a",
+     "hair": "#9af0ff",
+     "gem": "#ffe04a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "mohawk",
+     "color": "#4ad8ff"
+    },
+    {
+     "kind": "goggles",
+     "lens": "#ffe04a"
+    },
+    {
+     "kind": "cape"
+    },
+    {
+     "kind": "staff_orb",
+     "hand": "l",
+     "color": "#9af0ff"
+    }
+   ]
+  },
+  "Witch": {
+   "base": "mage",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "2H_Staff"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#2a1a3a",
+     "skin": "#cfe8b8"
+    },
+    "mage": {
+     "robe": "#5a2a7a",
+     "robe_dark": "#36184a",
+     "skin": "#cfe8b8",
+     "sash": "#9adf4a",
+     "crystal": "#9adf4a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "witch_hat",
+     "color": "#3a1e55",
+     "band": "#9adf4a"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "DarkWitch": {
+   "base": "mage",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "2H_Staff"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#e8e8f0",
+     "skin": "#b8b0c8"
+    },
+    "mage": {
+     "robe": "#24202e",
+     "robe_dark": "#16141c",
+     "skin": "#b8b0c8",
+     "sash": "#c8304a",
+     "crystal": "#ff3a5a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "witch_hat",
+     "color": "#16141c",
+     "band": "#c8304a"
+    },
+    {
+     "kind": "wings",
+     "color": "#2a2436"
+    },
+    {
+     "kind": "cape"
+    }
+   ]
+  },
+  "WitchMother": {
+   "base": "mage",
+   "parts": [
+    [
+     "rogue",
+     "Rogue_Head"
+    ],
+    [
+     "mage",
+     "Mage_Body"
+    ],
+    [
+     "mage",
+     "Mage_ArmLeft"
+    ],
+    [
+     "mage",
+     "Mage_ArmRight"
+    ],
+    [
+     "mage",
+     "Mage_LegLeft"
+    ],
+    [
+     "mage",
+     "Mage_LegRight"
+    ],
+    [
+     "mage",
+     "Spellbook_open"
+    ]
+   ],
+   "colors": {
+    "rogue": {
+     "hair": "#b0b0b8",
+     "skin": "#e8c8b0"
+    },
+    "mage": {
+     "robe": "#7a3a8a",
+     "robe_dark": "#4a2054",
+     "sash": "#ff9ac8",
+     "book": "#5a2a7a"
+    }
+   },
+   "accessories": [
+    {
+     "kind": "witch_hat",
+     "color": "#4a2054",
+     "band": "#ff9ac8"
+    },
+    {
+     "kind": "pigtails",
+     "color": "#b0b0b8"
+    },
+    {
+     "kind": "lantern",
+     "color": "#9adf4a"
+    }
+   ]
+  }
+ },
+ "aliases": {
+  "DeliveryRecruit": "Recruit",
+  "Goblin_Stab": "Goblin",
+  "SpearGoblinGiant": "SpearGoblin"
+ }
+}

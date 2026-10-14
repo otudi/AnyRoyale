@@ -10,6 +10,7 @@ import { loadIdentity, provisionalName, saveIdentity } from '../network/identity
 import type { CardInfo, MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
 import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
+import { forgedFileFor } from '../rendering/visualCatalog';
 import { Renderer3D } from '../rendering/Renderer3D';
 import { CORE_MODEL_FILES, resetClipCache } from '../rendering/UnitFactory';
 import { attacks, cardName, kindLabel, prettyName, targetsLabel } from './cardLabels';
@@ -497,7 +498,16 @@ export class App {
         const img = imgs[i++];
         if (!img.isConnected) continue;
         const c = cards.get(img.dataset.art!);
-        if (c) img.src = this.art.get(c);
+        if (!c) continue;
+        const file = forgedFileFor(c.unit?.name);
+        if (file && !assets.get(file)) {
+          // its own model is still downloading: draw the portrait once it is there
+          void assets.load(file).then(() => {
+            if (img.isConnected) img.src = this.art.get(c);
+          });
+          continue;
+        }
+        img.src = this.art.get(c);
       }
       if (i < imgs.length) requestAnimationFrame(step);
     };
@@ -776,7 +786,9 @@ export class App {
     this.lastSeed = m.mode === 'bot' ? m.seed : null;
     this.roomCode = null;
     // Make sure every bundle this arena and deck can use is loaded before building the scene.
-    await assets.loadAll([...new Set([...themeBundles(m.arena.id), ...EXTRA_BUNDLES])]);
+    // ...and the deck's own forged character models (a few hundred KB, loaded once per page).
+    const forged = m.deck.map((id) => forgedFileFor(cards.get(id)?.unit?.name)).filter((f): f is string => !!f);
+    await assets.loadAll([...new Set([...themeBundles(m.arena.id), ...EXTRA_BUNDLES, ...forged])]);
     if (this.cancelledMatches.has(m.matchId)) return; // cancelled while we were loading
     if (!ARENA_THEMES[m.arena.id]) console.warn('Unknown arena theme', m.arena.id);
     this.battle = new BattleSession(m, this.conn, this.r, this.hudRoot, this.art, this.stage);

@@ -160,6 +160,23 @@ for (const ch of manifest.characters) {
   await write(doc, ch.out, origin(ch.pack, ch.path));
 }
 
+// Forged characters (tools/character-forge): per-unit models assembled in Blender from the same CC0
+// KayKit parts, recoloured, with procedural accessories. Already one skinned mesh + atlas.
+{
+  const forgeDir = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'character-forge', 'out');
+  const files = fs.existsSync(forgeDir) ? fs.readdirSync(forgeDir).filter((f) => /^forged_.*\.glb$/.test(f)).sort() : [];
+  for (const f of files) {
+    const doc = await io.read(path.join(forgeDir, f));
+    for (const anim of doc.getRoot().listAnimations()) dropAnimation(anim);
+    await finish(doc);
+    await write(doc, f, {
+      pack: 'AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)',
+      recipe: `tools/character-forge/recipes.json#${f.replace(/^forged_|\.glb$/g, '')}`,
+      license: 'CC0-1.0',
+    });
+  }
+}
+
 // Bundles: one node per item, named by key.
 for (const bundle of manifest.bundles) {
   const doc = new Document();

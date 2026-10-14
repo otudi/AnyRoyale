@@ -54,7 +54,51 @@ function charFile(model: string): string {
  * capes/hats recoloured to the team colour, body tinted, extra weapons attached to hand slots.
  * Units are created by cloning this template with SkeletonUtils (shares geometry, own skeleton).
  */
+/** Native height used for every forged model (rest pose body + head, like the KayKit bodies). */
+const FORGED_NATIVE = 2.4;
+
+function forgedTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
+  const file = spec.forged!;
+  const key = `forged|${file}|${side}|${spec.ghost ? 1 : 0}`;
+  const cached = templates.get(key);
+  if (cached) return cached;
+  const gltf = assets.get(file);
+  if (!gltf) {
+    void assets.load(file); // ready for the next unit / portrait
+    return null;
+  }
+  const tpl = SkeletonUtils.clone(gltf.scene);
+  const teamColor = new THREE.Color(TEAM_COLORS[side]);
+  tpl.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.castShadow = true;
+    mesh.frustumCulled = false;
+    const src = mesh.material as THREE.MeshStandardMaterial;
+    const m = src.clone();
+    m.roughness = Math.max(0.6, m.roughness);
+    m.metalness = 0;
+    // the forged "Team" mesh is painted white in the atlas: the team colour tints it
+    if (mesh.name.startsWith('Team')) m.color = teamColor.clone();
+    if (spec.ghost) {
+      m.transparent = true;
+      m.opacity = 0.55;
+      m.emissive = new THREE.Color(0x6080ff);
+      m.emissiveIntensity = 0.25;
+    }
+    mesh.material = m;
+  });
+  nativeHeight.set(file, FORGED_NATIVE);
+  if (!spec.ghost) addOutlines(tpl);
+  templates.set(key, tpl);
+  return tpl;
+}
+
 function characterTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
+  if (spec.forged) {
+    const forged = forgedTemplate(spec, side);
+    if (forged) return forged;
+  }
   const key = `${spec.model}|${(spec.extras ?? []).join(',')}|${(spec.gear ?? []).join(',')}|${(spec.weapons ?? []).map((w) => w.key + w.hand).join(',')}|${spec.tint ?? 0}|${side}|${spec.ghost ? 1 : 0}`;
   const cached = templates.get(key);
   if (cached) return cached;
@@ -266,7 +310,7 @@ export class UnitVisual {
       return;
     }
     const model = SkeletonUtils.clone(tpl);
-    const native = nativeHeight.get(spec.model) ?? 2;
+    const native = (spec.forged && assets.get(spec.forged) ? nativeHeight.get(spec.forged) : nativeHeight.get(spec.model)) ?? 2;
     const s = scaleOverride ?? (spec.height * UNIT_SCALE) / native;
     model.scale.setScalar(s);
     parent.add(model);

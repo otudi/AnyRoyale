@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import { assets } from '../assets/AssetLoader';
 import type { CardInfo } from '../network/protocol';
 import type { Renderer3D } from './Renderer3D';
 import { UnitVisual } from './UnitFactory';
-import { visualFor } from './visualCatalog';
+import { forgedFileFor, visualFor } from './visualCatalog';
 
 /**
  * Finished card images (all original, generated at runtime): a rarity-coloured metallic frame
@@ -68,7 +69,9 @@ export class CardArt {
       console.warn('Card art failed for', card.id, e);
       url = compose(card, null);
     }
-    this.cache.set(card.id, url);
+    // A portrait drawn with the fallback body (own model still loading) is not kept.
+    const file = forgedFileFor(card.unit?.name);
+    if (!file || assets.get(file)) this.cache.set(card.id, url);
     return url;
   }
 

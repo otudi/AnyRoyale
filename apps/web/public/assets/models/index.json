@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-13",
+  "generated": "2026-10-14",
   "license": "CC0-1.0",
   "files": {
     "anims.glb": {
@@ -109,6 +109,411 @@
         "repo": "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0",
         "commit": "15b62b9bad122f72926c10fb14d622c73819fa54",
         "path": "Characters/gltf/Skeleton_Rogue.glb",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_AngryBarbarian.glb": {
+      "bytes": 103812,
+      "sha256": "fa783a442992d9545f433accb3fda63ccd29f12b45870e4b1890627a5b819c6a",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#AngryBarbarian",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Archer.glb": {
+      "bytes": 101012,
+      "sha256": "165038f2bdbf4079c75255e76b881da5a567bb55ee493c851f3efa8e824a64e1",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Archer",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Assassin.glb": {
+      "bytes": 94180,
+      "sha256": "a3847c8f808940f76580ff78bfaac0fd771bb07e1c7dad1020c14ae404a0d55d",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Assassin",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_AxeMan.glb": {
+      "bytes": 99480,
+      "sha256": "31c52f44a14e1f50f075094da1fac5499e4d217f3414b79fa286332060f9b8e1",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#AxeMan",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Barbarian.glb": {
+      "bytes": 103800,
+      "sha256": "971ba9e388cca39c489c3ac52aebbddaac8e9fca9195af0c118ce1ff455fbf71",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Barbarian",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_BattleHealer.glb": {
+      "bytes": 106816,
+      "sha256": "238edd0b8e6cc2842e5ef7e2db9c448b0e905f15d7d76fcb9be052266a90d5de",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#BattleHealer",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Berserker.glb": {
+      "bytes": 103580,
+      "sha256": "3b51edbb5428d9c1b3019813cd5541b64249d536111cef91de3c62501776764b",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Berserker",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_BlowdartGoblin.glb": {
+      "bytes": 87032,
+      "sha256": "5d1f39cf66cae2a85ba374265e2cb513a280e15247269591796fa1948164cf10",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#BlowdartGoblin",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Bowler.glb": {
+      "bytes": 85336,
+      "sha256": "f7144249843a8c4779b798e7aa5703e9c547ece4b423d89011ac860b3e045cf2",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Bowler",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_BushGoblin.glb": {
+      "bytes": 88784,
+      "sha256": "a6a6c5ae1589037fcb0e09bd389dd841376673772c049feed3398b1dfbddee83",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#BushGoblin",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_DarkPrince.glb": {
+      "bytes": 90592,
+      "sha256": "9c2cb45cf446adea34719cf221cdb0271dec259ccb1711c12b0b097c16a6f0ec",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#DarkPrince",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_DarkWitch.glb": {
+      "bytes": 100016,
+      "sha256": "190427b3b61389e877d9e289528b2b1f4829caa18a74ee6275f19cc26bf97f6a",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#DarkWitch",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_ElectroGiant.glb": {
+      "bytes": 88044,
+      "sha256": "779aa98c016a638aee652d06b91808fbb868fb42b73da6fcf3ec2f8e32f8e2ae",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#ElectroGiant",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_ElectroWizard.glb": {
+      "bytes": 93516,
+      "sha256": "436060201deb18fc7ffff8634753994be7d72b2f0f2fcad75a46cbdf6f93a368",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#ElectroWizard",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_EliteArcher.glb": {
+      "bytes": 96280,
+      "sha256": "a1909644129981bb9e73a6996ad93f4663475e08192349ee7787ed1f782a0220",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#EliteArcher",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Firecracker.glb": {
+      "bytes": 87720,
+      "sha256": "9427579e61cfb0799ae129f87671ad47868feb3bdb09afc78079dd62dd27a847",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Firecracker",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Fisherman.glb": {
+      "bytes": 85708,
+      "sha256": "301ea61e3d8a127623e2c0f72d2f685a0d2127f14f7c479610ddc5d00a05f10f",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Fisherman",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Giant.glb": {
+      "bytes": 86212,
+      "sha256": "4a82a4ce84a9074ae72e1d0ae487c2b482132b8a5e7a01b18b7b884c57be066a",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Giant",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_GiantBuffer.glb": {
+      "bytes": 84740,
+      "sha256": "e08e202e89c464ed4aeb9bee02baa881304868a996157ea0f4f48af600a16daa",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#GiantBuffer",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Goblin.glb": {
+      "bytes": 92880,
+      "sha256": "4b8834db5400dcf62f5f44dd518a25cf1bf14cff8711f622c56d2f1b0da7e8b0",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Goblin",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_GoblinBrawler.glb": {
+      "bytes": 86088,
+      "sha256": "234c494fdd8cb731f9af56ffed50ab59590b767ff15240b9db9dd34758c42584",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#GoblinBrawler",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_GoblinDemolisher.glb": {
+      "bytes": 90064,
+      "sha256": "4478cea2a654b8e1510badb2a052dd3c11cf4fab6f83c63c68a1cfac9a5bf72b",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#GoblinDemolisher",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_GoblinDemolisher_kamikaze_form.glb": {
+      "bytes": 90100,
+      "sha256": "407cc433b5bb72dc0a0a609440e60f6d29fef8df7f7a44866d887b69884db7cc",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#GoblinDemolisher_kamikaze_form",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_GoblinGiant.glb": {
+      "bytes": 86388,
+      "sha256": "07f7144bbadb56b375ba6e3fe8004a674a3169874ac641597f75d658be1126f8",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#GoblinGiant",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_HogRider.glb": {
+      "bytes": 82932,
+      "sha256": "58fd455f7aa7f68bacd84da36a41352ccd331ebaebe561ba473ca50149f35117",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#HogRider",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Hunter.glb": {
+      "bytes": 85208,
+      "sha256": "c54077d6015a53fd6f1b23757c5c3431137840827ca58963884d1927e9d56abd",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Hunter",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_IceWizard.glb": {
+      "bytes": 92548,
+      "sha256": "8d108b3fa10effe1b70c226057392806bcc98d37dd49c5526d5d7772d3a257ca",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#IceWizard",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Knight.glb": {
+      "bytes": 102684,
+      "sha256": "3850222b30e5cf84280d93459d939848ddf36ae1697c6f0c947c3de5e728e63d",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Knight",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_MegaKnight.glb": {
+      "bytes": 90864,
+      "sha256": "3efd29788b65931d537996e157369724d25d51926e210393916a5759f260db67",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#MegaKnight",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Miner.glb": {
+      "bytes": 88600,
+      "sha256": "68381bd09bfa5a3e57f9d7483a143658b0dd93b553c8b0f54690b53915fdef6d",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Miner",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_MiniPekka.glb": {
+      "bytes": 88744,
+      "sha256": "f03e36c2cde6c01fb58746a66861032328887a6a1bcc899311e43af8e6c8cf9f",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#MiniPekka",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Musketeer.glb": {
+      "bytes": 101052,
+      "sha256": "5ab86d8b880a9833c594f92b5183e9473f0c780ce5cb7cfc74712295074d4ff3",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Musketeer",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Pekka.glb": {
+      "bytes": 89772,
+      "sha256": "d65aef2b049636b38af96e5ae5cc808f15a27e4f37fd7ded12f64b63b1fd7928",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Pekka",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Prince.glb": {
+      "bytes": 86580,
+      "sha256": "91542d7a2019de3ce9b496704efcaea5f0a0d4ee6c6b78abb3e213940e879f94",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Prince",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Princess.glb": {
+      "bytes": 104208,
+      "sha256": "b401da7b4b037ad3f8ef6e409c5eacef5ed5bf73858005392f96aa1157491e6c",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Princess",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_RageBarbarian.glb": {
+      "bytes": 98988,
+      "sha256": "115f190c21430f50e342294588a7a8fb05b637e1c741cd033e2a3bc6a4bd4def",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#RageBarbarian",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_RamRider.glb": {
+      "bytes": 95220,
+      "sha256": "f0d50a82d202aff80b8990a9f0629b64f4f59f676025b6f39c27652feee2da03",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#RamRider",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_RascalBoy.glb": {
+      "bytes": 91096,
+      "sha256": "578b8a41e5dc4a62d5b10ce0dcd89981a8dee99e9e6497ee185beb4fea7f72b2",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#RascalBoy",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_RascalGirl.glb": {
+      "bytes": 98732,
+      "sha256": "88ef37449d771fac3b676f33c0d3f8f2c9d24ca8f58c8de61e0e07869a49a3e2",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#RascalGirl",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Recruit.glb": {
+      "bytes": 106612,
+      "sha256": "3aeecbf45cf20faaf90d173b9b46a7788ef98816397046b9b2f0a1b31df7034f",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Recruit",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_RoyalGiant.glb": {
+      "bytes": 88356,
+      "sha256": "af2ad785323787fd71e9c5d4e39808ad2cffcdc900862b44cbcab13ab2c0932b",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#RoyalGiant",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_SpearGoblin.glb": {
+      "bytes": 90436,
+      "sha256": "7d556c4165a39421b3f1bd872274401894a9e2305b7d2f76b3508ac80fceeaf2",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#SpearGoblin",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Witch.glb": {
+      "bytes": 98824,
+      "sha256": "c09705a3cc6cd8009475281818612a31aeecc2b7ccffc6d04d84357159f30de2",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Witch",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_WitchMother.glb": {
+      "bytes": 98296,
+      "sha256": "c963ba74455fd7eebd588c8344dddfc95f8a7d5375b4a2331d08dd74c80b5ca9",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#WitchMother",
+        "license": "CC0-1.0"
+      }
+    },
+    "forged_Wizard.glb": {
+      "bytes": 98740,
+      "sha256": "bc21bdb34775d8af9b8d13b31e700aa7b246d9490c0f4a901f3b136ff13a4db0",
+      "origin": {
+        "pack": "AnyRoyale character forge (derived from KayKit Adventurers/Skeletons, CC0 1.0)",
+        "recipe": "tools/character-forge/recipes.json#Wizard",
         "license": "CC0-1.0"
       }
     },

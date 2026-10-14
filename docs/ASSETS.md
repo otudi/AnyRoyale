@@ -15,7 +15,7 @@ card art or logos. Everything you see or hear comes from one of these sources:
 None of these is the original artwork, and none is presented as identical to it. Unit names come
 from the crforge card data (Apache-2.0); the game is not affiliated with or endorsed by Supercell.
 
-## 3D models (`apps/web/public/assets/models`, ≈3.3 MB)
+## 3D models (`apps/web/public/assets/models`, ≈7.3 MB, loaded per deck)
 
 Built by `tools/asset-pipeline/build.mjs` from these sources (`tools/asset-pipeline/sources.json`):
 
@@ -38,6 +38,17 @@ The pipeline:
 5. writes `index.json` with byte size, SHA-256 and origin (pack, repo, commit, path) of every file.
 
 Rebuild: `cd tools/asset-pipeline && npm ci && node build.mjs`.
+
+### Forged unit models (`forged_*.glb`)
+
+45 human units (knights, barbarians, giants, archers, goblins, spellcasters) have their own model
+built by `tools/character-forge` (Blender, headless). Each one mixes body parts from the KayKit
+characters (they share one skeleton), recolours each texture region separately, and adds
+procedural accessories (helmets, crowns, horns, ears, beards, armour, wings, weapons). Each model is
+one skinned mesh plus a team-tinted mesh with one 512 px atlas, about 80–105 KB.
+
+The game loads only the models of the current deck (before the battle starts). The Cards page loads
+them as portraits scroll into view. Derived from CC0 parts, so these models are CC0 as well.
 
 ### Coverage of the 111 playable cards (from `docs/CARD_SUPPORT.md`)
 

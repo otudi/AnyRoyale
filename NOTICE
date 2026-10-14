@@ -9,7 +9,8 @@ Third-party components and assets included in this repository:
 2. 3D models (apps/web/public/assets/models)
    Derived from KayKit asset packs by Kay Lousberg (www.kaylousberg.com), CC0 1.0.
    Sources and pinned commits: tools/asset-pipeline/sources.json, per-file origins in
-   apps/web/public/assets/models/index.json.
+   apps/web/public/assets/models/index.json. The forged_*.glb unit models are assembled from those
+   CC0 parts by tools/character-forge (recipes in tools/character-forge/recipes.py).
 
 3. Sound effects and music (apps/web/public/assets/sfx)
    Derived from CC0 1.0 sound packs by Kenney (kenney.nl) and by "rubberduck" on OpenGameArt.org,
