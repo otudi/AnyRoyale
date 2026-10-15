@@ -98,7 +98,7 @@ export class App {
     this.conn.connect();
     try {
       await cards.load();
-      await this.loadAssets();
+      await Promise.all([this.loadAssets(), this.art.preload(cards.all())]);
     } catch (e) {
       console.error(e);
       this.renderLoadError();

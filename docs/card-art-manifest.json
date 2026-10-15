@@ -1,0 +1,566 @@
+{
+  "generator": "Built-in image_gen",
+  "size": [
+    384,
+    480
+  ],
+  "format": "WebP quality 85",
+  "style": "Original fantasy strategy game illustration, polished stylized 3D painting, bold shapes, readable signature weapon/ability/structure, navy background, bright rim light, 4:5 portrait, no text or borders. Subject fills 80 percent, readable at 60px.",
+  "cards": [
+    {
+      "id": "knight",
+      "name": "Knight",
+      "description": "Cheap, sturdy melee fighter that holds the line."
+    },
+    {
+      "id": "archer",
+      "name": "Archer",
+      "description": "Two ranged shooters that hit air and ground."
+    },
+    {
+      "id": "goblins",
+      "name": "Goblins",
+      "description": "Four fast goblins: high damage, low health."
+    },
+    {
+      "id": "giant",
+      "name": "Giant",
+      "description": "Slow tank that only attacks buildings."
+    },
+    {
+      "id": "pekka",
+      "name": "Iron Sentinel",
+      "description": "Armoured knight with a crushing hit; shreds tanks."
+    },
+    {
+      "id": "minions",
+      "name": "Minions",
+      "description": "Three small flyers that hit air and ground."
+    },
+    {
+      "id": "balloon",
+      "name": "Balloon",
+      "description": "Flies to buildings and drops heavy bombs; bomb on death."
+    },
+    {
+      "id": "witch",
+      "name": "Witch",
+      "description": "Summons skeletons and deals splash damage."
+    },
+    {
+      "id": "barbarians",
+      "name": "Barbarians",
+      "description": "Five tough melee fighters."
+    },
+    {
+      "id": "golem",
+      "name": "Golem",
+      "description": "Huge building-tank that splits into two golemites."
+    },
+    {
+      "id": "skeletons",
+      "name": "Skeletons",
+      "description": "Three cheap skeletons to distract enemies."
+    },
+    {
+      "id": "valkyrie",
+      "name": "Valkyrie",
+      "description": "Spins her axe to hit everything around her."
+    },
+    {
+      "id": "skeletonarmy",
+      "name": "Bone Legion",
+      "description": "A swarm of skeletons that overwhelms single targets."
+    },
+    {
+      "id": "bomber",
+      "name": "Bomber",
+      "description": "Throws bombs that splash ground units."
+    },
+    {
+      "id": "musketeer",
+      "name": "Musketeer",
+      "description": "Long-range shooter with strong single-target damage."
+    },
+    {
+      "id": "babydragon",
+      "name": "Ember Drake",
+      "description": "Flying dragon with splash fireballs."
+    },
+    {
+      "id": "prince",
+      "name": "Prince",
+      "description": "Charges forward; the first hit deals double damage."
+    },
+    {
+      "id": "wizard",
+      "name": "Wizard",
+      "description": "Shoots fireballs that splash air and ground."
+    },
+    {
+      "id": "minipekka",
+      "name": "Iron Squire",
+      "description": "Fast with a huge single hit; great against tanks."
+    },
+    {
+      "id": "speargoblins",
+      "name": "Spear Goblins",
+      "description": "Three goblins throwing spears from range."
+    },
+    {
+      "id": "giantskeleton",
+      "name": "Giant Skeleton",
+      "description": "Sturdy; drops a giant bomb when it dies."
+    },
+    {
+      "id": "hogrider",
+      "name": "Boar Raider",
+      "description": "Very fast, jumps the river, hits buildings only."
+    },
+    {
+      "id": "minionhorde",
+      "name": "Minion Horde",
+      "description": "Six minions with big combined damage."
+    },
+    {
+      "id": "icewizard",
+      "name": "Ice Wizard",
+      "description": "Slows enemies with every hit."
+    },
+    {
+      "id": "royalgiant",
+      "name": "Siege Giant",
+      "description": "Shoots buildings with a cannon from range."
+    },
+    {
+      "id": "skeletonwarriors",
+      "name": "Skeleton Warriors",
+      "description": "Three armoured skeleton warriors."
+    },
+    {
+      "id": "princess",
+      "name": "Princess",
+      "description": "Very long range flaming arrows with splash."
+    },
+    {
+      "id": "darkprince",
+      "name": "Shadow Lancer",
+      "description": "Shielded charger with splash damage."
+    },
+    {
+      "id": "lavahound",
+      "name": "Magma Beast",
+      "description": "Flying building-tank; bursts into smaller magma beasts."
+    },
+    {
+      "id": "icespirits",
+      "name": "Ice Spirits",
+      "description": "Jumps in and freezes nearby enemies briefly."
+    },
+    {
+      "id": "firespirits",
+      "name": "Fire Spirits",
+      "description": "Jump onto enemies and explode with splash."
+    },
+    {
+      "id": "miner",
+      "name": "Miner",
+      "description": "Tunnels underground and pops up anywhere."
+    },
+    {
+      "id": "zapmachine",
+      "name": "Arc Cannon",
+      "description": "Charges up, then fires a massive splash blast."
+    },
+    {
+      "id": "bowler",
+      "name": "Bowler",
+      "description": "Rolls boulders that pierce and knock back."
+    },
+    {
+      "id": "ragebarbarian",
+      "name": "Rage Barbarian",
+      "description": "Melee fighter that gets enraged."
+    },
+    {
+      "id": "battleram",
+      "name": "Battle Ram",
+      "description": "Charges buildings; two barbarians pop out."
+    },
+    {
+      "id": "infernodragon",
+      "name": "Blazewing",
+      "description": "Beam that ramps up damage; melts tanks."
+    },
+    {
+      "id": "icegolemite",
+      "name": "Ice Golemite",
+      "description": "Cheap tank; slows nearby enemies on death."
+    },
+    {
+      "id": "megaminion",
+      "name": "Mega Minion",
+      "description": "Sturdy flyer with a strong hit."
+    },
+    {
+      "id": "blowdartgoblin",
+      "name": "Blowdart Goblin",
+      "description": "Fast goblin shooting darts from range."
+    },
+    {
+      "id": "goblingang",
+      "name": "Goblin Gang",
+      "description": "Stab goblins and spear goblins together."
+    },
+    {
+      "id": "electrowizard",
+      "name": "Storm Mage",
+      "description": "Zaps two targets and stuns them; zaps on deploy."
+    },
+    {
+      "id": "angrybarbarians",
+      "name": "Angry Barbarians",
+      "description": "Fast, strong elite barbarians."
+    },
+    {
+      "id": "hunter",
+      "name": "Hunter",
+      "description": "Shotgun: huge damage up close, spreads out."
+    },
+    {
+      "id": "axeman",
+      "name": "Axe Man",
+      "description": "Throws an axe that hits going and coming back."
+    },
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "description": "Dashes in and hits hard."
+    },
+    {
+      "id": "royalrecruits",
+      "name": "Shield Company",
+      "description": "Six shielded recruits split across both lanes."
+    },
+    {
+      "id": "darkwitch",
+      "name": "Dark Witch",
+      "description": "Summons bats and hits up close."
+    },
+    {
+      "id": "bats",
+      "name": "Bats",
+      "description": "Five fast, cheap flyers."
+    },
+    {
+      "id": "ghost",
+      "name": "Phantom Guard",
+      "description": "Invisible until it attacks; splash damage."
+    },
+    {
+      "id": "ramrider",
+      "name": "Ram Charger",
+      "description": "Charges buildings and snares enemies."
+    },
+    {
+      "id": "minisparkys",
+      "name": "Arc Sentries",
+      "description": "Small machines firing electric charges."
+    },
+    {
+      "id": "rascals",
+      "name": "Alley Crew",
+      "description": "A tough boy plus two slingshot girls."
+    },
+    {
+      "id": "megaknight",
+      "name": "Titan Guardian",
+      "description": "Lands with a splash and jumps onto enemies."
+    },
+    {
+      "id": "skeletonballoon",
+      "name": "Skeleton Balloon",
+      "description": "Flies to buildings, dropping bombs and skeletons."
+    },
+    {
+      "id": "dartbarrell",
+      "name": "Dart Barrell",
+      "description": "A flying barrel that shoots darts."
+    },
+    {
+      "id": "wallbreakers",
+      "name": "Wallbreakers",
+      "description": "Run to buildings and explode."
+    },
+    {
+      "id": "royalhogs",
+      "name": "Siege Boars",
+      "description": "Four fast hogs that hit buildings only."
+    },
+    {
+      "id": "goblingiant",
+      "name": "Brute Carrier",
+      "description": "Building-giant carrying two spear goblins."
+    },
+    {
+      "id": "fisherman",
+      "name": "Fisherman",
+      "description": "Hooks enemies and drags them to him."
+    },
+    {
+      "id": "elitearcher",
+      "name": "Elite Archer",
+      "description": "Very high damage from long range."
+    },
+    {
+      "id": "electrodragon",
+      "name": "Storm Drake",
+      "description": "Chain lightning across three targets; stuns."
+    },
+    {
+      "id": "firecracker",
+      "name": "Blast Ranger",
+      "description": "Shoots a rocket that scatters; recoils back."
+    },
+    {
+      "id": "elixirgolem",
+      "name": "Elixir Golem",
+      "description": "Cheap tank, but gives the opponent elixir when it breaks."
+    },
+    {
+      "id": "battlehealer",
+      "name": "Dawn Healer",
+      "description": "Heals nearby friendly troops when she attacks."
+    },
+    {
+      "id": "skeletondragons",
+      "name": "Skeleton Dragons",
+      "description": "Two flying dragons with splash."
+    },
+    {
+      "id": "witchmother",
+      "name": "Hex Matron",
+      "description": "Turns troops she kills into hogs for you."
+    },
+    {
+      "id": "electrospirit",
+      "name": "Electro Spirit",
+      "description": "Jumps in and zaps a chain of enemies."
+    },
+    {
+      "id": "electrogiant",
+      "name": "Thunder Colossus",
+      "description": "Building-giant that zaps whoever hits it."
+    },
+    {
+      "id": "phoenix",
+      "name": "Phoenix",
+      "description": "Fiery flyer that can be reborn from its egg."
+    },
+    {
+      "id": "suspiciousbush",
+      "name": "Bramble Ambush",
+      "description": "Hidden bush carrying two goblins to buildings."
+    },
+    {
+      "id": "berserker",
+      "name": "Berserker",
+      "description": "Very fast melee attacks."
+    },
+    {
+      "id": "goblindemolisher",
+      "name": "Fuse Raider",
+      "description": "Throws explosives; charges when low on health."
+    },
+    {
+      "id": "giantbuffer",
+      "name": "Warhorn Giant",
+      "description": "Boosts the attacks of nearby friendly troops."
+    },
+    {
+      "id": "goblinmachine",
+      "name": "Scrap Walker",
+      "description": "Sturdy machine with a punch and rockets."
+    },
+    {
+      "id": "mergemaiden",
+      "name": "Skybound Maiden",
+      "description": "A fighter whose ground or flying form depends on available elixir."
+    },
+    {
+      "id": "fireball",
+      "name": "Fireball",
+      "description": "Spell: splash damage and knockback."
+    },
+    {
+      "id": "arrows",
+      "name": "Arrows",
+      "description": "Three volleys over a large area; great vs swarms."
+    },
+    {
+      "id": "rage",
+      "name": "Rage",
+      "description": "Speeds up your troops inside the area."
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket",
+      "description": "Huge damage in a small area."
+    },
+    {
+      "id": "goblinbarrel",
+      "name": "Raider Barrel",
+      "description": "Thrown anywhere; three goblins pop out."
+    },
+    {
+      "id": "freeze",
+      "name": "Freeze",
+      "description": "Freezes all enemies in the area for seconds."
+    },
+    {
+      "id": "mirror",
+      "name": "Mirror",
+      "description": "Repeats your last card for +1 elixir."
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning",
+      "description": "Strikes the three toughest targets in the area."
+    },
+    {
+      "id": "zap",
+      "name": "Zap",
+      "description": "Cheap instant zap that briefly stuns."
+    },
+    {
+      "id": "poison",
+      "name": "Poison",
+      "description": "Cloud that damages and slows over time."
+    },
+    {
+      "id": "graveyard",
+      "name": "Graveyard",
+      "description": "Spawns skeletons over time in the area."
+    },
+    {
+      "id": "log",
+      "name": "Log",
+      "description": "Rolls forward, hitting and pushing ground units."
+    },
+    {
+      "id": "tornado",
+      "name": "Tornado",
+      "description": "Pulls enemies to its centre and damages them."
+    },
+    {
+      "id": "clone",
+      "name": "Clone",
+      "description": "Clones your troops in the area (clones are fragile)."
+    },
+    {
+      "id": "earthquake",
+      "name": "Earthquake",
+      "description": "Damages ground units, extra damage to buildings."
+    },
+    {
+      "id": "barblog",
+      "name": "Barb Log",
+      "description": "Rolls and hits, then a barbarian jumps out."
+    },
+    {
+      "id": "heal",
+      "name": "Heal",
+      "description": "Jumps in and heals nearby friendly troops."
+    },
+    {
+      "id": "snowball",
+      "name": "Snowball",
+      "description": "Light damage that slows and knocks back."
+    },
+    {
+      "id": "royaldelivery",
+      "name": "Guard Drop",
+      "description": "Crate drops with damage; an armoured guard comes out."
+    },
+    {
+      "id": "darkmagic",
+      "name": "Dark Magic",
+      "description": "Vortex whose damage grows the longer enemies stay."
+    },
+    {
+      "id": "goblincurse",
+      "name": "Goblin Curse",
+      "description": "Cursed enemies become goblins for you when they die."
+    },
+    {
+      "id": "vines",
+      "name": "Vines",
+      "description": "Roots enemies and pulls flyers to the ground."
+    },
+    {
+      "id": "cannon",
+      "name": "Cannon",
+      "description": "Cheap defence vs ground; pulls tanks."
+    },
+    {
+      "id": "goblinhut_rework",
+      "name": "Goblin Hut",
+      "description": "Building that keeps spawning spear goblins."
+    },
+    {
+      "id": "mortar",
+      "name": "Mortar",
+      "description": "Very long-range splash artillery."
+    },
+    {
+      "id": "infernotower",
+      "name": "Ember Spire",
+      "description": "Ramp-up beam that melts tanks."
+    },
+    {
+      "id": "bombtower",
+      "name": "Bomb Tower",
+      "description": "Splash bombs; explodes when destroyed."
+    },
+    {
+      "id": "barbarianhut",
+      "name": "Barbarian Hut",
+      "description": "Building that keeps spawning barbarians."
+    },
+    {
+      "id": "tesla",
+      "name": "Tesla",
+      "description": "Hides underground; hits air and ground."
+    },
+    {
+      "id": "elixircollector",
+      "name": "Elixir Collector",
+      "description": "Produces extra elixir over time."
+    },
+    {
+      "id": "xbow",
+      "name": "Xbow",
+      "description": "Rapid long-range bolts; can hit towers."
+    },
+    {
+      "id": "tombstone",
+      "name": "Tombstone",
+      "description": "Spawns skeletons, more when destroyed."
+    },
+    {
+      "id": "firespirithut",
+      "name": "Firespirit Hut",
+      "description": "Keeps spawning fire spirits."
+    },
+    {
+      "id": "goblincage",
+      "name": "Goblin Cage",
+      "description": "A strong goblin brawler bursts out when it breaks."
+    },
+    {
+      "id": "goblindrill",
+      "name": "Burrow Drill",
+      "description": "Digs in anywhere and releases goblins."
+    }
+  ]
+}

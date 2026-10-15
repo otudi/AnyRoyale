@@ -6,9 +6,8 @@ import { UnitVisual } from './UnitFactory';
 import { forgedFileFor, visualFor } from './visualCatalog';
 
 /**
- * Finished card images (all original, generated at runtime): a rarity-coloured metallic frame
- * with bevel, gloss and corner gems, a radiant background, and either the unit's 3D model
- * (three-point lit, rendered with transparency onto the background) or a painted spell emblem.
+ * Original illustrated card portraits with a rarity-coloured metallic frame.
+ * Model portraits and painted spell emblems remain available when an image cannot load.
  * Cached as data URLs; used by the hand, the Cards page and the match intro.
  */
 
@@ -39,6 +38,26 @@ function lookFor(card: CardInfo): Look {
 
 export class CardArt {
   private cache = new Map<string, string>();
+
+  /** Load lightweight card illustrations independently of the battlefield models. */
+  async preload(catalog: CardInfo[]): Promise<void> {
+    await Promise.all(catalog.map((card) => new Promise<void>((resolve) => {
+      const image = new Image();
+      const timer = window.setTimeout(resolve, 8000);
+      image.onload = () => {
+        window.clearTimeout(timer);
+        try {
+          this.cache.set(card.id, compose(card, image));
+        } catch (error) {
+          console.warn('Card illustration failed for', card.id, error);
+        } finally {
+          resolve();
+        }
+      };
+      image.onerror = () => { window.clearTimeout(timer); resolve(); };
+      image.src = `${import.meta.env.BASE_URL}assets/card-art/${card.id}.webp?v=1`;
+    })));
+  }
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(28, W / H, 0.1, 60);
   private target: THREE.WebGLRenderTarget;
@@ -151,7 +170,7 @@ function roundRect(g: CanvasRenderingContext2D, x: number, y: number, w: number,
   g.closePath();
 }
 
-function compose(card: CardInfo, portrait: HTMLCanvasElement | null): string {
+function compose(card: CardInfo, portrait: HTMLCanvasElement | HTMLImageElement | null): string {
   const look = lookFor(card);
   const c = document.createElement('canvas');
   c.width = W;
@@ -200,7 +219,7 @@ function compose(card: CardInfo, portrait: HTMLCanvasElement | null): string {
     g.beginPath();
     g.ellipse(W / 2, H * 0.86, W * 0.4, H * 0.06, 0, 0, Math.PI * 2);
     g.fill();
-    g.drawImage(portrait, 0, 0);
+    g.drawImage(portrait, 0, 0, W, H);
   } else {
     g.save();
     g.translate(W / 2, H * 0.47);
