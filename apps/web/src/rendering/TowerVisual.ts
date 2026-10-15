@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { addOutlines } from './outline';
 import { assets } from '../assets/AssetLoader';
 import { mergeStatic } from './mergeStatic';
 import { towerTopCharacter, type Side, UnitVisual } from './UnitFactory';
@@ -36,12 +35,17 @@ export class TowerVisual {
         m.receiveShadow = true;
       }
     });
-    addOutlines(b.group);
+    // Drawn smaller than their footprint so troops keep their scale next to them (the engine's
+    // tower size, targeting and collision are unchanged): slimmer bases, the king's keep stays the
+    // largest building on the field.
+    const sxz = kind === 'K' ? 0.8 : 0.72;
+    const sy = kind === 'K' ? 0.86 : 0.8;
+    b.group.scale.set(sxz, sy, sxz);
     this.root.add(b.group);
     this.building = b.group;
-    this.height = b.topY;
+    this.height = b.topY * sy;
     this.top = towerTopCharacter(kind === 'K' ? 'king' : 'archer', side);
-    this.top.root.position.y = b.topY - (kind === 'K' ? 0.25 : 0.15);
+    this.top.root.position.y = this.height - (kind === 'K' ? 0.22 : 0.12);
     this.root.add(this.top.root);
   }
 
@@ -51,7 +55,7 @@ export class TowerVisual {
     if (this.kind === 'K') {
       if (!active && !this.zzz) {
         this.zzz = makeZzz();
-        this.zzz.position.set(0.5, this.height + 1.4, 0);
+        this.zzz.position.set(0.5, this.height + 1.2, 0);
         this.root.add(this.zzz);
       } else if (active && this.zzz) {
         this.zzz.removeFromParent();
@@ -68,7 +72,7 @@ export class TowerVisual {
     if (this.destroyed) return;
     this.top.update(dt, 0, { frozen });
     if (this.zzz) {
-      this.zzz.position.y = this.height + 1.4 + Math.sin(this.time * 2) * 0.15;
+      this.zzz.position.y = this.height + 1.2 + Math.sin(this.time * 2) * 0.15;
       this.zzz.material.opacity = 0.6 + Math.sin(this.time * 3) * 0.3;
     }
   }
@@ -90,7 +94,7 @@ export class TowerVisual {
       const r = src.clone();
       const box = new THREE.Box3().setFromObject(r);
       const w = Math.max(box.max.x - box.min.x, box.max.z - box.min.z, 0.01);
-      r.scale.multiplyScalar((this.kind === 'K' ? 3.6 : 2.8) / w);
+      r.scale.multiplyScalar((this.kind === 'K' ? 3.0 : 2.2) / w);
       const box2 = new THREE.Box3().setFromObject(r);
       r.position.y -= box2.min.y - 0.25;
       this.root.add(r);

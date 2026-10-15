@@ -95,13 +95,34 @@ export function isValid(card: CardInfo, gx: number, gy: number, team: TeamName, 
   }
 }
 
-/** 18x32 validity grid for the overlay (true = can deploy a troop there). */
-export function troopGrid(team: TeamName, towers: TowerState, kind: PlacementKind): boolean[][] {
+export type PlacementReason = 'river' | 'enemySide' | 'tower' | 'edge' | 'footprint';
+
+/** Why {@link isValid} refused a spot, for the short message shown to the player. */
+export function invalidReason(card: CardInfo, gx: number, gy: number, team: TeamName, towers: TowerState): PlacementReason {
+  const tx = Math.floor(gx / 1000);
+  const ty = Math.floor(gy / 1000);
+  if (tx < 0 || tx > 17 || ty < 0 || ty > 31 || bannedTile(tx, ty)) return 'edge';
+  if (towerTile(tx, ty, towers)) return 'tower';
+  if (ty === 15 || ty === 16) return 'river';
+  if (!ownZone(ty, team) && !inPocket(tx, ty, team, towers) && placementKind(card) !== 'anywhere') return 'enemySide';
+  return 'footprint';
+}
+
+/**
+ * 18x32 validity grid for the overlay (true = can deploy there). For buildings a tile is marked
+ * valid only when the building dropped on that tile (snapped like a real drop) fits, so the
+ * shading always agrees with what a release would do.
+ */
+export function troopGrid(team: TeamName, towers: TowerState, kind: PlacementKind, card?: CardInfo): boolean[][] {
   const grid: boolean[][] = [];
   for (let ty = 0; ty < 32; ty++) {
     const row: boolean[] = [];
     for (let tx = 0; tx < 18; tx++) {
       if (kind === 'spell') row.push(true);
+      else if (kind === 'building' && card) {
+        const s = snap(tx * 1000 + 500, ty * 1000 + 500, card);
+        row.push(isValid(card, s.gx, s.gy, team, towers));
+      }
       else if (kind === 'anywhere') row.push(!bannedTile(tx, ty) && !towerTile(tx, ty, towers) && ty !== 15 && ty !== 16);
       else row.push(tileValidForTroop(tx, ty, team, towers));
     }

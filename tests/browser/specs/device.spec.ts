@@ -3,7 +3,7 @@ import { affordableTroopSlot, openPlayer, ownSpot, state, surrender, waitElixir,
 
 test('touch drag deploys a card (real touch events, Chromium CDP)', async ({ browser, browserName }) => {
   test.skip(browserName !== 'chromium', 'CDP touch emulation is Chromium-only; other engines use the pointer drag tests');
-  const p = await openPlayer(browser, { hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+  const p = await openPlayer(browser, { hasTouch: true, isMobile: true, viewport: { width: 844, height: 390 } });
   await p.page.locator('[data-act="bot"]').tap();
   await p.page.locator('[data-act="d_easy"]').tap();
   const s = await waitRunning(p.page);
@@ -74,18 +74,74 @@ test('dropping a troop on the enemy side is refused before reaching the server',
   await p.ctx.close();
 });
 
-test('rotating the device keeps the battle rendering and the tray usable', async ({ browser }) => {
+test('the near touchline beside the card tray accepts a drop', async ({ browser }) => {
+  // In landscape the tray is a centred panel: the field to its left and right, right down to the
+  // tray's height, is deployable (the tray check used to look at the height only).
+  const p = await openPlayer(browser, { viewport: { width: 844, height: 390 } });
+  await p.page.locator('[data-act="bot"]').click();
+  await p.page.locator('[data-act="d_easy"]').click();
+  const s = await waitRunning(p.page);
+  await waitElixir(p.page, 4);
+  const slot = await affordableTroopSlot(p.page);
+  const tray = (await p.page.locator('.tray').boundingBox())!;
+  const own = (ty: number) => (s.match!.you === 'BLUE' ? ty < 15 : ty > 16);
+  // a free own tile drawn at about the tray's top edge, beside the tray
+  const spot = await p.page.evaluate(
+    ([tray, you]) => {
+      const app = (window as any).__anyroyale;
+      for (let ty = 0; ty < 32; ty++) {
+        if (!(you === 'BLUE' ? ty < 14 : ty > 17)) continue;
+        for (let tx = 0; tx < 18; tx++) {
+          // not a tower tile, a banned back corner or a tile next to them
+          const king = tx >= 6 && tx <= 11 && (ty <= 5 || ty >= 26);
+          const princess = ((tx >= 1 && tx <= 5) || (tx >= 12 && tx <= 16)) && ((ty >= 4 && ty <= 8) || (ty >= 23 && ty <= 27));
+          if (king || princess || ty === 0 || ty === 31) continue;
+          const q = app.debugProject(tx * 1000 + 500, ty * 1000 + 500);
+          const el = document.elementFromPoint(q.x, q.y);
+          if (q.y > tray.y - 40 && (q.x < tray.x - 10 || q.x > tray.x + tray.width + 10) && el?.classList.contains('game-canvas')) {
+            return { tx, ty, x: q.x, y: q.y };
+          }
+        }
+      }
+      return null;
+    },
+    [tray, s.match!.you] as const,
+  );
+  expect(spot, 'some own field tile is drawn next to the tray').not.toBeNull();
+  expect(own(spot!.ty)).toBe(true);
+  const box = (await p.page.locator(`[data-slot="${slot}"]`).boundingBox())!;
+  await p.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await p.page.mouse.down();
+  await p.page.mouse.move(box.x + box.width / 2, box.y - 30, { steps: 3 });
+  await p.page.mouse.move(spot!.x, spot!.y, { steps: 6 });
+  await p.page.mouse.up();
+  await expect.poll(async () => (await state(p.page)).match!.view.units, { timeout: 15_000 }).toBeGreaterThan(0);
+  await surrender(p.page);
+  await p.ctx.close();
+});
+
+test('upright screens get a rotate prompt; turning the device removes it and the battle stays usable', async ({ browser }) => {
   const p = await openPlayer(browser, { viewport: { width: 390, height: 844 } });
   await p.page.locator('[data-act="bot"]').click();
   await p.page.locator('[data-act="d_easy"]').click();
+  // the prompt is up from the intro on (before the battle starts)
+  await expect(p.page.locator('#rotate-hint')).toBeVisible({ timeout: 30_000 });
   await waitRunning(p.page);
   await p.page.setViewportSize({ width: 844, height: 390 });
-  await p.page.waitForTimeout(1000);
+  await expect(p.page.locator('#rotate-hint')).toBeHidden();
   const canvas = await p.page.locator('canvas.game-canvas').boundingBox();
-  expect(canvas!.height).toBeGreaterThan(300);
+  expect(canvas!.width).toBeGreaterThan(800);
   await expect(p.page.locator('[data-slot="0"]')).toBeVisible();
+  // the side view: own king tower on the left half of the screen, the enemy's on the right
+  const s = await state(p.page);
+  const ownKing = await p.page.evaluate(([y]) => (window as any).__anyroyale.debugProject(9000, y), [s.match!.you === 'BLUE' ? 3000 : 29000]);
+  const enemyKing = await p.page.evaluate(([y]) => (window as any).__anyroyale.debugProject(9000, y), [s.match!.you === 'BLUE' ? 29000 : 3000]);
+  expect(ownKing.x).toBeLessThan(844 / 2);
+  expect(enemyKing.x).toBeGreaterThan(844 / 2);
   await p.page.setViewportSize({ width: 390, height: 844 });
-  await p.page.waitForTimeout(500);
+  await expect(p.page.locator('#rotate-hint')).toBeVisible();
+  await p.page.locator('[data-rotate-anyway]').click();
+  await expect(p.page.locator('#rotate-hint')).toBeHidden();
   const t0 = (await state(p.page)).match!.tick;
   await expect.poll(async () => (await state(p.page)).match!.tick).toBeGreaterThan(t0);
   await surrender(p.page);

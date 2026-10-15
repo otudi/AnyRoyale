@@ -9,6 +9,7 @@ import { loadIdentity, provisionalName, saveIdentity } from '../network/identity
 import type { CardInfo, MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
 import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
+import { CardSizePreview } from './CardSizePreview';
 import { forgedFileFor } from '../rendering/visualCatalog';
 import { Renderer3D } from '../rendering/Renderer3D';
 import { CORE_MODEL_FILES, resetClipCache } from '../rendering/UnitFactory';
@@ -619,9 +620,11 @@ export class App {
       <div class="mm-field"><label>${t('music')}</label><input type="range" min="0" max="1" step="0.05" value="${s.music}" data-s="music" /></div>
       <div class="mm-field"><label>${t('sfx')}</label><input type="range" min="0" max="1" step="0.05" value="${s.sfx}" data-s="sfx" /></div>
       <div class="mm-field"><label>${t('quality')}</label><select data-s="quality">
-        <option value="auto" ${s.quality === 'auto' ? 'selected' : ''}>${t('qualityAuto')}</option>
-        <option value="high" ${s.quality === 'high' ? 'selected' : ''}>${t('qualityHigh')}</option>
-        <option value="low" ${s.quality === 'low' ? 'selected' : ''}>${t('qualityLow')}</option></select></div>
+        <option value="low" ${s.quality === 'low' ? 'selected' : ''}>${t('qualityLow')}</option>
+        <option value="medium" ${s.quality === 'medium' ? 'selected' : ''}>${t('qualityMedium')}</option>
+        <option value="high" ${s.quality === 'high' ? 'selected' : ''}>${t('qualityHigh')}</option></select></div>
+      <div class="mm-field"><label>${t('cardSize')}</label><span class="mm-size-row"><b data-card-size-name>${t(`cardSize${s.cardSize}` as 'cardSize1')}</b>
+        <button class="mm-btn small" data-m="preview">${t('preview')}</button></span></div>
       <div class="mm-field"><label>${t('language')}</label><select data-s="lang">
         <option value="ar" ${getLang() === 'ar' ? 'selected' : ''}>العربية</option>
         <option value="en" ${getLang() === 'en' ? 'selected' : ''}>English</option></select></div>
@@ -642,6 +645,13 @@ export class App {
       this.rerender();
     });
     modal.querySelector('[data-m="close"]')!.addEventListener('click', () => modal.remove());
+    modal.querySelector('[data-m="preview"]')!.addEventListener('click', () => {
+      modal.remove();
+      new CardSizePreview(this.r, this.art, this.hudRoot, () => {
+        this.rerender();
+        this.showSettings();
+      });
+    });
   }
 
   toast(text: string): void {
@@ -769,7 +779,36 @@ export class App {
     if (['roomNotFound', 'serverFull'].includes(code) && this.screen === 'queue') this.showHome();
   }
 
+  /**
+   * Marks the page as "in a match" (intro + battle): on an upright screen the rotate prompt shows.
+   * Where the browser allows it (installed app / fullscreen) we also ask for landscape; elsewhere
+   * the prompt is the guidance.
+   */
+  private setInMatch(on: boolean): void {
+    const root = document.documentElement;
+    if (on && !root.classList.contains('in-match')) {
+      root.classList.remove('rotate-dismissed');
+      const hint = document.getElementById('rotate-hint');
+      if (hint) {
+        hint.innerHTML = `<div class="phone"></div><h2></h2><p></p><button type="button" data-rotate-anyway></button>`;
+        hint.querySelector('h2')!.textContent = t('rotateTitle');
+        hint.querySelector('p')!.textContent = t('rotateBody');
+        const btn = hint.querySelector<HTMLButtonElement>('[data-rotate-anyway]')!;
+        btn.textContent = t('rotateAnyway');
+        btn.addEventListener('click', () => root.classList.add('rotate-dismissed'));
+      }
+      const o = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> };
+      try {
+        void o?.lock?.('landscape').catch(() => {});
+      } catch {
+        // not supported: the prompt guides the player instead
+      }
+    }
+    root.classList.toggle('in-match', on);
+  }
+
   private async onMatchStart(m: MatchStart): Promise<void> {
+    this.setInMatch(true);
     if (this.battle && this.battle.matchId === m.matchId) {
       // Reconnected to the same match: resynchronise from fresh snapshots.
       this.battle.view.resync();
@@ -781,6 +820,7 @@ export class App {
     }
     this.searching = false;
     this.disposeBattle();
+    this.setInMatch(true); // after disposeBattle(), which clears it
     this.lastSeed = m.mode === 'bot' ? m.seed : null;
     this.roomCode = null;
     // Make sure every bundle this arena and deck can use is loaded before building the scene.
@@ -861,6 +901,7 @@ export class App {
   }
 
   private showResult(m: MatchEnd): void {
+    this.setInMatch(false);
     if (this.resultEnd !== m) return;
     const you = this.battle?.start.you ?? 'BLUE';
     const opp = you === 'BLUE' ? 'RED' : 'BLUE';
@@ -908,6 +949,7 @@ export class App {
   }
 
   private disposeBattle(): void {
+    this.setInMatch(false);
     if (this.battle) {
       this.battle.dispose();
       this.battle = null;

@@ -43,7 +43,7 @@ export default defineConfig({
     {
       name: 'chromium-mobile',
       use: {
-        ...devices['Pixel 7'],
+        ...devices['Pixel 7 landscape'],
         launchOptions: { executablePath: chromiumPath, args: gl },
       },
     },
@@ -56,7 +56,7 @@ export default defineConfig({
     },
     {
       name: 'webkit-iphone',
-      use: { ...devices['iPhone 14'] },
+      use: { ...devices['iPhone 14 landscape'] },
     },
     {
       name: 'webkit-desktop',

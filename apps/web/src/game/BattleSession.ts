@@ -55,7 +55,10 @@ export class BattleSession {
     this.input = new DragDeploy(stage, r, this.hud, this.preview, start.you, () => this.towers);
     this.input.enabled = false;
     this.input.onPlay = (slot, card, gx, gy) => this.play(slot, card.id, card.cost, gx, gy);
-    this.input.onInvalid = (reason) => this.hud.toast(reason === 'elixir' ? t('notEnoughElixir') : t('invalidPlacement'));
+    this.input.onInvalid = (reason) => {
+      const key = { elixir: 'notEnoughElixir', river: 'placeRiver', enemySide: 'placeEnemySide', tower: 'placeTower', edge: 'placeEdge', footprint: 'placeFootprint' } as const;
+      this.hud.toast(t(key[reason]));
+    };
     this.hud.onSurrender = () => this.onSurrender();
     this.view.onPhase = (phase) => {
       if (phase === 'double') this.hud.banner(t('doubleElixir'));
@@ -124,7 +127,9 @@ export class BattleSession {
           this.view.cancelLocalPlay(p.cardId);
         }
         audio.play('reject', { volume: 0.6 });
-        this.hud.toast(msg.reason === 'elixir' ? t('notEnoughElixir') : t('invalidPlacement'));
+        // only a real placement refusal says "can't deploy here"; a hand that changed under the
+        // play (or any other race) is not the player's spot being wrong
+        this.hud.toast(msg.reason === 'elixir' ? t('notEnoughElixir') : msg.reason === 'placement' ? t('invalidPlacement') : t('playFailed'));
         break;
       }
       case 'opponentStatus':

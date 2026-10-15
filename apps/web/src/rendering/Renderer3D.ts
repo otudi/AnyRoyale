@@ -12,6 +12,10 @@ import { getSettings, onSettings, type Quality } from '../ui/settings';
  * pixel ratio 1. "auto" starts high on capable devices and lowers the resolution when the frame
  * rate stays under ~45 FPS (and raises it again when there is headroom).
  */
+/** Side-view camera: vertical field of view and downward tilt (degrees). */
+const SIDE_FOV = 22;
+const SIDE_TILT = 33;
+
 export class Renderer3D {
   readonly scene = new THREE.Scene();
   readonly camera: THREE.PerspectiveCamera;
@@ -94,11 +98,17 @@ export class Renderer3D {
     return this.renderer.shadowMap.enabled;
   }
 
+  /** The player's quality setting: low (battery), medium (phones), high (desktop). */
+  tier: Quality = 'medium';
+
   private applyQuality(q: Quality, caps: { strong: boolean; mobile: boolean }): void {
-    const high = q === 'high' || (q === 'auto' && caps.strong);
-    this.quality = high ? 'high' : 'low';
-    // Phones: no shadow map (a second render pass of every caster); units use blob shadows.
-    const shadows = q === 'high' || (q === 'auto' && caps.strong && !caps.mobile);
+    this.tier = q;
+    // geometry/particle detail: medium and high share it; low trims the scenery and effects
+    this.quality = q === 'low' ? 'low' : 'high';
+    void caps;
+    // Real-time shadows only on "high" (a second render pass of every caster); otherwise units
+    // get soft blob shadows.
+    const shadows = q === 'high';
     this.renderer.shadowMap.enabled = shadows;
     this.sun.castShadow = shadows;
     this.sun.shadow.mapSize.set(shadows ? 2048 : 512, shadows ? 2048 : 512);
@@ -106,7 +116,7 @@ export class Renderer3D {
     this.sun.shadow.map = null;
     // Fill rate dominates on phones: 1.5x density looks sharp and costs ~45% fewer pixels than 2x.
     const dpr = window.devicePixelRatio || 1;
-    this.maxPixelRatio = q === 'low' ? 1 : q === 'high' ? Math.min(dpr, 2) : Math.min(dpr, caps.mobile ? 1.5 : 2);
+    this.maxPixelRatio = q === 'low' ? 1 : q === 'high' ? Math.min(dpr, 2) : Math.min(dpr, 1.5);
     this.pixelRatio = this.maxPixelRatio;
     this.renderer.setPixelRatio(this.pixelRatio);
     this.resize();
@@ -125,10 +135,13 @@ export class Renderer3D {
   /** Fraction of the screen covered by the card tray (bottom) and top HUD; set by the HUD. */
   private trayFraction = 0.2;
   private topFraction = 0.075;
+  /** Fraction of the screen width covered on the left (the card size preview's side panel). */
+  private leftFraction = 0;
 
-  setInsets(trayFraction: number, topFraction: number): void {
+  setInsets(trayFraction: number, topFraction: number, leftFraction = 0): void {
     this.trayFraction = trayFraction;
     this.topFraction = topFraction;
+    this.leftFraction = leftFraction;
     this.layoutCamera();
   }
 
@@ -145,10 +158,10 @@ export class Renderer3D {
     const w = Math.max(1, this.container.clientWidth);
     const h = Math.max(1, this.container.clientHeight);
     this.landscape = w > h * 1.05;
-    if (this.landscape) {
-      this.layoutSideView(w, h);
-      return;
-    }
+    // Battles are always shown from the side (own half left, enemy right). On a portrait screen
+    // the HUD asks the player to turn the device; the view stays correct meanwhile.
+    this.layoutSideView(w, h);
+    return;
     this.rim.position.set(3 * this.side, 7, -16 * this.side);
     const cam = this.camera;
     cam.aspect = w / h;
@@ -207,22 +220,28 @@ export class Renderer3D {
   private layoutSideView(w: number, h: number): void {
     const cam = this.camera;
     cam.aspect = w / h;
-    cam.fov = 30;
+    // Narrow field of view = mild perspective: the far lane's troops stay nearly as big as the
+    // near lane's. A lower tilt shows the sides of troops and towers (tuned from screenshots).
+    cam.fov = SIDE_FOV;
     cam.updateProjectionMatrix();
     const s = this.side; // blue: camera on +x, so +z (own half) is on the left
-    const tilt = THREE.MathUtils.degToRad(47);
+    const tilt = THREE.MathUtils.degToRad(SIDE_TILT);
     const bottom = -1 + 2 * (this.trayFraction + 0.01);
     const top = 1 - 2 * (this.topFraction + 0.03);
     const v = new THREE.Vector3();
+    // tz slides the view along the field (screen horizontal) when a side panel covers the left
+    let tz = 0;
     const place = (d: number, tx: number) => {
-      cam.position.set(s * (tx + Math.cos(tilt) * d), Math.sin(tilt) * d, 0);
-      cam.lookAt(s * tx, 0, 0);
+      cam.position.set(s * (tx + Math.cos(tilt) * d), Math.sin(tilt) * d, tz);
+      cam.lookAt(s * tx, 0, tz);
       cam.updateMatrixWorld(true);
     };
+    const left = -1 + 2 * this.leftFraction + (this.leftFraction > 0 ? 0.02 : 0.03);
+    const right = 0.97;
     const nearY = () => Math.min(v.set(s * 9.9, 0, 16.6).project(cam).y, v.set(s * 9.9, 0, 0).project(cam).y);
     // far touchline, and the far towers with their health bars
     const farY = () =>
-      Math.max(v.set(-s * 9.9, 0.6, 0).project(cam).y, v.set(-s * 5.5, 4.6, 9.5).project(cam).y, v.set(-s * 5.5, 4.6, -9.5).project(cam).y);
+      Math.max(v.set(-s * 9.9, 0.6, 0).project(cam).y, v.set(-s * 5.5, 3.6, 9.5).project(cam).y, v.set(-s * 5.5, 3.6, -9.5).project(cam).y);
     let d = 38;
     let tx = 0;
     for (let iter = 0; iter < 40; iter++) {
@@ -233,11 +252,25 @@ export class Renderer3D {
       const mid = (farY() + nearY()) / 2;
       tx += ((bottom + top) / 2 - mid) * d * 0.25;
     }
+    const xs = () => {
+      const a = v.set(s * 9.9, 0, 16.8).project(cam).x;
+      const b = v.set(s * 9.9, 0, -16.8).project(cam).x;
+      return [Math.min(a, b), Math.max(a, b)];
+    };
     for (let iter = 0; iter < 30; iter++) {
       place(d, tx);
-      const x = Math.max(Math.abs(v.set(s * 9.9, 0, 16.8).project(cam).x), Math.abs(v.set(s * 9.9, 0, -16.8).project(cam).x));
-      if (x <= 0.97) break;
-      d *= x / 0.97;
+      const [x0, x1] = xs();
+      if (x0 >= left - 1e-3 && x1 <= right + 1e-3) break;
+      d *= Math.max(1, (x1 - x0) / (right - left));
+      place(d, tx);
+      // centre the near touchline between the side insets (numerical slope: sign-agnostic)
+      const [a0, a1] = xs();
+      tz += 0.5;
+      place(d, tx);
+      const [b0, b1] = xs();
+      const slope = ((b0 + b1) - (a0 + a1)) / 2 / 0.5;
+      tz -= 0.5;
+      if (Math.abs(slope) > 1e-6) tz += ((left + right) / 2 - (a0 + a1) / 2) / slope;
       place(d, tx);
       tx += (bottom - nearY()) * d * 0.25;
     }
@@ -286,7 +319,9 @@ export class Renderer3D {
 
   /** Short camera shake for big explosions and tower destruction. */
   kick(strength: number): void {
-    this.shake = Math.min(0.6, this.shake + strength);
+    // The camera stays still during play (a moving view makes card drops miss); impacts are shown
+    // by effects instead.
+    void strength;
   }
 
   private applyShake(dt: number): void {
@@ -306,7 +341,7 @@ export class Renderer3D {
     this.fps = this.fpsFrames / this.fpsTime;
     this.fpsFrames = 0;
     this.fpsTime = 0;
-    if (getSettings().quality !== 'auto') return;
+    if (getSettings().quality !== 'medium') return; // medium adapts its resolution to keep FPS
     if (this.fps < 45) {
       this.lowFpsSeconds++;
       this.highFpsSeconds = 0;

@@ -1,6 +1,6 @@
 import { audio } from '../audio/AudioManager';
 import { cards } from '../game/cards';
-import { isValid, placementKind, snap, troopGrid, type TowerState } from '../game/placement';
+import { invalidReason, isValid, placementKind, snap, troopGrid, type PlacementReason, type TowerState } from '../game/placement';
 import type { CardInfo, TeamName } from '../network/protocol';
 import { fromWorld } from '../rendering/coords';
 import type { DeployPreview } from '../rendering/DeployPreview';
@@ -22,7 +22,7 @@ export class DragDeploy {
   private moved = false;
   enabled = true;
   onPlay: (slot: number, card: CardInfo, gx: number, gy: number) => void = () => {};
-  onInvalid: (reason: 'elixir' | 'placement') => void = () => {};
+  onInvalid: (reason: 'elixir' | PlacementReason) => void = () => {};
 
   private readonly onKey = (e: KeyboardEvent) => {
     if (!this.enabled) return;
@@ -63,7 +63,7 @@ export class DragDeploy {
     }
     this.hud.select(slot);
     audio.play('select', { volume: 0.6 });
-    this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card)));
+    this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card), card));
   }
 
   private onCardDown = (e: PointerEvent, slot: number) => {
@@ -73,7 +73,7 @@ export class DragDeploy {
     if (!card) return;
     this.hud.select(slot);
     audio.play('select', { volume: 0.6 });
-    this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card)));
+    this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card), card));
     this.dragging = true;
     this.moved = false;
     this.pointerId = e.pointerId;
@@ -91,22 +91,25 @@ export class DragDeploy {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  /**
+   * Is the pointer over the card tray? Both axes count: in landscape the tray is a narrow centred
+   * panel, and the field to its left and right (down to the bottom edge) is still deployable.
+   */
   private overTray(e: PointerEvent): boolean {
     const rect = this.hud.tray.getBoundingClientRect();
-    return e.clientY >= rect.top + 6;
+    return e.clientY >= rect.top + 6 && e.clientX >= rect.left && e.clientX <= rect.right;
   }
 
-  private evaluate(e: PointerEvent): { gx: number; gy: number; valid: boolean } | null {
+  private evaluate(e: PointerEvent): { gx: number; gy: number; valid: boolean; card: CardInfo } | null {
     const slot = this.hud.selected;
     const card = this.card(slot);
     if (!card || this.overTray(e)) return null;
     const p = this.local(e);
     const hit = this.r.pickGround(p.x, p.y);
     if (!hit) return null;
-    // Lift the touch point a little so the finger does not hide the ghost (drag only).
     const g = fromWorld(hit.x, hit.z);
     const snapped = snap(g.gx, g.gy, card);
-    return { ...snapped, valid: isValid(card, snapped.gx, snapped.gy, this.team, this.towers()) };
+    return { ...snapped, card, valid: isValid(card, snapped.gx, snapped.gy, this.team, this.towers()) };
   }
 
   private onMove = (e: PointerEvent) => {
@@ -121,7 +124,7 @@ export class DragDeploy {
       this.preview.show(card, at.gx, at.gy, at.valid);
     } else {
       this.preview.hide();
-      if (card) this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card)));
+      if (card) this.preview.showGrid(troopGrid(this.team, this.towers(), placementKind(card), card));
     }
   };
 
@@ -148,12 +151,12 @@ export class DragDeploy {
     if (at) this.tryPlay(at);
   };
 
-  private tryPlay(at: { gx: number; gy: number; valid: boolean }): void {
+  private tryPlay(at: { gx: number; gy: number; valid: boolean; card: CardInfo }): void {
     const slot = this.hud.selected;
     const card = this.card(slot);
     if (!card) return;
     if (!at.valid) {
-      this.onInvalid('placement');
+      this.onInvalid(invalidReason(card, at.gx, at.gy, this.team, this.towers()));
       this.hud.shake(slot);
       audio.play('reject', { volume: 0.6 });
       this.cancel();

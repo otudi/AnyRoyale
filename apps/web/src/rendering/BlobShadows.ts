@@ -58,3 +58,53 @@ export class BlobShadows {
     this.mesh.removeFromParent();
   }
 }
+
+/** Small team-coloured rings under troops' feet (one instanced draw): who is whose at a glance. */
+export class TeamRings {
+  readonly mesh: THREE.InstancedMesh;
+  private count = 0;
+  private m = new THREE.Matrix4();
+  private q = new THREE.Quaternion();
+  private p = new THREE.Vector3();
+  private s = new THREE.Vector3();
+  private c = new THREE.Color();
+
+  constructor(private readonly capacity = 200) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = 64;
+    const g = cv.getContext('2d')!;
+    g.strokeStyle = 'rgba(255,255,255,0.9)';
+    g.lineWidth = 5;
+    g.beginPath();
+    g.arc(32, 32, 26, 0, Math.PI * 2);
+    g.stroke();
+    const tex = new THREE.CanvasTexture(cv);
+    const geo = new THREE.PlaneGeometry(1, 1);
+    geo.rotateX(-Math.PI / 2);
+    this.mesh = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0.75 }), capacity);
+    this.mesh.frustumCulled = false;
+    this.mesh.renderOrder = 1;
+    this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.mesh.count = 0;
+  }
+
+  begin(): void {
+    this.count = 0;
+  }
+
+  add(x: number, z: number, size: number, color: number): void {
+    if (this.count >= this.capacity) return;
+    this.p.set(x, 0.035, z);
+    this.s.set(size, 1, size);
+    this.m.compose(this.p, this.q, this.s);
+    this.mesh.setMatrixAt(this.count, this.m);
+    this.mesh.setColorAt(this.count, this.c.setHex(color));
+    this.count++;
+  }
+
+  end(): void {
+    this.mesh.count = this.count;
+    this.mesh.instanceMatrix.needsUpdate = true;
+    if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
+  }
+}

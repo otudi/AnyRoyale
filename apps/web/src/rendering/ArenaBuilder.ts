@@ -68,6 +68,11 @@ function smoothstep(a: number, b: number, x: number): number {
 
 // Arena layout in game tiles (x: 0..18, y: 0..32 from the blue back edge), from crforge's Arena.
 const LANES = [3.5, 14.5];
+/** River extent outside the field (world units from the centre): spring behind, waterfall in front. */
+const RIVER_FAR = 30;
+const RIVER_NEAR = 13.6;
+/** Height of the ledge in the foreground the river falls over. */
+const CLIFF_DROP = 2.6;
 const PRINCESS_Y = 6.5;
 const KING_Y = 3;
 
@@ -91,10 +96,10 @@ function colored(src: THREE.BufferGeometry, paint: (x: number, y: number, z: num
 }
 
 const WATER_VERT = /* glsl */ `
-varying vec2 vUv;
+varying vec3 vW;
 #include <fog_pars_vertex>
 void main() {
-  vUv = uv;
+  vW = (modelMatrix * vec4(position, 1.0)).xyz;
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
   gl_Position = projectionMatrix * mvPosition;
   #include <fog_vertex>
@@ -105,12 +110,16 @@ uniform float uTime;
 uniform vec3 uShallow;
 uniform vec3 uDeep;
 uniform vec3 uFoam;
-varying vec2 vUv;
+uniform float uFlow;
+uniform float uHalfWidth;
+uniform float uDetail;
+varying vec3 vW;
 #include <common>
 #include <fog_pars_fragment>
 void main() {
-  vec2 p = vec2(vUv.x * 18.0, vUv.y * 2.0);
-  float edge = abs(vUv.y - 0.5) * 2.0;
+  // world space: x runs along the river (flowing towards +uFlow), z across it
+  vec2 p = vec2(vW.x * uFlow, vW.z);
+  float edge = clamp(abs(vW.z) / uHalfWidth, 0.0, 1.0);
   vec3 col = mix(uDeep, uShallow, smoothstep(0.1, 1.0, edge));
   float t = uTime;
   vec2 q = p * vec2(1.25, 2.3);
@@ -118,12 +127,30 @@ void main() {
   c += sin(q.x * 1.3 - t * 0.9 + q.y * 2.7 + sin(q.x * 0.7 - t * 0.5) * 1.5);
   c += sin((q.x + q.y) * 1.7 + t * 1.7);
   c /= 3.0;
-  col += smoothstep(0.5, 0.95, c) * 0.2;
+  col += smoothstep(0.5, 0.95, c) * 0.2 * uDetail;
   float streak = smoothstep(0.93, 1.0, sin(p.x * 0.9 - t * 1.6 + sin(p.y * 4.0 + p.x * 0.3) * 0.8) * 0.5 + 0.5);
   col += streak * (1.0 - edge) * 0.16;
   float foam = smoothstep(0.74, 1.0, edge + 0.07 * sin(p.x * 3.1 + t * 2.0) + 0.04 * sin(p.x * 7.3 - t * 3.0));
   col = mix(col, uFoam, foam * 0.8);
   gl_FragColor = vec4(col, 1.0);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+  #include <fog_fragment>
+}`;
+
+const FALL_FRAG = /* glsl */ `
+uniform float uTime;
+uniform vec3 uShallow;
+uniform vec3 uFoam;
+varying vec3 vW;
+#include <common>
+#include <fog_pars_fragment>
+void main() {
+  float a = vW.z * 3.1 + sin(vW.z * 1.7) * 0.6;
+  float s1 = smoothstep(0.55, 1.0, sin(vW.y * 2.6 + uTime * 6.0 + sin(a) * 2.0) * 0.5 + 0.5);
+  float s2 = smoothstep(0.7, 1.0, sin(vW.y * 4.3 + uTime * 8.5 + a * 1.3) * 0.5 + 0.5);
+  vec3 col = mix(uShallow, uFoam, clamp(s1 * 0.55 + s2 * 0.45, 0.0, 1.0));
+  gl_FragColor = vec4(col, 0.92);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
@@ -140,6 +167,8 @@ export class ArenaBuilder {
   readonly root = new THREE.Group();
   private disposables: { dispose(): void }[] = [];
   private water: THREE.ShaderMaterial | null = null;
+  private pond: THREE.ShaderMaterial | null = null;
+  private falls: THREE.ShaderMaterial[] = [];
   private particles: THREE.Points[] = [];
   private extrasTime = 0;
   private readonly look: Scenery;
@@ -158,6 +187,8 @@ export class ArenaBuilder {
     private readonly quality: 'high' | 'low',
     /** +1 when this player's own side is at +z (blue), -1 otherwise: banners show team colours. */
     private readonly ownSide: 1 | -1 = 1,
+    /** The player's quality setting (crowd size, water detail). */
+    private readonly tier: 'low' | 'medium' | 'high' = 'high',
   ) {
     this.root.name = 'arena';
     this.look = sceneryFor(theme.id);
@@ -208,12 +239,13 @@ export class ArenaBuilder {
     const X = (gx: number) => gx * px;
     const Y = (gy: number) => (32 - gy) * px;
 
-    // 1. checkerboard turf (soft, like mown stripes)
-    for (let ty = 0; ty < 32; ty++) {
-      for (let tx = 0; tx < 18; tx++) {
-        g.fillStyle = hex((tx + ty) % 2 === 0 ? t.grassA : t.grassB);
-        g.fillRect(tx * px, ty * px, px, px);
-      }
+    // 1. plain turf with very faint mowing stripes across the field (no checkerboard: the lanes
+    //    and the troops are what the eye should follow)
+    g.fillStyle = hex(t.grassA);
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    for (let ty = 0; ty < 32; ty += 2) {
+      g.fillStyle = 'rgba(255,255,230,0.035)';
+      g.fillRect(0, ty * px, canvas.width, px);
     }
     // 2. large soft light/dark patches break the grid up
     for (let i = 0; i < 46; i++) {
@@ -233,7 +265,7 @@ export class ArenaBuilder {
     for (let i = 0; i < blades; i++) {
       const x = rand() * canvas.width;
       const y = rand() * canvas.height;
-      const base = ((Math.floor(x / px) + Math.floor(y / px)) % 2 === 0 ? t.grassA : t.grassB) as number;
+      const base = t.grassA;
       const f = rand();
       g.strokeStyle = hex(shade(base, f < 0.5 ? 0.78 + f * 0.3 : 1.05 + (f - 0.5) * 0.3));
       g.lineWidth = (0.8 + rand() * 1.2) * (px / 64);
@@ -447,10 +479,45 @@ export class ArenaBuilder {
     return tex;
   }
 
+  /** +1 when the camera (and the player's near touchline) is on the +x side of the arena. */
+  private get camSign(): number {
+    return this.ownSide;
+  }
+
+  private waterMaterial(halfWidth: number, detail: number): THREE.ShaderMaterial {
+    const t = this.theme;
+    return this.track(
+      new THREE.ShaderMaterial({
+        uniforms: THREE.UniformsUtils.merge([
+          THREE.UniformsLib.fog,
+          {
+            uTime: { value: 0 },
+            uShallow: { value: new THREE.Color(mix(t.water, 0xffffff, 0.12)) },
+            uDeep: { value: new THREE.Color(t.waterDeep) },
+            uFoam: { value: new THREE.Color(0xf4fbff) },
+            uFlow: { value: this.camSign },
+            uHalfWidth: { value: halfWidth },
+            uDetail: { value: detail },
+          },
+        ]),
+        vertexShader: WATER_VERT,
+        fragmentShader: WATER_FRAG,
+        fog: true,
+      }),
+    );
+  }
+
+  /**
+   * The river runs across the whole scene: it springs from rocks in the background (far side),
+   * crosses the field under both bridges, leaves past the near touchline in a channel and drops
+   * over a small waterfall into a pond in the foreground. The water always flows the same way.
+   */
   private buildRiver(): void {
     const t = this.theme;
     const stone = this.look.stone;
-    // Stone channel walls and a dark bed
+    const c = this.camSign;
+    const detail = this.tier === 'high' ? 1 : this.tier === 'medium' ? 0.7 : 0.35;
+    // Stone channel walls inside the field and a dark bed along the whole river
     const brick = this.brickTexture(stone, 512, 64, 2);
     brick.repeat.set(9, 1);
     const wallMat = this.track(new THREE.MeshLambertMaterial({ map: brick }));
@@ -460,47 +527,90 @@ export class ArenaBuilder {
       wall.receiveShadow = true;
       this.root.add(wall);
     }
-    const bed = new THREE.Mesh(this.track(new THREE.PlaneGeometry(18, 2.2).rotateX(-Math.PI / 2)), this.track(new THREE.MeshLambertMaterial({ color: t.waterDeep })));
-    bed.position.y = -0.62;
+    const far = -c * RIVER_FAR;
+    const near = c * RIVER_NEAR;
+    const len = RIVER_FAR + RIVER_NEAR;
+    const mid = (far + near) / 2;
+    const bed = new THREE.Mesh(this.track(new THREE.PlaneGeometry(len, 2.3).rotateX(-Math.PI / 2)), this.track(new THREE.MeshLambertMaterial({ color: t.waterDeep })));
+    bed.position.set(mid, -0.64, 0);
     this.root.add(bed);
 
-    // Animated water (custom shader: caustics, current streaks and foam along the banks)
-    this.water = this.track(
-      new THREE.ShaderMaterial({
-        uniforms: THREE.UniformsUtils.merge([
-          THREE.UniformsLib.fog,
-          {
-            uTime: { value: 0 },
-            uShallow: { value: new THREE.Color(mix(t.water, 0xffffff, 0.12)) },
-            uDeep: { value: new THREE.Color(t.waterDeep) },
-            uFoam: { value: new THREE.Color(0xf4fbff) },
-          },
-        ]),
-        vertexShader: WATER_VERT,
-        fragmentShader: WATER_FRAG,
-        fog: true,
-      }),
-    );
-    const water = new THREE.Mesh(this.track(new THREE.PlaneGeometry(18, 2, 1, 1).rotateX(-Math.PI / 2)), this.water);
-    water.position.y = -0.2;
+    // Animated water: one surface from the spring to the lip of the waterfall
+    this.water = this.waterMaterial(1.0, detail);
+    const water = new THREE.Mesh(this.track(new THREE.PlaneGeometry(len, 2, 1, 1).rotateX(-Math.PI / 2)), this.water);
+    water.position.set(mid, -0.2, 0);
     water.userData.dynamic = true;
     this.root.add(water);
 
-    // Rocks along both bank edges (away from the bridges), reeds near the side walls
+    // waterfall over the ledge, then a pond below
+    const fallMat = this.track(
+      new THREE.ShaderMaterial({
+        uniforms: THREE.UniformsUtils.merge([
+          THREE.UniformsLib.fog,
+          { uTime: { value: 0 }, uShallow: { value: new THREE.Color(mix(t.water, 0xffffff, 0.25)) }, uFoam: { value: new THREE.Color(0xffffff) } },
+        ]),
+        vertexShader: WATER_VERT,
+        fragmentShader: FALL_FRAG,
+        fog: true,
+        transparent: true,
+      }),
+    );
+    this.falls.push(fallMat);
+    const fallH = 0.2 + CLIFF_DROP - 0.3;
+    const fall = new THREE.Mesh(this.track(new THREE.PlaneGeometry(2, fallH)), fallMat);
+    fall.position.set(near + c * 0.05, -0.2 - fallH / 2, 0);
+    fall.rotation.y = c > 0 ? Math.PI / 2 : -Math.PI / 2;
+    fall.userData.dynamic = true;
+    this.root.add(fall);
+    this.pond = this.waterMaterial(3.2, detail);
+    const pond = new THREE.Mesh(this.track(new THREE.CircleGeometry(1, 20).rotateX(-Math.PI / 2)), this.pond);
+    pond.scale.set(4.2, 1, 3.2);
+    pond.position.set(near + c * 3.6, -CLIFF_DROP + 0.12, 0);
+    pond.userData.dynamic = true;
+    this.root.add(pond);
+    // a second little spring fall at the source, between big rocks
+    const spring = new THREE.Mesh(this.track(new THREE.PlaneGeometry(2, 1.9)), fallMat);
+    spring.position.set(far - c * 0.05, 0.75, 0);
+    spring.rotation.y = c > 0 ? Math.PI / 2 : -Math.PI / 2;
+    spring.userData.dynamic = true;
+    this.root.add(spring);
+
     const rand = seededRandom('banks' + t.id);
     const rock = new THREE.IcosahedronGeometry(1, 0);
+    const rockAt = (x: number, z: number, sz: number, y = 0.02) => {
+      const m = this.add(colored(rock, (_x, yy, _z, ny) => this.stoneColor(rand, yy > 0.3 && ny > 0.5)), x, y, z, rand() * 3);
+      m.scale.set(sz * (1 + rand() * 0.6), sz * 0.75, sz);
+      m.castShadow = sz > 0.6 && this.quality === 'high';
+      this.shadows.push([x, z, sz * 0.9]);
+      return m;
+    };
+    // small rocks along the banks inside the field (away from the bridges)
     for (const z of [1.02, -1.02]) {
-      for (let x = -8.7; x < 8.8; x += 0.42 + rand() * 0.3) {
+      for (let x = -8.7; x < 8.8; x += 0.5 + rand() * 0.35) {
         if (Math.abs(Math.abs(x) - 5.5) < 1.9) continue;
-        const s = 0.12 + rand() * 0.12;
-        const geo = colored(rock, (_x, y, _z, ny) => this.stoneColor(rand, y > 0.3 && ny > 0.5));
-        const m = this.add(geo, x, 0.02, z + (rand() - 0.5) * 0.12, rand() * 3);
-        m.scale.set(s * (1 + rand() * 0.6), s * 0.75, s);
-        m.castShadow = false;
+        rockAt(x, z + (rand() - 0.5) * 0.12, 0.1 + rand() * 0.1).castShadow = false;
       }
     }
+    // rocky banks outside the field, bigger towards the spring; big boulders frame the source
+    for (const side of [1, -1]) {
+      for (let k = 10.5; k < RIVER_FAR; k += 0.9 + rand() * 0.6) {
+        const sz = 0.3 + (k / RIVER_FAR) * 0.9 + rand() * 0.3;
+        rockAt(-c * k, side * (1.35 + sz * 0.5 + rand() * 0.3), sz, -0.1);
+      }
+      for (let k = 10.2; k < RIVER_NEAR; k += 0.8 + rand() * 0.5) {
+        rockAt(c * k, side * (1.3 + rand() * 0.3), 0.25 + rand() * 0.25, -0.15);
+      }
+      rockAt(far - c * 1.2, side * 1.8, 2.2, 0.4);
+      rockAt(far - c * 2.4, side * 0.9, 2.0, 1.2);
+      rockAt(near + c * 0.2, side * 1.6, 0.8, -0.3);
+      for (let i = 0; i < 6; i++) {
+        const a = rand() * Math.PI;
+        rockAt(near + c * (3.6 + Math.cos(a) * 4.4), side * Math.sin(a) * 3.4, 0.35 + rand() * 0.4, -CLIFF_DROP + 0.1);
+      }
+    }
+    // reeds where the river meets the field
     const reed = new THREE.ConeGeometry(0.035, 0.6, 4);
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 30; i++) {
       const x = (rand() < 0.5 ? -1 : 1) * (7.3 + rand() * 1.5);
       const z = (rand() < 0.5 ? -1 : 1) * (0.78 + rand() * 0.14);
       const col = mix(this.look.foliage[1], 0xd8e870, rand() * 0.3);
@@ -582,8 +692,12 @@ export class ArenaBuilder {
     return shade(this.look.stone, 0.78 + rand() * 0.3);
   }
 
+  /**
+   * The field's edge: a low stone curb (ankle high, it never hides a troop) and a few scattered
+   * bushes and rocks outside it. No wall: the scene stays open around the battle.
+   */
   private buildWalls(): void {
-    const rand = seededRandom('walls' + this.theme.id);
+    const rand = seededRandom('curb' + this.theme.id);
     const block = new THREE.BoxGeometry(1, 1, 1);
     const run = (x0: number, z0: number, x1: number, z1: number) => {
       const len = Math.hypot(x1 - x0, z1 - z0);
@@ -591,41 +705,41 @@ export class ArenaBuilder {
       const dz = (z1 - z0) / len;
       let d = 0;
       while (d < len) {
-        const bl = Math.min(len - d, 0.75 + rand() * 0.55);
+        const bl = Math.min(len - d, 0.6 + rand() * 0.5);
         const mid = d + bl / 2;
-        const h = 0.48 + rand() * 0.1;
-        const m = this.add(colored(block, (_x, y, _z, ny) => this.stoneColor(rand, y > 0.4 && ny > 0.5)), x0 + dx * mid, h / 2 - 0.02, z0 + dz * mid, Math.atan2(dx, dz) + (rand() - 0.5) * 0.04);
-        m.scale.set(0.62, h, bl - 0.05);
-        // cap course
-        if (rand() < 0.85) {
-          const cap = this.add(colored(block, () => (this.look.snow ? 0xf2f7fb : shade(this.look.stone, 1.05 + rand() * 0.1))), x0 + dx * mid, h + 0.04, z0 + dz * mid, Math.atan2(dx, dz));
-          cap.scale.set(0.72, 0.1, bl - 0.02);
-          cap.castShadow = false;
-        }
+        const m = this.add(colored(block, (_x, y) => this.stoneColor(rand, false) + (y > 0.3 ? 0 : 0)), x0 + dx * mid, 0.06, z0 + dz * mid, Math.atan2(dx, dz) + (rand() - 0.5) * 0.05);
+        m.scale.set(0.34, 0.16 + rand() * 0.04, bl - 0.04);
+        m.castShadow = false;
         d += bl;
       }
     };
-    run(-9.42, -16.4, -9.42, 16.4);
-    run(9.42, -16.4, 9.42, 16.4);
-    run(-9.75, 16.42, 9.75, 16.42);
-    run(-9.75, -16.42, 9.75, -16.42);
-    // corner towers with team-coloured roofs, banners on the back walls
-    const cyl = new THREE.CylinderGeometry(0.62, 0.7, 1.4, 8);
-    const roof = new THREE.ConeGeometry(0.78, 0.8, 8);
-    const pole = new THREE.CylinderGeometry(0.04, 0.04, 1.9, 5);
-    const flag = new THREE.BoxGeometry(0.04, 0.62, 0.48);
+    // long sides: leave the river mouth open
     for (const sx of [-1, 1]) {
-      for (const sz of [-1, 1]) {
-        const own = sz === this.ownSide;
-        const team = own ? 0x2f7fe8 : 0xe23b3b;
-        this.add(colored(cyl, () => this.stoneColor(rand)), sx * 9.55, 0.68, sz * 16.45, rand());
-        this.add(colored(roof, (_x, y) => (this.look.snow && y > 0.05 ? 0xf4f8fc : team)), sx * 9.55, 1.78, sz * 16.45, 0);
-        for (const bx of [3.2, 6.4]) {
-          this.add(colored(pole, () => 0x6b4a2a), sx * bx, 1.0, sz * 16.6, 0).castShadow = false;
-          const f = this.add(colored(flag, (_x, y) => (y < -0.2 ? 0xffd34a : team)), sx * bx, 1.6, sz * 16.6 - sz * 0.0, Math.PI / 2);
-          f.position.x += sx * -0.26;
-          f.castShadow = false;
-        }
+      run(sx * 9.25, -16.25, sx * 9.25, -1.2);
+      run(sx * 9.25, 1.2, sx * 9.25, 16.25);
+    }
+    run(-9.25, 16.25, 9.25, 16.25);
+    run(-9.25, -16.25, 9.25, -16.25);
+    // a few bushes and stones just outside the curb (never in the near foreground)
+    const ico = new THREE.IcosahedronGeometry(1, 1);
+    const rock = new THREE.IcosahedronGeometry(1, 0);
+    const leaf = (k: number) => mix(this.look.foliage[0], this.look.foliage[1], k);
+    for (let i = 0; i < (this.quality === 'high' ? 26 : 14); i++) {
+      const sideX = rand() < 0.5;
+      const x = sideX ? -this.camSign * (9.9 + rand() * 1.4) : (rand() - 0.5) * 18;
+      const z = sideX ? (rand() - 0.5) * 32 : (rand() < 0.5 ? -1 : 1) * (16.9 + rand() * 1.3);
+      if (Math.abs(z) < 2.2) continue; // river
+      if (rand() < 0.6) {
+        const sz = 0.25 + rand() * 0.25;
+        const base = leaf(rand());
+        const m = this.add(colored(ico, (_x, y, _z, ny) => (this.look.snow && ny > 0.4 && y > 0 ? 0xf4f8fc : shade(base, 0.85 + (y + 1) * 0.12))), x, sz * 0.4, z, rand() * 3);
+        m.scale.set(sz * 1.3, sz, sz * 1.2);
+        m.castShadow = false;
+      } else {
+        const sz = 0.18 + rand() * 0.2;
+        const m = this.add(colored(rock, (_x, y, _z, ny) => this.stoneColor(rand, y > 0.2 && ny > 0.4)), x, sz * 0.2, z, rand() * 3);
+        m.scale.set(sz * 1.3, sz * 0.7, sz);
+        m.castShadow = false;
       }
     }
   }
@@ -642,9 +756,20 @@ export class ArenaBuilder {
   private height(x: number, z: number): number {
     const d = this.outside(x, z);
     const n = noise2(x, z);
-    // flat inside the stadium (stands reach ~7 units out), rolling hills beyond
-    return smoothstep(7.5, 16, d) * (0.6 + n * 2.6) + Math.max(0, d - 26) * 0.35;
+    // flat inside the stadium zone, rolling hills beyond
+    let h = smoothstep(7.5, 16, d) * (0.6 + n * 2.6) + Math.max(0, d - 26) * 0.35;
+    const along = x * this.camSign; // towards the camera / player
+    // foreground: a ledge drops to a lower meadow (the river falls over it)
+    const drop = smoothstep(RIVER_NEAR - 0.1, RIVER_NEAR + 0.7, along);
+    h = h * (1 - drop) + (-CLIFF_DROP + n * 0.4) * drop;
+    // the river's channel outside the field, from the spring to the ledge
+    if (Math.abs(x) > 8.9 && along > -RIVER_FAR - 1 && along < RIVER_NEAR + 0.2) {
+      const cut = 1 - smoothstep(1.15, 2.1, Math.abs(z));
+      h = h * (1 - cut) + -0.66 * cut;
+    }
+    return h;
   }
+
 
   private buildOuter(): void {
     const look = this.look;
@@ -673,8 +798,8 @@ export class ArenaBuilder {
     const mat = this.track(new THREE.MeshLambertMaterial({ map: tex, vertexColors: true }));
     const W = 110;
     const H = 150;
-    const ax = 9.6;
-    const az = 16.6;
+    const ax = 9.0; // meets the field floor (the curb hides the seam)
+    const az = 16.0;
     const pieces: [number, number, number, number][] = [
       [-W / 2, -ax, -H / 2, H / 2],
       [ax, W / 2, -H / 2, H / 2],
@@ -683,8 +808,8 @@ export class ArenaBuilder {
     ];
     const col = new THREE.Color();
     for (const [x0, x1, z0, z1] of pieces) {
-      const sx = Math.max(2, Math.round((x1 - x0) / 1.6));
-      const sz = Math.max(2, Math.round((z1 - z0) / 1.6));
+      const sx = Math.max(2, Math.round((x1 - x0) / (this.quality === 'high' ? 1.0 : 1.6)));
+      const sz = Math.max(2, Math.round((z1 - z0) / (this.quality === 'high' ? 1.0 : 1.6)));
       const geo = this.track(new THREE.PlaneGeometry(x1 - x0, z1 - z0, sx, sz));
       geo.rotateX(-Math.PI / 2);
       geo.translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
@@ -719,100 +844,159 @@ export class ArenaBuilder {
   // ------------------------------------------------------------------ stadium
 
   /**
-   * A stone stadium around the field: tiered stands on all four sides full of fans in team colours,
-   * a crenellated back wall with big team banners and burning braziers, round towers at the corners
-   * and a ring of mountains on the horizon. Low enough never to hide the field from either camera.
+   * A single stand far behind the arena (on the side opposite the camera), split by the river:
+   * a few tiers of calm, sparse spectators in muted team colours, a few banners and braziers, and a
+   * ring of mountains on the horizon. Nothing in the foreground or at the sides: the battle stays
+   * the focus and nothing ever covers the lanes.
    */
   private buildStadium(): void {
-    const rand = seededRandom('stadium' + this.theme.id);
+    const rand = seededRandom('stand' + this.theme.id);
     const block = new THREE.BoxGeometry(1, 1, 1);
     const stone = (k = 1) => shade(this.look.stone, k);
-    const own = 0x2f7fe8;
-    const enemy = 0xe23b3b;
+    const own = 0x5a86c8; // muted team colours: the spectators are scenery, not units
+    const enemy = 0xc06a6a;
     const teamAt = (z: number) => (z * this.ownSide >= 0 ? own : enemy);
-    const TIERS = 4;
-    const STEP_D = 1.1;
-    const STEP_H = 0.5;
-    const seats: [number, number, number, number][] = []; // x, y, z, facing angle
-    // A run of stands: from the inner edge (distance `inner` from centre along the normal) outwards.
-    const stand = (axis: 'x' | 'z', sign: number, inner: number, from: number, to: number) => {
+    const far = -this.camSign;
+    const TIERS = 3;
+    const STEP_D = 1.2;
+    const STEP_H = 0.55;
+    const INNER = 16.5; // distance of the first tier from the arena centre line
+    const seats: [number, number, number][] = [];
+    const runs: [number, number][] = [
+      [-21, -3.4],
+      [3.4, 21],
+    ];
+    for (const [from, to] of runs) {
       const len = to - from;
       const mid = (from + to) / 2;
       for (let t = 0; t < TIERS; t++) {
-        const depth = STEP_D;
         const top = STEP_H * (t + 1);
-        const c = inner + depth * (t + 0.5);
-        const geo = colored(block, (_x, y) => (y > 0.45 ? stone(0.98 + t * 0.03) : stone(0.78)));
-        const m = this.add(geo, axis === 'x' ? sign * c : mid, (top - 1) / 2, axis === 'x' ? mid : sign * c);
-        m.scale.set(axis === 'x' ? depth : len, top + 1, axis === 'x' ? len : depth);
+        const c = INNER + STEP_D * (t + 0.5);
+        const m = this.add(colored(block, (_x, y) => (y > 0.45 ? stone(0.98 + t * 0.03) : stone(0.8))), far * c, (top - 1) / 2, mid);
+        m.scale.set(STEP_D, top + 1, len);
         m.castShadow = false;
-        // seats along the tier
-        for (let p = from + 0.4; p < to - 0.3; p += 0.62 + rand() * 0.2) {
-          const off = c + (rand() - 0.5) * 0.3;
-          const face = axis === 'x' ? (sign > 0 ? -Math.PI / 2 : Math.PI / 2) : sign > 0 ? Math.PI : 0;
-          seats.push(axis === 'x' ? [sign * off, top, p, face] : [p, top, sign * off, face]);
+        for (let p = from + 0.5; p < to - 0.4; p += 1.0 + rand() * 0.5) {
+          if (rand() < 0.35) continue; // gaps: a calm, not packed, crowd
+          seats.push([far * (c + (rand() - 0.5) * 0.3), top, p]);
         }
       }
-      // back wall with battlements
-      const wallC = inner + STEP_D * TIERS + 0.4;
-      const wallH = STEP_H * TIERS + 1.4;
-      const wall = this.add(colored(block, (_x, y) => (y > 0.4 ? stone(1.0) : stone(0.82))), axis === 'x' ? sign * wallC : mid, (wallH - 1) / 2, axis === 'x' ? mid : sign * wallC);
-      wall.scale.set(axis === 'x' ? 0.8 : len + 1.6, wallH + 1, axis === 'x' ? len + 1.6 : 0.8);
-      for (let p = from - 0.4; p <= to + 0.4; p += 1.2) {
-        const m = this.add(colored(block, () => stone(1.08)), axis === 'x' ? sign * wallC : p, wallH + 0.25, axis === 'x' ? p : sign * wallC);
-        m.scale.set(axis === 'x' ? 0.8 : 0.6, 0.5, axis === 'x' ? 0.6 : 0.8);
+      const wallC = INNER + STEP_D * TIERS + 0.35;
+      const wallH = STEP_H * TIERS + 1.0;
+      const wall = this.add(colored(block, (_x, y) => (y > 0.4 ? stone(1.0) : stone(0.84))), far * wallC, (wallH - 1) / 2, mid);
+      wall.scale.set(0.7, wallH + 1, len + 0.6);
+      wall.castShadow = false;
+      for (let p = from; p <= to; p += 1.3) {
+        const m = this.add(colored(block, () => stone(1.08)), far * wallC, wallH + 0.22, p);
+        m.scale.set(0.7, 0.44, 0.65);
         m.castShadow = false;
       }
-      return { wallC, wallH };
-    };
-    const XI = 11.6; // inner edge of the side stands
-    const ZI = 18.8; // inner edge of the end stands
-    const sideRun = stand('x', 1, XI, -ZI + 0.2, ZI - 0.2);
-    stand('x', -1, XI, -ZI + 0.2, ZI - 0.2);
-    stand('z', 1, ZI, -XI + 0.2, XI - 0.2);
-    stand('z', -1, ZI, -XI + 0.2, XI - 0.2);
-    const outerX = XI + STEP_D * TIERS + 0.8;
-    const outerZ = ZI + STEP_D * TIERS + 0.8;
-    // round towers at the corners, roofs in the colour of the half they stand on
-    const tower = new THREE.CylinderGeometry(1.5, 1.7, 1, 10);
-    const roof = new THREE.ConeGeometry(1.9, 2.2, 10);
-    for (const sx of [-1, 1]) {
-      for (const sz of [-1, 1]) {
-        const h = sideRun.wallH + 2.6;
-        const t = this.add(colored(tower, (_x, y) => (y > 0.45 ? stone(1.05) : stone(0.85))), sx * outerX, h / 2 - 0.5, sz * outerZ, rand());
-        t.scale.y = h + 1;
-        this.add(colored(roof, (_x, y) => (this.look.snow && y > 0.2 ? 0xf4f8fc : teamAt(sz))), sx * outerX, h + 0.6, sz * outerZ, 0);
+      // banners and braziers along the top
+      for (let p = from + 2; p < to - 1; p += 6) {
+        this.banner(far * wallC, wallH, p, teamAt(p) === own ? 'own' : 'enemy');
+        this.brazier(far * wallC, wallH, p + 3);
       }
     }
-    // the crowd: two instanced meshes (bodies and heads), coloured per fan
+    if (this.quality !== 'low') this.buildCrowd(seats, teamAt, rand);
+    this.buildMountains(rand);
+  }
+
+  private crestMats: Record<'own' | 'enemy', THREE.MeshLambertMaterial> | null = null;
+  private flameMat: THREE.SpriteMaterial | null = null;
+
+  private banner(x: number, wallTop: number, z: number, team: 'own' | 'enemy'): void {
+    if (!this.crestMats) {
+      this.crestMats = { own: this.crest(0x2f6fc8), enemy: this.crest(0xc83a3a) };
+    }
+    const pole = this.add(colored(new THREE.CylinderGeometry(0.05, 0.05, 1, 5), () => 0x5a3a20), x, wallTop + 1.6, z, 0);
+    pole.scale.y = 3.2;
+    pole.castShadow = false;
+    const b = new THREE.Mesh(this.track(new THREE.PlaneGeometry(1.1, 2.1)), this.crestMats[team]);
+    b.position.set(x + this.camSign * 0.1, wallTop + 1.9, z);
+    b.rotation.y = this.camSign > 0 ? Math.PI / 2 : -Math.PI / 2;
+    b.userData.dynamic = true;
+    b.userData.phase = z;
+    this.root.add(b);
+    this.banners.push(b);
+  }
+
+  private brazier(x: number, wallTop: number, z: number): void {
+    this.add(colored(new THREE.CylinderGeometry(0.34, 0.2, 0.38, 8), () => 0x3a3236), x, wallTop + 0.6, z, 0).castShadow = false;
+    if (!this.flameMat) this.flameMat = this.track(new THREE.SpriteMaterial({ map: this.flameTexture(), depthWrite: false, transparent: true }));
+    const f = new THREE.Sprite(this.flameMat);
+    f.position.set(x, wallTop + 1.15, z);
+    f.scale.set(0.9, 1.3, 1);
+    f.userData.dynamic = true;
+    f.userData.phase = z;
+    this.root.add(f);
+    this.fires.push(f);
+  }
+
+  private crest(color: number): THREE.MeshLambertMaterial {
+    const c = document.createElement('canvas');
+    c.width = 128;
+    c.height = 256;
+    const g = c.getContext('2d')!;
+    g.fillStyle = hex(color);
+    g.fillRect(0, 0, 128, 256);
+    g.fillStyle = '#ffd24a';
+    g.fillRect(0, 14, 128, 6);
+    g.globalCompositeOperation = 'destination-out';
+    g.beginPath();
+    g.moveTo(0, 256);
+    g.lineTo(64, 214);
+    g.lineTo(128, 256);
+    g.fill();
+    g.globalCompositeOperation = 'source-over';
+    g.fillStyle = '#ffffff';
+    g.beginPath();
+    g.moveTo(36, 70);
+    g.lineTo(92, 70);
+    g.lineTo(92, 118);
+    g.quadraticCurveTo(92, 156, 64, 172);
+    g.quadraticCurveTo(36, 156, 36, 118);
+    g.closePath();
+    g.fill();
+    g.fillStyle = '#ffd24a';
+    g.beginPath();
+    g.moveTo(48, 64);
+    g.lineTo(48, 46);
+    g.lineTo(56, 56);
+    g.lineTo(64, 40);
+    g.lineTo(72, 56);
+    g.lineTo(80, 46);
+    g.lineTo(80, 64);
+    g.closePath();
+    g.fill();
+    const t = this.track(new THREE.CanvasTexture(c));
+    t.colorSpace = THREE.SRGBColorSpace;
+    return this.track(new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }));
+  }
+
+  /** Spectators: two instanced meshes (bodies tinted per fan, heads), gently bobbing. */
+  private buildCrowd(seats: [number, number, number][], teamAt: (z: number) => number, rand: () => number): void {
     const body = new THREE.CylinderGeometry(0.15, 0.2, 0.42, 6);
     body.translate(0, 0.21, 0);
     const head = new THREE.IcosahedronGeometry(0.13, 0);
     head.translate(0, 0.56, 0);
-    const count = Math.min(seats.length, this.quality === 'high' ? 1400 : 700);
-    const bodyMat = this.track(new THREE.MeshLambertMaterial({ color: 0xffffff }));
-    const headMat = this.track(new THREE.MeshLambertMaterial({ vertexColors: true }));
-    const bodies = new THREE.InstancedMesh(this.track(body), bodyMat, count);
-    const heads = new THREE.InstancedMesh(this.track(colored(head, (_x, y) => (y > 0.62 ? 0x4a3020 : 0xf2c8a0))), headMat, count);
+    const count = Math.min(seats.length, this.tier === 'high' ? 260 : 130);
+    const bodies = new THREE.InstancedMesh(this.track(body), this.track(new THREE.MeshLambertMaterial({ color: 0xffffff })), count);
+    const heads = new THREE.InstancedMesh(this.track(colored(head, (_x, y) => (y > 0.62 ? 0x4a3020 : 0xe8c4a0))), this.track(new THREE.MeshLambertMaterial({ vertexColors: true })), count);
     const base = new Float32Array(count * 4);
     const phase = new Float32Array(count);
     const tmp = new THREE.Object3D();
     const col = new THREE.Color();
+    const face = this.camSign > 0 ? Math.PI / 2 : -Math.PI / 2; // looking at the field
     const pick = seats.slice().sort(() => rand() - 0.5).slice(0, count);
-    pick.forEach(([x, y, z, face], i) => {
+    pick.forEach(([x, y, z], i) => {
       tmp.position.set(x, y, z);
-      tmp.rotation.set(0, face + (rand() - 0.5) * 0.6, 0);
+      tmp.rotation.set(0, face + (rand() - 0.5) * 0.5, 0);
       tmp.updateMatrix();
       bodies.setMatrixAt(i, tmp.matrix);
       heads.setMatrixAt(i, tmp.matrix);
-      base[i * 4] = x;
-      base[i * 4 + 1] = y;
-      base[i * 4 + 2] = z;
-      base[i * 4 + 3] = tmp.rotation.y;
+      base.set([x, y, z, tmp.rotation.y], i * 4);
       phase[i] = rand() * Math.PI * 2;
       const r = rand();
-      const team = teamAt(z === 0 ? 1 : z);
-      col.setHex(r < 0.72 ? team : r < 0.84 ? 0xffffff : r < 0.92 ? 0xffd24a : shade(team, 0.6));
+      col.setHex(r < 0.6 ? teamAt(z) : r < 0.8 ? 0xd8d4c8 : 0x8a7a68);
       bodies.setColorAt(i, col);
     });
     for (const m of [bodies, heads]) {
@@ -823,107 +1007,6 @@ export class ArenaBuilder {
       this.root.add(m);
     }
     this.crowd = { meshes: [bodies, heads], base, phase };
-    // banners on the back walls (crest texture per team) and braziers between them
-    const crest = (color: number) => {
-      const c = document.createElement('canvas');
-      c.width = 128;
-      c.height = 256;
-      const g = c.getContext('2d')!;
-      g.fillStyle = hex(color);
-      g.fillRect(0, 0, 128, 256);
-      g.fillStyle = hex(shade(color, 0.7));
-      g.fillRect(0, 0, 128, 18);
-      g.fillStyle = '#ffd24a';
-      g.fillRect(0, 18, 128, 6);
-      // swallow-tail bottom
-      g.globalCompositeOperation = 'destination-out';
-      g.beginPath();
-      g.moveTo(0, 256);
-      g.lineTo(64, 214);
-      g.lineTo(128, 256);
-      g.fill();
-      g.globalCompositeOperation = 'source-over';
-      // shield crest with a crown
-      g.fillStyle = '#ffffff';
-      g.beginPath();
-      g.moveTo(34, 70);
-      g.lineTo(94, 70);
-      g.lineTo(94, 120);
-      g.quadraticCurveTo(94, 160, 64, 176);
-      g.quadraticCurveTo(34, 160, 34, 120);
-      g.closePath();
-      g.fill();
-      g.fillStyle = hex(shade(color, 0.85));
-      g.beginPath();
-      g.moveTo(44, 80);
-      g.lineTo(84, 80);
-      g.lineTo(84, 118);
-      g.quadraticCurveTo(84, 148, 64, 162);
-      g.quadraticCurveTo(44, 148, 44, 118);
-      g.closePath();
-      g.fill();
-      g.fillStyle = '#ffd24a';
-      g.beginPath();
-      g.moveTo(48, 64);
-      g.lineTo(48, 46);
-      g.lineTo(56, 56);
-      g.lineTo(64, 40);
-      g.lineTo(72, 56);
-      g.lineTo(80, 46);
-      g.lineTo(80, 64);
-      g.closePath();
-      g.fill();
-      const t = this.track(new THREE.CanvasTexture(c));
-      t.colorSpace = THREE.SRGBColorSpace;
-      return this.track(new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }));
-    };
-    const ownMat = crest(own);
-    const enemyMat = crest(enemy);
-    const bannerGeo = this.track(new THREE.PlaneGeometry(1.5, 3));
-    const bowl = new THREE.CylinderGeometry(0.42, 0.25, 0.45, 8);
-    const flameTex = this.flameTexture();
-    const flameMat = this.track(new THREE.SpriteMaterial({ map: flameTex, depthWrite: false, transparent: true }));
-    const wallTop = sideRun.wallH;
-    const place = (x: number, z: number, nx: number, nz: number, i: number) => {
-      const isBanner = i % 2 === 0;
-      if (isBanner) {
-        const b = new THREE.Mesh(bannerGeo, teamAt(z) === own ? ownMat : enemyMat);
-        // flown from a pole above the battlements, facing the field
-        const pole = this.add(colored(new THREE.CylinderGeometry(0.06, 0.06, 1, 5), () => 0x5a3a20), x, wallTop + 2.3, z, 0);
-        pole.scale.y = 4.6;
-        pole.castShadow = false;
-        b.position.set(x - nx * 0.12, wallTop + 2.6, z - nz * 0.12);
-        b.rotation.y = Math.atan2(-nx, -nz);
-        b.userData.dynamic = true;
-        b.userData.phase = rand() * 6;
-        this.root.add(b);
-        this.banners.push(b);
-      } else {
-        this.add(colored(bowl, () => 0x3a3236), x, wallTop + 0.75, z, 0).castShadow = false;
-        const f = new THREE.Sprite(flameMat);
-        f.position.set(x, wallTop + 1.6, z);
-        f.scale.set(1.3, 1.9, 1);
-        f.userData.dynamic = true;
-        f.userData.phase = rand() * 6;
-        this.root.add(f);
-        this.fires.push(f);
-      }
-    };
-    const wallX = XI + STEP_D * TIERS + 0.4;
-    const wallZ = ZI + STEP_D * TIERS + 0.4;
-    let i = 0;
-    for (let z = -ZI + 1.5; z <= ZI - 1.5; z += 3.4) {
-      place(wallX, z, 1, 0, i);
-      place(-wallX, z, -1, 0, i + 1);
-      i++;
-    }
-    i = 0;
-    for (let x = -XI + 1.5; x <= XI - 1.5; x += 3.4) {
-      place(x, wallZ, 0, 1, i);
-      place(x, -wallZ, 0, -1, i + 1);
-      i++;
-    }
-    this.buildMountains(rand);
   }
 
   private flameTexture(): THREE.CanvasTexture {
@@ -1035,7 +1118,11 @@ export class ArenaBuilder {
       }
     };
 
-    const nearCamera = (x: number, z: number) => z * this.ownSide > 16.4 && Math.abs(x) < 12.5;
+    // keep the foreground open, the river channel clear and the far stand unobstructed
+    const nearCamera = (x: number, z: number) => {
+      const along = x * this.camSign;
+      return along > 8.5 || Math.abs(z) < 3 || (along < -14 && along > -23 && Math.abs(z) < 23);
+    };
     // trees: dense near the walls, thinning out with distance
     const trees = high ? 150 : 85;
     let placed = 0;
@@ -1044,7 +1131,8 @@ export class ArenaBuilder {
       const x = (rand() - 0.5) * 70;
       const z = (rand() - 0.5) * 96;
       const d = this.outside(x, z);
-      if (d < 8 || d > 32) continue;
+      if (d < 4 || d > 32) continue;
+      if (nearCamera(x, z)) continue;
       if (rand() > 1.25 - d / 32) continue; // denser close by
       const s = 0.9 + rand() * 0.8 + d * 0.02;
       if (spots.some(([sx, sz, ss]) => Math.hypot(sx - x, sz - z) < (ss + s) * 0.55)) continue;
@@ -1058,19 +1146,19 @@ export class ArenaBuilder {
       const x = (rand() - 0.5) * 60;
       const z = (rand() - 0.5) * 80;
       const d = this.outside(x, z);
-      if (d < 7.6) continue;
+      if (d < 5 || nearCamera(x, z)) continue;
       const s = 0.3 + rand() * 0.6;
       const m = this.add(colored(ico, (_x, y, _z, ny) => this.stoneColor(rand, y > 0.2 && ny > 0.4)), x, this.height(x, z) + s * 0.25, z, rand() * 3);
       m.scale.set(s * (1 + rand() * 0.6), s * 0.7, s);
       this.shadows.push([x, z, s * 1.3]);
     }
     // bushes hugging the outside of the walls
-    for (let i = 0; i < (high ? 70 : 36); i++) {
+    for (let i = 0; i < (high ? 22 : 12); i++) {
       const side = Math.floor(rand() * 4);
       const along = (rand() - 0.5) * 2;
       const x = side < 2 ? (side ? 1 : -1) * (10.25 + rand() * 0.8) : along * 10.5;
       const z = side < 2 ? along * 17 : (side === 2 ? 1 : -1) * (17.25 + rand() * 0.6);
-      if (nearCamera(x, z) && rand() < 0.5) continue;
+      if (nearCamera(x, z)) continue;
       const s = 0.3 + rand() * 0.35;
       const base = leaf(rand());
       const m = this.add(colored(ico, (_x, y, _z, ny) => snowCap(y, ny, shade(base, 0.85 + (y + 1) * 0.12))), x, this.height(x, z) + s * 0.45, z, rand() * 3);
@@ -1128,7 +1216,7 @@ export class ArenaBuilder {
       const z = (rand() - 0.5) * 66;
       const edge = this.outside(x, z);
       if (edge < (ref.far ? 12 : 8.5)) continue;
-      if (z * this.ownSide > 16.4 && Math.abs(x) < 12.5) continue;
+      if (x * this.camSign > 8.5 || Math.abs(z) < 3 || (x * this.camSign < -14 && x * this.camSign > -23)) continue;
       const pos = new THREE.Vector3(x, this.height(x, z) - 0.05, z);
       if (placed.some((p) => p.distanceTo(pos) < (ref.far ? 6 : 2.4))) continue;
       placed.push(pos);
@@ -1207,9 +1295,11 @@ export class ArenaBuilder {
     this.extrasTime += dt;
     const t = this.extrasTime;
     if (this.water) this.water.uniforms.uTime.value = t;
+    if (this.pond) this.pond.uniforms.uTime.value = t;
+    for (const f of this.falls) f.uniforms.uTime.value = t;
     for (const f of this.fires) {
       const k = 1 + Math.sin(t * 13 + f.userData.phase) * 0.08 + Math.sin(t * 7.3 + f.userData.phase * 2) * 0.06;
-      f.scale.set(1.3 * k, 1.9 * (2 - k), 1);
+      f.scale.set(0.9 * k, 1.3 * (2 - k), 1);
     }
     for (const b of this.banners) b.rotation.z = Math.sin(t * 1.6 + b.userData.phase) * 0.035;
     if (this.crowd && Math.floor(t * 30) % 2 === 0) {
@@ -1223,7 +1313,7 @@ export class ArenaBuilder {
       const sc = new THREE.Vector3(1, 1, 1);
       for (let i = 0; i < mesh.count; i++) {
         const ph = phase[i];
-        const jump = Math.max(0, Math.sin(t * 5 + ph)) * 0.09;
+        const jump = Math.max(0, Math.sin(t * 2.2 + ph)) * 0.05;
         p.set(base[i * 4], base[i * 4 + 1] + jump, base[i * 4 + 2]);
         q.setFromEuler(e.set(0, base[i * 4 + 3] + Math.sin(t * 0.7 + ph) * 0.25, 0));
         m.compose(p, q, sc);

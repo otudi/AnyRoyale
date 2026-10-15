@@ -3,11 +3,10 @@ import { audio } from '../audio/AudioManager';
 import type { SfxName } from '../audio/sfx';
 import { F, type EntityTuple, type GameEvent, type Phase, type ProjectileTuple, type Snapshot, type TeamName } from '../network/protocol';
 import { ArenaBuilder } from '../rendering/ArenaBuilder';
-import { cardName } from '../ui/cardLabels';
 import { themeFor } from '../rendering/arenaThemes';
 import { toWorld } from '../rendering/coords';
 import { AreaVisual, Effects } from '../rendering/Effects';
-import { BlobShadows } from '../rendering/BlobShadows';
+import { BlobShadows, TeamRings } from '../rendering/BlobShadows';
 import { HpBars } from '../rendering/HpBars';
 import { PlayMarkers } from '../rendering/PlayMarkers';
 import type { Renderer3D } from '../rendering/Renderer3D';
@@ -82,6 +81,9 @@ const SFX_FOR_SPELL: Record<string, SfxName> = {
  * effects line up with what is on screen. Nothing here decides game outcomes: positions, health,
  * deaths and elixir all come from the server.
  */
+/** How long a troop's health bar stays up after it is hit. */
+const HP_BAR_SECONDS = 3.5;
+
 export class BattleView {
   readonly side: Record<0 | 1, Side>;
   private arena: ArenaBuilder;
@@ -89,11 +91,12 @@ export class BattleView {
   private bars = new HpBars();
   private markers: PlayMarkers;
   private blobs = new BlobShadows();
+  private rings = new TeamRings();
   private snaps: SnapState[] = [];
   private renderTick = -1;
   private latestTick = -1;
   private units = new Map<number, UnitVisual>();
-  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string; lag: number; lastHp: number; acc: number; lastEmit: number }>();
+  private unitInfo = new Map<number, { name: string; lastFlags: number; lastPos: THREE.Vector3; speed: number; kind: string; lag: number; lastHp: number; acc: number; lastEmit: number; lastHit: number }>();
   /** Tick of the snapshot whose health values were last compared (damage numbers). */
   private hpTick = -1;
   private towerDmg = new Map<number, { acc: number; last: number }>();
@@ -127,9 +130,9 @@ export class BattleView {
     const mine: 0 | 1 = myTeam === 'BLUE' ? 0 : 1;
     this.side = { 0: mine === 0 ? 'own' : 'enemy', 1: mine === 1 ? 'own' : 'enemy' };
     const theme = themeFor(arenaId);
-    this.arena = new ArenaBuilder(theme, r.quality, myTeam === 'BLUE' ? 1 : -1);
+    this.arena = new ArenaBuilder(theme, r.quality, myTeam === 'BLUE' ? 1 : -1, r.tier);
     this.fx = new Effects(r.quality);
-    this.world.add(this.arena.root, this.fx.root, this.bars.root, this.markers.root, this.blobs.mesh);
+    this.world.add(this.arena.root, this.fx.root, this.bars.root, this.markers.root, this.blobs.mesh, this.rings.mesh);
     r.scene.add(this.world);
     r.scene.background = skyTexture(theme.sky, theme.skyHorizon);
     // fog only far beyond the field: the top of the screen (enemy side) stays crisp
@@ -205,6 +208,7 @@ export class BattleView {
     const cam = this.r.camera;
     this.bars.begin(cam);
     this.blobs.begin();
+    this.rings.begin();
     const freshHp = b.tick !== this.hpTick;
     this.hpTick = b.tick;
     for (const [id, eb] of b.entities) {
@@ -231,7 +235,7 @@ export class BattleView {
         this.world.add(v.root);
         v.root.position.copy(pos);
         v.root.rotation.y = side === 'own' ? (this.myTeam === 'BLUE' ? Math.PI : 0) : this.myTeam === 'BLUE' ? 0 : Math.PI;
-        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind, lag: eb[8] > 0 ? eb[7] / eb[8] : 1, lastHp: eb[7] + eb[9], acc: 0, lastEmit: 0 });
+        this.unitInfo.set(id, { name: eb[1], lastFlags: flags, lastPos: pos.clone(), speed: 0, kind, lag: eb[8] > 0 ? eb[7] / eb[8] : 1, lastHp: eb[7] + eb[9], acc: 0, lastEmit: 0, lastHit: -99 });
         this.markers.unitAppeared(side, pos.x, pos.z);
         if (flags & F.DEPLOYING || kind === 'B') {
           v.spawn();
@@ -259,7 +263,11 @@ export class BattleView {
       }
       if (flags & F.HIDDEN_BUILDING) yOff -= v.height * 0.85;
       v.root.position.set(pos.x, yOff, pos.z);
-      if (!(flags & F.TUNNELING)) this.blobs.add(pos.x, pos.z, Math.max(0.8, (eb[12] / 1000) * (kind === 'B' ? 2.4 : 2.2)) * (flying ? 0.75 : 1));
+      if (!(flags & F.TUNNELING)) {
+        const foot = Math.max(0.8, (eb[12] / 1000) * (kind === 'B' ? 2.4 : 2.2)) * (flying ? 0.75 : 1);
+        this.blobs.add(pos.x, pos.z, foot);
+        if (kind !== 'B') this.rings.add(pos.x, pos.z, foot * 0.95, TEAM_COLORS[side]);
+      }
       // facing
       const targetId = eb[11];
       const targetPos = targetId ? this.positionOf(targetId, b) : null;
@@ -296,7 +304,10 @@ export class BattleView {
         const threshold = kind === 'B' ? Math.max(8, max * 0.02) : 0;
         if (diff > threshold || diff < -2) {
           info.acc += diff;
-          if (diff > 0) v.hitFlash();
+          if (diff > 0) {
+            v.hitFlash();
+            info.lastHit = this.time;
+          }
         }
       }
       if (info.acc !== 0 && this.time - info.lastEmit >= 0.2) {
@@ -306,11 +317,12 @@ export class BattleView {
         info.acc = 0;
         info.lastEmit = this.time;
       }
-      // Every unit always shows its health (team-coloured), so fights are readable.
+      // Troops show their health for a few seconds after being hit; buildings always do.
       const ratio = max > 0 ? hp / max : 0;
       if (ratio > info.lag) info.lag = ratio;
       else info.lag = Math.max(ratio, info.lag - dt * 0.6);
-      if (!(flags & F.TUNNELING) && !(flags & F.HIDDEN_BUILDING) && max > 10) {
+      const showBar = kind === 'B' || this.time - info.lastHit < HP_BAR_SECONDS;
+      if (showBar && !(flags & F.TUNNELING) && !(flags & F.HIDDEN_BUILDING) && max > 10) {
         const w = kind === 'B' ? 1.9 : Math.max(1.05, Math.min(2.2, 0.9 + (eb[12] / 1000) * 0.9 + (max > 2500 ? 0.4 : 0)));
         this.tmp2.set(pos.x, yOff + v.height + 0.5, pos.z);
         this.bars.add(this.tmp2, w, ratio, TEAM_COLORS[side], shield > 0 ? 1 : 0, info.lag, 0.24);
@@ -355,6 +367,7 @@ export class BattleView {
     }
     this.bars.end();
     this.blobs.end(!this.r.realShadows);
+    this.rings.end();
   }
 
   private syncTower(id: number, e: EntityTuple, pos: THREE.Vector3, side: Side, flags: number, dt: number): void {
@@ -523,7 +536,6 @@ export class BattleView {
           audio.play(card && card.cost >= 6 ? 'deployHeavy' : 'deploy', { pan: this.pan(p.x) });
         }
         if (side === 'enemy' && card) {
-          this.fx.label(cardName(card), p.x, p.z, '#ffb0b0');
           this.onOpponentPlay(cardId);
         }
         break;

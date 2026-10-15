@@ -6,7 +6,7 @@ export class DamageNumbers {
   private readonly layer: HTMLElement;
   private pool: HTMLElement[] = [];
   private live = 0;
-  private static readonly MAX_LIVE = 40;
+  private static readonly MAX_LIVE = 24;
 
   constructor(parent: HTMLElement) {
     this.layer = document.createElement('div');

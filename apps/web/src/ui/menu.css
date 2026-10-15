@@ -1110,3 +1110,16 @@ html.menu-mode .mm-help {
   margin-left: calc(var(--stage-w) / -2);
   z-index: 50;
 }
+
+.mm-size-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mm-btn.small {
+  width: auto;
+  min-height: 0;
+  padding: 6px 14px;
+  font-size: 15px;
+}

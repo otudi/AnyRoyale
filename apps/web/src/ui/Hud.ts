@@ -45,9 +45,10 @@ export class Hud {
     root.innerHTML = `
       <div class="top">
         <div class="opp-tag" data-opp></div>
-        <div class="score">
+        <div class="scoreboard">
+          <span class="c blue" data-crowns-mine>👑 0</span>
           <div class="timer"><div class="label" data-timer-label></div><div class="value" data-timer>3:00</div></div>
-          <div class="crowns"><span class="c red" data-crowns-opp>👑 0</span><span class="c blue" data-crowns-mine>👑 0</span></div>
+          <span class="c red" data-crowns-opp>👑 0</span>
         </div>
       </div>
       <button class="surrender" data-surrender title="${t('surrender')}">🏳️</button>

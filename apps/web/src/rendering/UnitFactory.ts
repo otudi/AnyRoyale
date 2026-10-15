@@ -89,7 +89,7 @@ function forgedTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
     mesh.material = m;
   });
   nativeHeight.set(file, FORGED_NATIVE);
-  if (!spec.ghost) addOutlines(tpl);
+  if (!spec.ghost) addOutlines(tpl, side);
   templates.set(key, tpl);
   return tpl;
 }
@@ -163,7 +163,7 @@ function characterTemplate(spec: CharSpec, side: Side): THREE.Object3D | null {
     nativeHeight.set(spec.model, Math.max(0.5, box.max.y - box.min.y));
   }
   attachExtras(tpl, spec);
-  if (!spec.ghost) addOutlines(tpl);
+  if (!spec.ghost) addOutlines(tpl, side);
   templates.set(key, tpl);
   return tpl;
 }
@@ -258,7 +258,7 @@ function propTemplate(spec: PropSpec, side: Side): THREE.Object3D | null {
     }
   });
   tpl.add(inner);
-  addOutlines(tpl);
+  addOutlines(tpl, side);
   tpl.userData.height = box2.max.y - box2.min.y;
   propTemplates.set(cacheKey, tpl);
   return tpl;
@@ -324,7 +324,7 @@ export class UnitVisual {
     this.height = spec.height * UNIT_SCALE;
     if (spec.mount) {
       this.mount = buildMount(spec.mount);
-      addOutlines(this.mount.root);
+      addOutlines(this.mount.root, this.side);
       this.body.add(this.mount.root);
       model.position.y = this.mount.top * 0.62;
       model.position.z = -0.05;
@@ -339,7 +339,7 @@ export class UnitVisual {
 
   private buildProcedural(spec: Extract<VisualSpec, { kind: 'proc' }>): void {
     this.proc = buildProc(spec.shape, spec.height * UNIT_SCALE, spec.color, spec.color2);
-    addOutlines(this.proc.root);
+    addOutlines(this.proc.root, this.side);
     this.body.add(this.proc.root);
     this.height = this.proc.top;
     this.flying = this.proc.flying;
