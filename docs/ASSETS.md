@@ -7,7 +7,8 @@ card art or logos. Everything you see or hear comes from one of these sources:
 |---|---|---|
 | KayKit packs by Kay Lousberg (pinned commits, below) | rigged humanoid characters, skeletons, medieval buildings (card buildings, tower ruins), props, weapons, one shared animation library | CC0 1.0 |
 | Code in `apps/web/src/rendering/` | procedural low-poly creatures/machines, crown towers, the arena (painted field, stone plazas, cobbled lanes, water shader, stone bridges and walls, hills, trees, rocks, bushes), particles, projectiles, card art | this repository |
-| npm packages `@fontsource/tajawal` 5.2.7, `material-icons` 1.13.14 (bundled at build time) | Tajawal font (Arabic + Latin) and Material Icons used by the menus | OFL-1.1 / Apache-2.0 |
+| npm packages `@fontsource/baloo-bhaijaan-2` 5.3.0, `material-icons` 1.13.14 (bundled at build time) | Baloo Bhaijaan 2 font (Arabic + Latin, the brand typeface) and Material Icons for utility glyphs | OFL-1.1 / Apache-2.0 |
+| `apps/web/src/ui/brand.ts`, `public/favicon.svg`, `public/icon-*.png` | Crest logo, wordmark, menu backdrop and brand glyphs — original vector art made for AnyRoyale (see `docs/BRAND.md`) | project's own |
 | Kenney audio packs (impact, interface, RPG, sci-fi, UI, music jingles) and rubberduck's OpenGameArt packs (80 RPG SFX, 100 SFX, 100 SFX 2, sci-fi SFX, bang/firework SFX, water/splash SFX) | the recorded sound effects in `apps/web/public/assets/sfx` | CC0 1.0 |
 | "Battle Theme A" and "Battle Theme B" by cynicmusic (OpenGameArt) | menu/battle and overtime music (`apps/web/public/assets/sfx/music-*.mp3`) | CC0 1.0 |
 | Code in `apps/web/src/audio/` | fallback effects synthesised with Web Audio | this repository |

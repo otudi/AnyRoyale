@@ -1,1 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset="1" stop-color="#ff9f1a"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="#1f3a7a"/><path d="M12 44 L16 20 L26 32 L32 14 L38 32 L48 20 L52 44 Z" fill="url(#g)" stroke="#6a3b00" stroke-width="3" stroke-linejoin="round"/><rect x="12" y="44" width="40" height="8" rx="2" fill="url(#g)" stroke="#6a3b00" stroke-width="3"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><defs><radialGradient id="bg" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#2a3580"/><stop offset="1" stop-color="#0b1030"/></radialGradient></defs><rect width="160" height="160" rx="34" fill="url(#bg)"/><g transform="translate(26 14) scale(0.9)">
+  <defs>
+    <linearGradient id="cr1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a3"/><stop offset=".45" stop-color="#ffc23d"/><stop offset="1" stop-color="#c9800e"/></linearGradient>
+    <linearGradient id="cr1b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5aa2ff"/><stop offset="1" stop-color="#1f4fc0"/></linearGradient>
+    <linearGradient id="cr1r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b74"/><stop offset="1" stop-color="#b8212e"/></linearGradient>
+    <clipPath id="cr1c"><path d="M60 22C79 22 97 25 106 31V66C106 96 86 116 60 128C34 116 14 96 14 66V31C23 25 41 22 60 22Z"/></clipPath>
+  </defs>
+  <path d="M60 22C79 22 97 25 106 31V66C106 96 86 116 60 128C34 116 14 96 14 66V31C23 25 41 22 60 22Z" fill="#0b1030" stroke="#0b1030" stroke-width="14" stroke-linejoin="round"/>
+  <g clip-path="url(#cr1c)">
+    <rect x="0" y="0" width="120" height="132" fill="url(#cr1r)"/>
+    <path d="M0 0H84L36 132H0Z" fill="url(#cr1b)"/>
+    <path d="M84 0L36 132" stroke="#0b1030" stroke-opacity=".35" stroke-width="3"/>
+    <path d="M14 22H106V40C80 34 40 34 14 40Z" fill="#fff" opacity=".16"/>
+  </g>
+  <path d="M60 22C79 22 97 25 106 31V66C106 96 86 116 60 128C34 116 14 96 14 66V31C23 25 41 22 60 22Z" fill="none" stroke="url(#cr1g)" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M60 44L84 104H71.5L67.4 93H52.6L48.5 104H36ZM60 64L55.6 81H64.4Z" fill="#fff6e0" fill-rule="evenodd" stroke="#0b1030" stroke-width="4" stroke-linejoin="round" paint-order="stroke"/>
+  <rect x="38" y="80" width="44" height="7" rx="3.5" fill="url(#cr1g)" stroke="#0b1030" stroke-width="2.5"/>
+  <circle cx="38" cy="83.5" r="4.5" fill="url(#cr1g)" stroke="#0b1030" stroke-width="2.5"/>
+  <circle cx="82" cy="83.5" r="4.5" fill="url(#cr1g)" stroke="#0b1030" stroke-width="2.5"/>
+  <path d="M33 30L36 6L48 17L60 0L72 17L84 6L87 30Z" fill="url(#cr1g)" stroke="#0b1030" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="60" cy="20" r="4" fill="#ff4d5a" stroke="#0b1030" stroke-width="2"/>
+  <circle cx="45" cy="23" r="3" fill="#3d8bff" stroke="#0b1030" stroke-width="2"/>
+  <circle cx="75" cy="23" r="3" fill="#3d8bff" stroke="#0b1030" stroke-width="2"/>
+</g></svg>

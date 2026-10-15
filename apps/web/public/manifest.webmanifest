@@ -1,11 +1,28 @@
 {
   "name": "AnyRoyale",
   "short_name": "AnyRoyale",
-  "description": "Real-time 1v1 lane battles in your browser. Same random deck for both players.",
+  "description": "Real-time 1v1 lane battles in your browser. Same deck for both players — pure skill.",
   "start_url": "/",
   "display": "fullscreen",
   "orientation": "portrait",
-  "background_color": "#13203f",
-  "theme_color": "#13203f",
-  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+  "background_color": "#141b45",
+  "theme_color": "#141b45",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }

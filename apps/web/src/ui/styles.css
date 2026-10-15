@@ -14,7 +14,7 @@
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --stage-w: min(100vw, calc(100dvh * 0.62));
-  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans Arabic', Tahoma, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
 }
 
 * {
@@ -79,7 +79,7 @@ body {
 
 .logo {
   font-size: clamp(38px, 11vw, 64px);
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 1px;
   line-height: 1;
   background: linear-gradient(180deg, #fff6c8 0%, #ffd34d 45%, #ff9f1a 100%);
@@ -128,7 +128,7 @@ body {
   border: none;
   cursor: pointer;
   font: inherit;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 20px;
   color: #fff;
   padding: 16px 18px;
@@ -237,7 +237,7 @@ select {
 
 .code {
   font-size: 44px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 8px;
   color: var(--gold);
   direction: ltr;
@@ -335,7 +335,7 @@ select {
   background: linear-gradient(180deg, #e04848 0%, #a8222a 100%);
   border-radius: 12px;
   padding: 5px 12px 4px;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 15px;
   max-width: 48%;
   white-space: nowrap;
@@ -343,7 +343,7 @@ select {
   text-overflow: ellipsis;
   border: 2.5px solid #1b1030;
   box-shadow: 0 3px 0 #1b1030;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
   color: #fff;
 }
@@ -363,7 +363,7 @@ select {
   min-width: 82px;
   border: 2.5px solid #0c1230;
   box-shadow: 0 3px 0 #0c1230;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
   color: #fff;
 }
@@ -376,7 +376,7 @@ select {
 
 .timer .value {
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
@@ -387,7 +387,7 @@ select {
 .crowns {
   display: flex;
   gap: 6px;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 16px;
 }
 
@@ -397,7 +397,7 @@ select {
   background: linear-gradient(180deg, #2a3560 0%, #18204a 100%);
   border: 2.5px solid #0c1230;
   box-shadow: 0 3px 0 #0c1230;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55);
 }
 
@@ -448,7 +448,7 @@ select {
   border: 2px solid rgba(255, 214, 102, 0.55);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   color: #fff;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
   animation: ci-in 0.16s ease-out;
 }
 
@@ -476,7 +476,7 @@ html[dir='ltr'] .card-info {
 
 .card-info .ci-head b {
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 800;
   color: #ffd966;
 }
 
@@ -562,7 +562,7 @@ html[dir='ltr'] .card-info {
   box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55), 0 2px 3px rgba(0, 0, 0, 0.55);
   display: grid;
   place-items: center;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 14px;
   color: #fff;
   text-shadow: 0 1px 0 #3a0a50, 0 0 3px #3a0a50;
@@ -657,7 +657,7 @@ html[dir='ltr'] .card-info {
   left: 6px;
   top: 50%;
   transform: translateY(-50%);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 15px;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
 }
@@ -716,7 +716,7 @@ html[dir='ltr'] .card-info {
   position: relative;
   display: block;
   text-align: center;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 12.5px;
   line-height: 15px;
   color: #fff;
@@ -756,7 +756,7 @@ html[dir='ltr'] .card-info {
   right: 0;
   text-align: center;
   font-size: clamp(30px, 9vw, 48px);
-  font-weight: 900;
+  font-weight: 800;
   color: #fff;
   text-shadow: 0 4px 0 rgba(0, 0, 0, 0.5), 0 0 24px rgba(255, 200, 80, 0.6);
   animation: banner 1.8s ease-out forwards;
@@ -871,7 +871,7 @@ html[dir='ltr'] .card-info {
 
 .vs .player {
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 800;
   padding: 8px 18px;
   border-radius: 12px;
 }
@@ -886,7 +886,7 @@ html[dir='ltr'] .card-info {
 
 .vs .x {
   font-size: 34px;
-  font-weight: 900;
+  font-weight: 800;
   color: var(--gold);
 }
 
@@ -899,7 +899,7 @@ html[dir='ltr'] .card-info {
 
 .result-title {
   font-size: clamp(40px, 13vw, 64px);
-  font-weight: 900;
+  font-weight: 800;
   text-shadow: 0 5px 0 rgba(0, 0, 0, 0.45);
 }
 
@@ -913,7 +913,7 @@ html[dir='ltr'] .card-info {
 
 .result-crowns {
   font-size: 30px;
-  font-weight: 900;
+  font-weight: 800;
   direction: ltr;
 }
 
@@ -943,7 +943,7 @@ html[dir='ltr'] .card-info {
 .dmg {
   position: absolute;
   transform: translate(-50%, -100%);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 17px;
   line-height: 1;
   white-space: nowrap;
@@ -1018,7 +1018,7 @@ html[dir='ltr'] .card-info {
   overflow: hidden;
   border: 2.5px solid #0c1230;
   box-shadow: 0 3px 0 #0c1230;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
 }
 
 .scoreboard .timer {
@@ -1032,7 +1032,7 @@ html[dir='ltr'] .card-info {
   display: flex;
   align-items: center;
   padding: 0 10px;
-  font-weight: 900;
+  font-weight: 800;
   font-size: 17px;
   color: #fff;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
@@ -1088,7 +1088,7 @@ html.previewing .game-canvas {
   border: 2px solid rgba(255, 214, 102, 0.55);
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
   color: #fff;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: 'Baloo Bhaijaan 2', system-ui, sans-serif;
   text-align: center;
 }
 

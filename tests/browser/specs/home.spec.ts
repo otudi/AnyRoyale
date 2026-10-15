@@ -45,7 +45,7 @@ test.describe('guest identity and home screen', () => {
     await page.locator('[data-s="music"]').fill('0.2');
     await page.locator('[data-s="lang"]').selectOption('ar');
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-    await expect(page.locator('[data-act="play"]')).toContainText('ابدأ اللعب');
+    await expect(page.locator('[data-act="play"]')).toContainText('معركة');
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('anyroyale.settings.v1') || '{}'));
     expect(saved.music).toBeCloseTo(0.2);
     await ctx.close();

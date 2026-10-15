@@ -1,6 +1,6 @@
-import '@fontsource/tajawal/500.css';
-import '@fontsource/tajawal/700.css';
-import '@fontsource/tajawal/900.css';
+import '@fontsource/baloo-bhaijaan-2/500.css';
+import '@fontsource/baloo-bhaijaan-2/700.css';
+import '@fontsource/baloo-bhaijaan-2/800.css';
 import 'material-icons/iconfont/filled.css';
 import './ui/styles.css';
 import './ui/menu.css';

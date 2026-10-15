@@ -9,6 +9,7 @@ import { loadIdentity, provisionalName, saveIdentity } from '../network/identity
 import type { CardInfo, MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
 import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
+import { backdrop, crest, glyph, wordmark } from './brand';
 import { CardSizePreview } from './CardSizePreview';
 import { forgedFileFor } from '../rendering/visualCatalog';
 import { Renderer3D } from '../rendering/Renderer3D';
@@ -146,11 +147,9 @@ export class App {
   private set(screen: Screen, html: string, variant: 'solid' | 'overlay' = 'solid'): void {
     this.screen = screen;
     window.clearInterval(this.searchTimer);
-    const patterns =
-      variant === 'solid'
-        ? `<div class="mm-patterns"><span class="material-icons">emoji_events</span><span class="material-icons">shield</span><span class="material-icons">bolt</span></div>`
-        : '';
-    this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}">${patterns}<div class="mm-col">${html}</div></div>`;
+    // solid menus stand in front of the castle backdrop; overlays show the arena behind
+    const scene = variant === 'solid' ? backdrop() : '';
+    this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}">${scene}<div class="mm-col">${html}</div></div>`;
     this.setMenuMode(variant === 'solid');
   }
 
@@ -167,8 +166,8 @@ export class App {
   }
 
   /** A 3D menu button: icon + title (+ subtitle) on the start side, chevron on the end side. */
-  private btn(act: string, icon: string, title: string, opts: { cls?: string; sub?: string; chev?: boolean } = {}): string {
-    return `<button class="mm-btn ${opts.cls ?? ''}" data-act="${act}"><span class="start">${icon ? ic(icon) : ''}<span><span class="title">${title}</span>${
+  private btn(act: string, icon: string, title: string, opts: { cls?: string; sub?: string; chev?: boolean; glyph?: string } = {}): string {
+    return `<button class="mm-btn ${opts.cls ?? ''}" data-act="${act}"><span class="start">${opts.glyph ?? (icon ? ic(icon) : '')}<span><span class="title">${title}</span>${
       opts.sub ? `<span class="sub">${opts.sub}</span>` : ''
     }</span></span>${opts.chev ? ic('chevron_left', 'chev') : ''}</button>`;
   }
@@ -177,18 +176,28 @@ export class App {
     return `<div class="mm-top inner"><button class="mm-circle" data-act="${act}" aria-label="${t('back')}">${ic(getLang() === 'ar' ? 'arrow_forward' : 'arrow_back')}</button></div>`;
   }
 
+  /** Home top bar: the player's plate (tap to rename) and the quick toggles. */
   private topNav(): string {
     const s = getSettings();
+    const initial = esc([...this.name.trim()][0]?.toUpperCase() ?? 'A');
     return `<div class="mm-top">
+      <button class="mm-name" data-act="name" aria-label="${t('editName')}">
+        <span class="avatar">${glyph.shield}<b>${initial}</b></span>
+        <span class="who"><b>${esc(this.name)}</b><small>${t('editName')}</small></span>
+      </button>
       <div class="mm-cluster">
-        <button class="mm-circle" data-act="lang" aria-label="${t('language')}">${getLang() === 'ar' ? 'EN' : 'عربي'}</button>
-        <button class="mm-circle" data-act="theme" aria-label="${t('darkMode')}">${ic(isDark() ? 'light_mode' : 'dark_mode')}</button>
-      </div>
-      <div class="mm-cluster">
-        <button class="mm-circle" data-act="settings" aria-label="${t('settings')}">${ic('settings')}</button>
-        <button class="mm-circle blue" data-act="mute" aria-label="${t('mute')}">${ic(s.muted ? 'volume_off' : 'volume_up')}</button>
         <button class="mm-circle gold ${helpSeen() ? '' : 'pulse'}" data-act="help" aria-label="${t('howTitle')}">${ic('lightbulb')}</button>
+        <button class="mm-circle blue" data-act="mute" aria-label="${t('mute')}">${ic(s.muted ? 'volume_off' : 'volume_up')}</button>
+        <button class="mm-circle" data-act="settings" aria-label="${t('settings')}">${ic('settings')}</button>
       </div>
+    </div>`;
+  }
+
+  /** Home footer: language and theme switches. */
+  private footNav(): string {
+    return `<div class="mm-foot">
+      <button class="mm-circle" data-act="lang" aria-label="${t('language')}">${getLang() === 'ar' ? 'EN' : 'ع'}</button>
+      <button class="mm-circle" data-act="theme" aria-label="${t('darkMode')}">${ic(isDark() ? 'light_mode' : 'dark_mode')}</button>
     </div>`;
   }
 
@@ -212,9 +221,9 @@ export class App {
     };
   }
 
-  private brand(): string {
-    return `<div class="mm-logo-icons">${ic('shield')}${ic('emoji_events', 'center')}${ic('shield', 'red')}</div>
-      <h1 class="mm-title">AnyRoyale</h1>`;
+  /** The crest and wordmark lock-up (docs/BRAND.md). */
+  private brand(size = 128): string {
+    return `${crest(size)}<h1 class="mm-title">${wordmark(Math.round(size * 2))}</h1>`;
   }
 
   private renderLoading(pct: number, text: string): void {
@@ -228,7 +237,7 @@ export class App {
     this.set(
       'loading',
       `<div class="mm-content" style="justify-content:center;flex:1">
-         <div class="mm-brand" style="margin:0">${this.brand()}</div>
+         <div class="mm-brand" style="margin:0">${this.brand(150)}<div class="mm-tagline">${t('tagline')}</div></div>
          <div class="mm-progress"><div style="width:${pct}%"></div></div>
          <div class="mm-note" data-text>${esc(text)}</div>
        </div>`,
@@ -270,14 +279,15 @@ export class App {
     this.set(
       'home',
       `${this.topNav()}
-       <div class="mm-brand">${this.brand()}
-         <button class="mm-name" data-act="name">${ic('person')}<span>${esc(this.name)}</span>${ic('edit')}</button>
-       </div>
+       <div class="mm-brand">${this.brand(132)}<div class="mm-tagline">${t('tagline')}</div></div>
        <div class="mm-menu">
-         ${this.btn('play', 'sports_esports', t('startGame'), { cls: 'hero', chev: true })}
-         ${this.btn('bot', 'smart_toy', t('trainingShort'), { chev: true })}
-         ${this.btn('cards', 'style', t('cardsTitle'), { chev: true })}
-       </div>`,
+         ${this.btn('play', '', t('startGame'), { cls: 'hero big', sub: t('battleSub'), chev: true, glyph: glyph.swords })}
+         <div class="mm-tiles">
+           ${this.btn('bot', '', t('trainingShort'), { sub: t('trainingSub'), glyph: glyph.target.replace('class="glyph"', 'class="glyph blue"') })}
+           ${this.btn('cards', '', t('cardsTitle'), { sub: t('cardsSub'), glyph: glyph.deck.replace('class="glyph"', 'class="glyph gold"') })}
+         </div>
+       </div>
+       ${this.footNav()}`,
     );
     this.bind({
       ...this.navActions(),
@@ -308,8 +318,8 @@ export class App {
       `${this.backBtn()}
        <div class="mm-content"><h2 class="mm-header">${t('playMode')}</h2>
          <div class="mm-menu" style="margin-top:0">
-           ${this.btn('online', 'bolt', t('quickMatch'), { cls: 'hero', chev: true })}
-           ${this.btn('friend', 'group', t('privateRoom'), { chev: true })}
+           ${this.btn('online', '', t('quickMatch'), { cls: 'hero big', sub: t('quickMatchSub'), chev: true, glyph: glyph.swords })}
+           ${this.btn('friend', 'group', t('privateRoom'), { cls: 'blue', sub: t('privateRoomSub'), chev: true })}
          </div>
        </div>`,
     );
@@ -395,7 +405,7 @@ export class App {
          <div class="mm-card"><div class="mm-card-label">${t('yourRoomCode')}</div>${this.btn('create', 'add_circle', t('createRoom'), { cls: 'hero center' })}</div>
          <div class="mm-card"><div class="mm-card-label">${t('joinFriend')}</div>
            <div class="mm-code-inputs">${boxes}</div>
-           ${this.btn('join', 'login', t('join'), { cls: 'gold center' })}
+           ${this.btn('join', 'login', t('join'), { cls: 'blue center' })}
          </div>
        </div>`,
     );
@@ -904,7 +914,7 @@ export class App {
       'result',
       `<div class="mm-content" style="justify-content:center;flex:1">
          <h1 class="mm-result-title ${m.youWon ? 'win' : 'lose'}" data-result="${m.draw ? 'draw' : m.youWon ? 'win' : 'lose'}">${title}</h1>
-         <div class="mm-result-crowns"><span style="color:#8ac0ff">👑 ${m.crowns[you]}</span> — <span style="color:#ff8a8a">${m.crowns[opp]} 👑</span></div>
+         <div class="mm-result-crowns"><span style="color:#8ac0ff">${m.crowns[you]}</span><span style="color:var(--gold-500);width:34px">${glyph.crown}</span><span style="color:#ff8a92">${m.crowns[opp]}</span></div>
          <div class="mm-note" style="margin-bottom:0">${t(('reason_' + m.reason) as 'reason_crowns')}</div>
          <div class="mm-note" data-rematch-status></div>
          <div class="mm-menu" style="margin-top:0">

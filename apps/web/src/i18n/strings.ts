@@ -1,7 +1,7 @@
 // UI strings in Arabic and English. Arabic is the default when the browser language is Arabic.
 
 const en = {
-  tagline: 'Play instantly in your browser',
+  tagline: 'Same deck. Pure skill.',
   playOnline: 'Play Online',
   training: 'Training vs Bot',
   friend: 'Challenge a Friend',
@@ -113,7 +113,12 @@ const en = {
   bot: 'Bot',
   howTo: 'Drag a card onto your side of the arena. Destroy the enemy King Tower to win!',
   cards: 'Cards',
-  startGame: 'Start Game',
+  startGame: 'Battle',
+  battleSub: '1v1 online · same deck for both',
+  trainingSub: 'Practise against the bot',
+  cardsSub: 'Every card and its stats',
+  quickMatchSub: 'Face a random opponent now',
+  privateRoomSub: 'Play a friend with a code',
   trainingShort: 'Training',
   cardsTitle: 'Cards',
   playMode: 'Game Mode',
@@ -179,7 +184,7 @@ const en = {
 type Strings = typeof en;
 
 const ar: Strings = {
-  tagline: 'العب فورًا في متصفحك',
+  tagline: 'نفس التشكيلة… والمهارة تحسم',
   playOnline: 'العب أونلاين',
   training: 'تدريب ضد البوت',
   friend: 'تحدّى صديقًا',
@@ -291,7 +296,12 @@ const ar: Strings = {
   bot: 'بوت',
   howTo: 'اسحب بطاقة إلى جهتك من الساحة. دمّر برج ملك الخصم لتفوز!',
   cards: 'البطاقات',
-  startGame: 'ابدأ اللعب',
+  startGame: 'معركة',
+  battleSub: 'واحد ضد واحد · نفس التشكيلة للاثنين',
+  trainingSub: 'تمرّن ضد البوت',
+  cardsSub: 'كل البطاقات وقدراتها',
+  quickMatchSub: 'واجه خصمًا عشوائيًا الآن',
+  privateRoomSub: 'العب مع صديق برمز',
   trainingShort: 'التدريب',
   cardsTitle: 'البطاقات',
   playMode: 'نمط اللعب',
