@@ -207,7 +207,11 @@ export class Renderer3D {
 
   resize(): void {
     const w = this.container.clientWidth;
-    const h = this.container.clientHeight;
+    // On the menus the stage grows with the page (a long cards list is several screens tall)
+    // while the canvas is hidden: never size it past one screen, or it keeps the page tall (and
+    // scrollable into emptiness) after going back to a short screen.
+    const menu = document.documentElement.classList.contains('menu-mode');
+    const h = menu ? Math.min(this.container.clientHeight, window.innerHeight) : this.container.clientHeight;
     if (w === 0 || h === 0) return;
     this.renderer.setSize(w, h, false);
     this.renderer.domElement.style.width = `${w}px`;

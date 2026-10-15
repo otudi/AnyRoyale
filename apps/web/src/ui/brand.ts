@@ -50,46 +50,6 @@ export function wordmark(width = 260): string {
 </svg>`;
 }
 
-/**
- * The menu backdrop: night (or day) sky, distant hills and the two castles with their team
- * banners. Colours come from CSS variables so the same scene serves both themes.
- */
-export function backdrop(): string {
-  const stars = [
-    [40, 60, 1.4], [92, 120, 1], [150, 40, 1.2], [214, 92, 1.6], [270, 50, 1], [330, 110, 1.3], [370, 30, 1],
-    [60, 190, 1], [300, 200, 1.2], [180, 160, 0.9], [120, 240, 1], [350, 260, 1.1], [24, 300, 0.9],
-  ]
-    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`)
-    .join('');
-  const castle = (x: number, flip: boolean, team: 'blue' | 'red') => {
-    const s = flip ? -1 : 1;
-    return `<g transform="translate(${x} 0) scale(${s} 1)">
-      <path class="bd-castle" d="M-70 1010V650h14v-14h12v14h14v-14h12v14h14V620h-6v-12h10v-14h10v14h10v12h-6v30h14v-14h12v14h14v-14h12v14h14v360Z"/>
-      <path class="bd-castle" d="M-20 600V540l-8-8 22-30 22 30-8 8v60Z"/>
-      <rect class="bd-window" x="-12" y="560" width="8" height="14" rx="4"/>
-      <rect class="bd-window" x="-48" y="700" width="8" height="14" rx="4"/>
-      <rect class="bd-window" x="30" y="700" width="8" height="14" rx="4"/>
-      <path d="M-6 500V462" class="bd-pole"/>
-      <path class="bd-banner ${team}" d="M-6 464h30l-7 9 7 9h-30Z"/>
-    </g>`;
-  };
-  return `<svg class="mm-backdrop" viewBox="0 0 400 860" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-  <defs>
-    <linearGradient id="bdsky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" style="stop-color:var(--bd-sky-top)"/><stop offset=".65" style="stop-color:var(--bd-sky-mid)"/><stop offset="1" style="stop-color:var(--bd-sky-low)"/>
-    </linearGradient>
-    <radialGradient id="bdglow" cx=".5" cy=".3" r=".55"><stop offset="0" style="stop-color:var(--bd-glow)"/><stop offset="1" style="stop-color:var(--bd-glow)" stop-opacity="0"/></radialGradient>
-  </defs>
-  <rect width="400" height="860" fill="url(#bdsky)"/>
-  <rect width="400" height="860" fill="url(#bdglow)"/>
-  <g class="bd-stars">${stars}</g>
-  <path class="bd-far" d="M0 690C60 640 110 660 160 630S260 600 300 640 370 650 400 620V860H0Z"/>
-  <path class="bd-mid" d="M0 740C70 700 130 720 200 700S320 690 400 720V860H0Z"/>
-  <g transform="translate(0 -170)">${castle(64, false, 'blue')}${castle(336, true, 'red')}</g>
-  <path class="bd-ground" d="M0 800C100 780 300 780 400 800V860H0Z"/>
-</svg>`;
-}
-
 /** Brand glyphs (inherit the text colour). */
 export const glyph = {
   swords: `<svg class="glyph" viewBox="0 0 48 48" aria-hidden="true"><g fill="currentColor" stroke="#0b1030" stroke-width="2.5" stroke-linejoin="round"><path d="M8 4l4 0 22 22-4 4L8 8z"/><path d="M40 4l-4 0-22 22 4 4L40 8z"/><path d="M10 30l8 8-3 3-3-3-4 4-3-3 4-4-3-3z"/><path d="M38 30l-8 8 3 3 3-3 4 4 3-3-4-4 3-3z"/></g></svg>`,

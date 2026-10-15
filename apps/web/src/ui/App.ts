@@ -9,7 +9,7 @@ import { loadIdentity, provisionalName, saveIdentity } from '../network/identity
 import type { CardInfo, MatchEnd, MatchStart, ServerMessage } from '../network/protocol';
 import { ARENA_THEMES, themeBundles } from '../rendering/arenaThemes';
 import { CardArt } from '../rendering/CardArt';
-import { backdrop, crest, glyph, wordmark } from './brand';
+import { crest, glyph, wordmark } from './brand';
 import { CardSizePreview } from './CardSizePreview';
 import { forgedFileFor } from '../rendering/visualCatalog';
 import { Renderer3D } from '../rendering/Renderer3D';
@@ -147,9 +147,8 @@ export class App {
   private set(screen: Screen, html: string, variant: 'solid' | 'overlay' = 'solid'): void {
     this.screen = screen;
     window.clearInterval(this.searchTimer);
-    // solid menus stand in front of the castle backdrop; overlays show the arena behind
-    const scene = variant === 'solid' ? backdrop() : '';
-    this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}">${scene}<div class="mm-col">${html}</div></div>`;
+    // solid menus stand in front of the castle courtyard (#menu-bg); overlays show the arena
+    this.screens.innerHTML = `<div class="mm mm-${variant}" data-screen="${screen}"><div class="mm-col">${html}</div></div>`;
     this.setMenuMode(variant === 'solid');
   }
 

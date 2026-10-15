@@ -77,4 +77,27 @@ test.describe('guest identity and home screen', () => {
     expect(errors).toEqual([]);
     await ctx.close();
   });
+
+  test('coming back from the long cards page leaves no extra page to scroll on the home screen', async ({ browser }) => {
+    const { page, ctx, errors } = await openPlayer(browser);
+    await page.locator('[data-act="cards"]').click();
+    await expect(page.locator('[data-card]').first()).toBeVisible();
+    // phone browsers fire a resize while scrolling (the toolbar collapses): the page is long here
+    await page.evaluate(() => {
+      window.scrollTo(0, 99999);
+      window.dispatchEvent(new Event('resize'));
+      window.scrollTo(0, 0);
+    });
+    await page.locator('[data-act="back"]').click();
+    await expect(page.locator('[data-screen="home"]')).toBeVisible();
+    const sizes = await page.evaluate(() => ({
+      page: document.documentElement.scrollHeight,
+      screen: window.innerHeight,
+      canvas: document.querySelector<HTMLCanvasElement>('canvas.game-canvas')!.getBoundingClientRect().height,
+    }));
+    expect(sizes.page).toBeLessThanOrEqual(sizes.screen + 2);
+    expect(sizes.canvas).toBeLessThanOrEqual(sizes.screen + 2);
+    expect(errors).toEqual([]);
+    await ctx.close();
+  });
 });

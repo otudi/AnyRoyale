@@ -67,6 +67,10 @@ action.
   face drops 4 px and the depth shrinks. Variants: `gold` (primary — one per screen), `blue`
   (secondary), `red` (danger), `stone` (neutral).
 - **Panels** ("royal plates"): night gradient, 3 px dark outline, gold hairline inside.
+- **Menu background**: the castle courtyard illustration supplied by the owner
+  (`apps/web/public/assets/ui/menu-bg.webp`): blue and red banners on twin keeps, a bridge and
+  river in the valley, a stone terrace in front. It sits in a fixed layer (`#menu-bg`) behind every
+  menu, extended past the screen edges in its sky and stone colours; night mode tints it.
 - **Ribbon titles**: screen titles sit on a gold ribbon banner with folded ends.
 - **Tiles**: cards and modes are tiles with an illustration area and a label strip.
 - **Icons**: Material Icons for utility glyphs (settings, sound, back…), custom SVG for brand
