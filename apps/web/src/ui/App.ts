@@ -182,7 +182,7 @@ export class App {
     return `<div class="mm-top">
       <button class="mm-name" data-act="name" aria-label="${t('editName')}">
         <span class="avatar">${glyph.shield}<b>${initial}</b></span>
-        <span class="who"><b>${esc(this.name)}</b><small>${t('editName')}</small></span>
+        <span class="who"><b>${esc(this.name)}</b></span>
       </button>
       <div class="mm-cluster">
         <button class="mm-circle gold ${helpSeen() ? '' : 'pulse'}" data-act="help" aria-label="${t('howTitle')}">${ic('lightbulb')}</button>
@@ -236,7 +236,7 @@ export class App {
     this.set(
       'loading',
       `<div class="mm-content" style="justify-content:center;flex:1">
-         <div class="mm-brand" style="margin:0">${this.brand(150)}<div class="mm-tagline">${t('tagline')}</div></div>
+         <div class="mm-brand" style="margin:0">${this.brand(150)}</div>
          <div class="mm-progress"><div style="width:${pct}%"></div></div>
          <div class="mm-note" data-text>${esc(text)}</div>
        </div>`,
@@ -278,12 +278,12 @@ export class App {
     this.set(
       'home',
       `${this.topNav()}
-       <div class="mm-brand">${this.brand(132)}<div class="mm-tagline">${t('tagline')}</div></div>
+       <div class="mm-brand">${this.brand(132)}</div>
        <div class="mm-menu">
-         ${this.btn('play', '', t('startGame'), { cls: 'hero big', sub: t('battleSub'), chev: true, glyph: glyph.swords })}
+         ${this.btn('play', '', t('startGame'), { cls: 'hero big center', glyph: glyph.swords })}
          <div class="mm-tiles">
-           ${this.btn('bot', '', t('trainingShort'), { sub: t('trainingSub'), glyph: glyph.target.replace('class="glyph"', 'class="glyph blue"') })}
-           ${this.btn('cards', '', t('cardsTitle'), { sub: t('cardsSub'), glyph: glyph.deck.replace('class="glyph"', 'class="glyph gold"') })}
+           ${this.btn('bot', '', t('trainingShort'), { glyph: glyph.target.replace('class="glyph"', 'class="glyph blue"') })}
+           ${this.btn('cards', '', t('cardsTitle'), { glyph: glyph.deck.replace('class="glyph"', 'class="glyph gold"') })}
          </div>
        </div>
        ${this.footNav()}`,
@@ -317,8 +317,8 @@ export class App {
       `${this.backBtn()}
        <div class="mm-content"><h2 class="mm-header">${t('playMode')}</h2>
          <div class="mm-menu" style="margin-top:0">
-           ${this.btn('online', '', t('quickMatch'), { cls: 'hero big', sub: t('quickMatchSub'), chev: true, glyph: glyph.swords })}
-           ${this.btn('friend', 'group', t('privateRoom'), { cls: 'blue', sub: t('privateRoomSub'), chev: true })}
+           ${this.btn('online', '', t('quickMatch'), { cls: 'hero big center', glyph: glyph.swords })}
+           ${this.btn('friend', 'group', t('privateRoom'), { cls: 'blue' })}
          </div>
        </div>`,
     );
@@ -374,7 +374,7 @@ export class App {
            ${diffs
              .map(
                (d) =>
-                 `<button class="mm-btn lvl-${d}" data-act="d_${d}"><span class="start">${ic('fiber_manual_record', 'dot')}<span><span class="title">${t(d)}</span><span class="sub">${t((d + 'Desc') as 'easyDesc')}</span></span></span></button>`,
+                 `<button class="mm-btn lvl-${d}" data-act="d_${d}"><span class="start">${ic('fiber_manual_record', 'dot')}<span><span class="title">${t(d)}</span></span></span></button>`,
              )
              .join('')}
          </div>

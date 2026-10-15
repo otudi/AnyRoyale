@@ -33,10 +33,10 @@
   --panel-bot: #f5e4bd;
   --panel-hair: rgba(201, 128, 14, 0.55);
   --field-bg: #fffdf6;
-  --stone-top: #fffaf0;
-  --stone-bot: #efdcb0;
-  --stone-depth: #b48d4a;
-  --stone-ink: #24183f;
+  --stone-top: #4f66c9;
+  --stone-bot: #3447a3;
+  --stone-depth: #1c2766;
+  --stone-ink: var(--ivory);
   --mm-gold: var(--gold-500);
   --mm-primary: var(--blue-team);
   --mm-red: var(--red-team);
@@ -518,28 +518,6 @@ html.menu-mode #menu-bg {
 .mm-btn.blue .title,
 .mm-btn.red .title {
   text-shadow: 0 2px 0 rgba(11, 16, 48, 0.55);
-}
-
-/* shine sweep on the primary button */
-.mm-btn.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 13px;
-  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 48%, transparent 60%);
-  background-size: 250% 100%;
-  animation: mm-shine 3.5s ease-in-out infinite 1s;
-  pointer-events: none;
-}
-
-@keyframes mm-shine {
-  0% {
-    background-position: 120% 0;
-  }
-  40%,
-  100% {
-    background-position: -120% 0;
-  }
 }
 
 .mm-btn.center {
@@ -1455,7 +1433,6 @@ html.menu-mode .mm-help {
   .mm,
   .mm-brand,
   .mm-brand .crest,
-  .mm-btn.hero::after,
   .mm-result-title {
     animation: none !important;
   }

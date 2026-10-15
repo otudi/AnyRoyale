@@ -1,7 +1,6 @@
 // UI strings in Arabic and English. Arabic is the default when the browser language is Arabic.
 
 const en = {
-  tagline: 'Same deck. Pure skill.',
   playOnline: 'Play Online',
   training: 'Training vs Bot',
   friend: 'Challenge a Friend',
@@ -20,10 +19,6 @@ const en = {
   normal: 'Normal',
   hard: 'Hard',
   expert: 'Expert',
-  easyDesc: 'Slow reactions, frequent mistakes',
-  normalDesc: 'Sensible defence and balanced attacks',
-  hardDesc: 'Good elixir management and smart spells',
-  expertDesc: 'Reads your cycle, defends under its towers',
   createRoom: 'Create room',
   joinRoom: 'Join with code',
   roomCode: 'Room code',
@@ -114,11 +109,6 @@ const en = {
   howTo: 'Drag a card onto your side of the arena. Destroy the enemy King Tower to win!',
   cards: 'Cards',
   startGame: 'Battle',
-  battleSub: '1v1 online · same deck for both',
-  trainingSub: 'Practise against the bot',
-  cardsSub: 'Every card and its stats',
-  quickMatchSub: 'Face a random opponent now',
-  privateRoomSub: 'Play a friend with a code',
   trainingShort: 'Training',
   cardsTitle: 'Cards',
   playMode: 'Game Mode',
@@ -184,7 +174,6 @@ const en = {
 type Strings = typeof en;
 
 const ar: Strings = {
-  tagline: 'نفس التشكيلة… والمهارة تحسم',
   playOnline: 'العب أونلاين',
   training: 'تدريب ضد البوت',
   friend: 'تحدّى صديقًا',
@@ -203,10 +192,6 @@ const ar: Strings = {
   normal: 'عادي',
   hard: 'صعب',
   expert: 'خبير',
-  easyDesc: 'ردود فعل بطيئة وأخطاء متكررة',
-  normalDesc: 'دفاع معقول وهجوم متوازن',
-  hardDesc: 'إدارة جيدة للإكسير وتعويذات ذكية',
-  expertDesc: 'يقرأ دورة بطاقاتك ويدافع تحت أبراجه',
   createRoom: 'إنشاء غرفة',
   joinRoom: 'الدخول برمز',
   roomCode: 'رمز الغرفة',
@@ -297,11 +282,6 @@ const ar: Strings = {
   howTo: 'اسحب بطاقة إلى جهتك من الساحة. دمّر برج ملك الخصم لتفوز!',
   cards: 'البطاقات',
   startGame: 'معركة',
-  battleSub: 'واحد ضد واحد · نفس التشكيلة للاثنين',
-  trainingSub: 'تمرّن ضد البوت',
-  cardsSub: 'كل البطاقات وقدراتها',
-  quickMatchSub: 'واجه خصمًا عشوائيًا الآن',
-  privateRoomSub: 'العب مع صديق برمز',
   trainingShort: 'التدريب',
   cardsTitle: 'البطاقات',
   playMode: 'نمط اللعب',

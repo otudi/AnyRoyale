@@ -25,7 +25,8 @@ Tagline — AR: «نفس التشكيلة... والمهارة تحسم» · EN: 
   any size and needs no image file.
 - **Wordmark**: "AnyRoyale" in Baloo Bhaijaan 2 ExtraBold, gold gradient fill, dark navy outline and
   a 3 px drop. "Any" and "Royale" are one word, capital A and R.
-- Lock-up: crest above the wordmark (menus); crest alone for the favicon / app icon.
+- Lock-up: crest above the wordmark (menus); the crest alone is the favicon (transparent) and
+  the app icon (on the menu sky).
 - Clear space around the crest ≥ ¼ of its width. Never stretch, recolour per screen or add
   effects beyond the defined glow.
 
@@ -80,6 +81,8 @@ action.
 ## 6. Layout & UX rules / قواعد الاستخدام
 
 1. One primary action per screen, in gold, reachable by the thumb (lower half on phones).
+   Buttons and tiles carry a title (and an icon) only: no description lines, no tagline under
+   the logo. The game should feel simple, not explained.
 2. Back is always at the top start corner; destructive actions ask once (surrender).
 3. Text is short and in the player's language; Arabic is RTL with the same layout mirrored.
 4. Touch targets ≥ 44 px; spacing on an 8 px grid; 16 px side gutters on phones.
