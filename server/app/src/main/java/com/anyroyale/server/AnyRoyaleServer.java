@@ -86,7 +86,9 @@ public final class AnyRoyaleServer {
                       sf.hostedPath = "/";
                       sf.directory = config.staticDir().toString();
                       sf.location = Location.EXTERNAL;
-                      sf.headers.put("Cache-Control", "public, max-age=300");
+                      // index.html names the current hashed bundles: browsers must revalidate
+                      // it on every load, or a phone keeps serving an old build after a deploy.
+                      sf.headers.put("Cache-Control", "no-cache");
                       sf.mimeTypes.add("application/manifest+json", "webmanifest");
                     });
                 if (Files.exists(config.staticDir().resolve("index.html"))) {

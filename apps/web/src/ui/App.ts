@@ -104,6 +104,13 @@ export class App {
       return;
     }
     this.assetsReady = true;
+    // A phone keeps an open tab's old build running after a deploy: look for a newer build when
+    // the game comes back to the foreground, and every few minutes, and reload only on the home
+    // screen (never during a match or in the queue).
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') void this.checkForUpdate();
+    });
+    setInterval(() => void this.checkForUpdate(), 3 * 60_000);
     // Background-load optional bundles so match start is instant.
     void assets.loadAll(EXTRA_BUNDLES);
     if (this.startQueue.length) {
@@ -237,6 +244,22 @@ export class App {
        </div>`,
     );
     this.screens.querySelector('[data-act="retry"]')!.addEventListener('click', () => location.reload());
+  }
+
+  /** Reloads the page when the server has a newer build and the player is on the home screen. */
+  private async checkForUpdate(): Promise<void> {
+    if (this.screen !== 'home' || this.battle) return;
+    const mine = [...document.querySelectorAll<HTMLScriptElement>('script[src]')]
+      .map((el) => el.getAttribute('src') ?? '')
+      .find((src) => /\/assets\/index-[\w-]+\.js$/.test(src));
+    if (!mine) return; // dev server: nothing to compare
+    try {
+      const html = await (await fetch('/', { cache: 'no-store' })).text();
+      const latest = /\/assets\/index-[\w-]+\.js/.exec(html)?.[0];
+      if (latest && !mine.endsWith(latest) && this.screen === 'home' && !this.battle) location.reload();
+    } catch {
+      // offline: try again later
+    }
   }
 
   showHome(): void {
