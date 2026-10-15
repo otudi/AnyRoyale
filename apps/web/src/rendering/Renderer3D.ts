@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { getSettings, onSettings, type Quality } from '../ui/settings';
+import { setSilhouettesEnabled } from './outline';
 
 /**
  * WebGL renderer, camera and lighting.
@@ -109,6 +110,8 @@ export class Renderer3D {
     // Real-time shadows only on "high" (a second render pass of every caster); otherwise units
     // get soft blob shadows.
     const shadows = q === 'high';
+    // see-through silhouettes double every unit's draw calls: not on "low"
+    setSilhouettesEnabled(q !== 'low');
     this.renderer.shadowMap.enabled = shadows;
     this.sun.castShadow = shadows;
     this.sun.shadow.mapSize.set(shadows ? 2048 : 512, shadows ? 2048 : 512);

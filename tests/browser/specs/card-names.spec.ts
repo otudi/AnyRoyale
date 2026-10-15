@@ -56,6 +56,8 @@ for (const lang of ['en', 'ar'] as const) {
     await page.locator('[data-act="bot"]').click();
     await page.locator('[data-act="d_easy"]').click();
     await expect(page.locator('[data-screen="intro"] .mm-tile')).toHaveCount(8);
+    // the intro is up before the battle session exists (it waits for the deck's models)
+    await expect.poll(async () => (await state(page)).match?.deck?.length ?? 0).toBe(8);
     const deck = (await state(page)).match!.deck;
     const titles = await page.locator('[data-screen="intro"] .mm-tile').evaluateAll((els) => els.map((el) => el.getAttribute('title')));
     expect(titles).toEqual(deck.map((id) => CARD_TEXTS[id][lang]));

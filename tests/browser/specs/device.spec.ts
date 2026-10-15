@@ -129,8 +129,8 @@ test('upright screens get a rotate prompt; turning the device removes it and the
   await waitRunning(p.page);
   await p.page.setViewportSize({ width: 844, height: 390 });
   await expect(p.page.locator('#rotate-hint')).toBeHidden();
-  const canvas = await p.page.locator('canvas.game-canvas').boundingBox();
-  expect(canvas!.width).toBeGreaterThan(800);
+  // the canvas follows the new size on the next resize pass
+  await expect.poll(async () => (await p.page.locator('canvas.game-canvas').boundingBox())!.width).toBeGreaterThan(800);
   await expect(p.page.locator('[data-slot="0"]')).toBeVisible();
   // the side view: own king tower on the left half of the screen, the enemy's on the right
   const s = await state(p.page);

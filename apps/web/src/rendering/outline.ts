@@ -18,11 +18,23 @@ export const SILHOUETTE_ORDER = 1;
 export const UNIT_ORDER = 2;
 
 const materials = new Map<SilhouetteSide, THREE.MeshBasicMaterial>();
+let enabled = true;
+
+/**
+ * Turns every silhouette on or off at once (low quality: they double each unit's draw calls).
+ * A hidden material is skipped by the renderer, so this costs nothing per frame.
+ */
+export function setSilhouettesEnabled(on: boolean): void {
+  enabled = on;
+  for (const m of materials.values()) m.visible = on;
+}
 
 function silhouetteMaterial(side: SilhouetteSide): THREE.MeshBasicMaterial {
   let m = materials.get(side);
   if (!m) {
-    m = new THREE.MeshBasicMaterial({ color: COLORS[side], depthWrite: false, depthFunc: THREE.GreaterDepth, fog: false });
+    // half transparent: enough to find a hidden unit without painting over the tower
+    m = new THREE.MeshBasicMaterial({ color: COLORS[side], transparent: true, opacity: 0.5, depthWrite: false, depthFunc: THREE.GreaterDepth, fog: false });
+    m.visible = enabled;
     materials.set(side, m);
   }
   return m;
