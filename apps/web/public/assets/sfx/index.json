@@ -128,10 +128,13 @@
    "heavyStep.mp3"
   ]
  },
- "music": {
-  "battle": "music-battle.mp3",
-  "overtime": "music-overtime.mp3"
- },
+ "music": [
+  "lofi-1.mp3",
+  "lofi-2.mp3",
+  "lofi-3.mp3",
+  "lofi-4.mp3",
+  "lofi-5.mp3"
+ ],
  "sources": {
   "k_impact": {
    "page": "https://kenney.nl/assets/impact-sounds",
@@ -163,15 +166,30 @@
    "license": "CC0-1.0",
    "sha256": "946fc23a63d535d693eb31b2eabb80c8c28d6351e2186b344ceb71b2cb1d5eb6"
   },
-  "m_battleA": {
-   "page": "https://opengameart.org/content/battle-theme-a",
+  "m_lofi_bartender": {
+   "page": "https://opengameart.org/content/lofi-compilation",
    "license": "CC0-1.0",
-   "sha256": "6042399782e581d753d616bc703e66483d5eccb5fb687a20c9a552d68c49e620"
+   "sha256": "5cbbbe5058ed31d5a9288529ac7b4c3e16a440aad5a4b603bb8bc90df54708d4"
   },
-  "m_battleB": {
-   "page": "https://opengameart.org/content/battle-theme-b-for-rpg",
+  "m_lofi_cue": {
+   "page": "https://opengameart.org/content/lofi-compilation",
    "license": "CC0-1.0",
-   "sha256": "8476ce29692d8d317a7d79628af967448ec09d9f66efe692a597336c5cea2629"
+   "sha256": "c97929e1a7b209d0ce24445d33396e3272b4675f50c3d72dbaa315c0152372a4"
+  },
+  "m_lofi_florist": {
+   "page": "https://opengameart.org/content/lofi-compilation",
+   "license": "CC0-1.0",
+   "sha256": "c68ac934076d05883376badb440d945738b9e075d493e03d4d00e05354945738"
+  },
+  "m_lofi_hiphop": {
+   "page": "https://opengameart.org/content/lofi-hip-hop",
+   "license": "CC0-1.0",
+   "sha256": "8641e8203d0e7dc06db0276b69fc15f59e9f45faf76d2d647bc076a3339c1ef1"
+  },
+  "m_lofi_tea": {
+   "page": "https://opengameart.org/content/lofi-compilation",
+   "license": "CC0-1.0",
+   "sha256": "03f8128bfa193e9fee5f0647f189baeb7adbf2a1f7b0fecf849ad57e6355091c"
   },
   "o_bang": {
    "page": "https://opengameart.org/content/25-cc0-bang-firework-sfx",

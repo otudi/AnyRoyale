@@ -14,13 +14,14 @@ test('audio starts after the first user gesture and the recorded effects decode'
   await p.ctx.close();
 });
 
-test('calm menu music plays; the mute button silences it completely; battles switch track', async ({ browser }) => {
+test('calm lofi music plays; the mute button silences it completely; it carries on into battle', async ({ browser }) => {
   const p = await openPlayer(browser);
   const music = async () => (await state(p.page)).audio.music as { track: string | null; playing: boolean; muted: boolean };
   await p.page.locator('[data-act="cards"]').click(); // first gesture unlocks audio
   await p.page.locator('[data-act="back"]').click();
   await expect.poll(async () => (await music()).track, { timeout: 10_000 }).toBe('menu');
   await expect.poll(async () => (await music()).playing, { timeout: 10_000 }).toBe(true);
+  expect((await state(p.page)).audio.music.song).toMatch(/^lofi-\d\.mp3$/);
   // mute: the music element itself stops (not only the Web Audio gain)
   await p.page.locator('[data-act="mute"]').click();
   await expect.poll(async () => (await music()).playing).toBe(false);
@@ -28,7 +29,7 @@ test('calm menu music plays; the mute button silences it completely; battles swi
   // unmute: the same track resumes
   await p.page.locator('[data-act="mute"]').click();
   await expect.poll(async () => (await music()).playing, { timeout: 10_000 }).toBe(true);
-  // a battle switches to the battle theme
+  // a battle keeps the same playlist going (a little louder)
   await p.page.locator('[data-act="bot"]').click();
   await p.page.locator('[data-act="d_easy"]').click();
   await expect.poll(async () => (await music()).track, { timeout: 40_000 }).toBe('battle');

@@ -80,15 +80,22 @@ for (const [name, variants] of Object.entries(sounds)) {
     index[name].push(file);
   });
 }
-// Music: whole tracks, loudness-normalised quieter than the effects so they never dominate.
-const musicIndex = {};
-for (const [track, id] of Object.entries(music ?? {})) {
+// Music: the background playlist (calm lofi). Whole tracks, silence-trimmed, loudness-normalised
+// well under the effects, with soft fades in and out, numbered in playlist order.
+const musicOut = join(here, '../../apps/web/public/assets/music');
+mkdirSync(musicOut, { recursive: true });
+const musicIndex = [];
+(music ?? []).forEach((id, i) => {
   const src = fetchPack(id);
   used.add(id);
-  const file = `music-${track}.mp3`;
-  execFileSync('ffmpeg', ['-hide_banner', '-v', 'error', '-y', '-i', src, '-af', 'loudnorm=I=-20:TP=-2:LRA=11', '-c:a', 'libmp3lame', '-b:a', '96k', '-ar', '44100', '-ac', '2', join(out, file)]);
-  musicIndex[track] = file;
-}
+  const file = `lofi-${i + 1}.mp3`;
+  const staged = join(cache, `music-stage-${i + 1}.mp3`);
+  const trim = 'silenceremove=start_periods=1:start_threshold=-55dB,areverse,silenceremove=start_periods=1:start_threshold=-55dB,areverse';
+  execFileSync('ffmpeg', ['-hide_banner', '-v', 'error', '-y', '-i', src, '-af', `${trim},loudnorm=I=-22:TP=-2:LRA=9,afade=t=in:d=1.5`, '-ar', '44100', '-ac', '2', '-b:a', '72k', staged]);
+  const secs = Number(execFileSync('ffprobe', ['-v', 'quiet', '-show_entries', 'format=duration', '-of', 'csv=p=0', staged]).toString());
+  execFileSync('ffmpeg', ['-hide_banner', '-v', 'error', '-y', '-i', staged, '-af', `afade=t=out:st=${Math.max(0, secs - 2.5)}:d=2.5`, '-b:a', '72k', join(musicOut, file)]);
+  musicIndex.push(file);
+});
 const sources = {};
 for (const id of [...used].sort()) {
   sources[id] = { page: packs[id].page, license: packs[id].license, sha256: sha256(readFileSync(join(cache, `${id}.${packs[id].single ? 'mp3' : 'zip'}`))) };

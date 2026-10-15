@@ -1,31 +1,30 @@
 /**
- * Background music: recorded CC0 tracks (public/assets/sfx/music-*.mp3, see docs/ASSETS.md),
- * streamed by <audio> elements routed through Web Audio so the music volume and fades work
- * everywhere (iOS ignores element.volume).
+ * Background music: a calm lofi playlist (public/assets/music/lofi-N.mp3, CC0, see docs/ASSETS.md)
+ * that sounds like ordinary background music, not game music. It plays track after track like a
+ * radio, from a random starting track, and carries on unchanged between the menus and battles
+ * (only a little quieter in the menus).
  *
- * Calm by design: a gentle town theme in the menus, an unhurried medieval theme in battle and a
- * slightly livelier one in overtime, crossfaded when the mood changes.
- *
- * Mute does not rely on the Web Audio graph alone: on iOS a media element can end up playing
- * outside the graph (interrupted context, routing lost), so muting also mutes and pauses the
- * elements themselves.
+ * One <audio> element streams the current track; it is routed through Web Audio so the music
+ * volume and fades work everywhere (iOS ignores element.volume). Mute does not rely on the graph
+ * alone: on iOS a media element can end up playing outside it, so muting also mutes and pauses
+ * the element itself.
  */
 export type Track = 'menu' | 'battle' | 'none';
-type Channel = 'menu' | 'battle' | 'overtime';
 
-const FADE = 1.4;
-/** Cache-busting version of the music files (2: the calm tracks). */
-const MUSIC_VERSION = 2;
-/** Relative levels: the menu theme sits a little under the battle one. */
-const LEVEL: Record<Channel, number> = { menu: 0.8, battle: 1, overtime: 1 };
+/** Cache-busting version of the music files (/assets is cached for a year). */
+const MUSIC_VERSION = 3;
+const PLAYLIST = ['lofi-1.mp3', 'lofi-2.mp3', 'lofi-3.mp3', 'lofi-4.mp3', 'lofi-5.mp3'];
+const FADE = 1.5;
+const LEVEL: Record<Track, number> = { menu: 0.85, battle: 1, none: 0 };
 
 export class MusicPlayer {
-  private channels = new Map<Channel, { el: HTMLAudioElement; gain: GainNode }>();
-  private current: Channel | null = null;
+  private el: HTMLAudioElement | null = null;
+  private gain: GainNode | null = null;
+  private index = Math.floor(Math.random() * PLAYLIST.length);
   private wanted: Track = 'none';
-  private overtime = false;
   private hidden = false;
   private muted = false;
+  private pauseTimer = 0;
 
   constructor(
     private readonly ctx: AudioContext,
@@ -33,16 +32,19 @@ export class MusicPlayer {
     private readonly base: string,
   ) {}
 
-  private channel(name: Channel): { el: HTMLAudioElement; gain: GainNode } {
-    let c = this.channels.get(name);
-    if (!c) {
+  private element(): HTMLAudioElement {
+    if (!this.el) {
       const el = new Audio();
-      // /assets is cached for a year: bump MUSIC_VERSION whenever a track file changes
-      el.src = `${this.base}music-${name}.mp3?v=${MUSIC_VERSION}`;
-      el.loop = true;
-      el.preload = name === 'menu' ? 'auto' : 'metadata';
+      el.preload = 'auto';
       el.muted = this.muted;
       el.setAttribute('playsinline', '');
+      el.src = this.url(this.index);
+      // next track when one ends (the same element keeps its iOS playback permission)
+      el.addEventListener('ended', () => {
+        this.index = (this.index + 1) % PLAYLIST.length;
+        el.src = this.url(this.index);
+        this.resume();
+      });
       const gain = this.ctx.createGain();
       gain.gain.value = 0;
       try {
@@ -51,93 +53,76 @@ export class MusicPlayer {
       } catch {
         // no MediaElementSource: the element plays at its own volume (mute still applies)
       }
-      c = { el, gain };
-      this.channels.set(name, c);
+      this.el = el;
+      this.gain = gain;
     }
-    return c;
+    return this.el;
   }
 
-  /**
-   * Call inside a user gesture: starts and immediately pauses every track so mobile Safari lets
-   * them play later without a gesture (each media element needs its own first play).
-   */
+  private url(i: number): string {
+    return `${this.base}${PLAYLIST[i]}?v=${MUSIC_VERSION}`;
+  }
+
+  /** Call inside a user gesture: a first play() lets mobile Safari play the element later. */
   bless(): void {
-    for (const name of ['menu', 'battle', 'overtime'] as Channel[]) {
-      const c = this.channel(name);
-      c.el
-        .play()
-        .then(() => {
-          if (this.current !== name || this.muted) c.el.pause();
-        })
-        .catch(() => {});
-    }
+    const el = this.element();
+    el.play()
+      .then(() => {
+        if (this.wanted === 'none' || this.muted || this.hidden) el.pause();
+      })
+      .catch(() => {});
   }
 
-  /** For tests: which track is audible and whether its element is actually playing. */
-  info(): { track: string | null; playing: boolean; time: number; muted: boolean } {
-    const c = this.current ? this.channels.get(this.current) : undefined;
-    return { track: this.current, playing: !!c && !c.el.paused, time: c ? c.el.currentTime : 0, muted: this.muted };
+  /** For tests: the mood, whether the element is actually playing, and the current track. */
+  info(): { track: string | null; playing: boolean; time: number; muted: boolean; song: string } {
+    return {
+      track: this.wanted === 'none' ? null : this.wanted,
+      playing: !!this.el && !this.el.paused,
+      time: this.el?.currentTime ?? 0,
+      muted: this.muted,
+      song: PLAYLIST[this.index],
+    };
   }
 
   play(track: Track): void {
+    if (track === this.wanted) return;
     this.wanted = track;
-    this.apply();
+    const el = this.element();
+    const now = this.ctx.currentTime;
+    const g = this.gain!.gain;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(g.value, now);
+    g.linearRampToValueAtTime(LEVEL[track], now + FADE);
+    window.clearTimeout(this.pauseTimer);
+    if (track === 'none') {
+      this.pauseTimer = window.setTimeout(() => el.pause(), FADE * 1000 + 100);
+      return;
+    }
+    this.resume();
   }
 
-  /** 1 during regular time, more in overtime. */
-  setIntensity(v: number): void {
-    this.overtime = v > 1.05;
-    this.apply();
-  }
+  /** The playlist keeps the same calm mood in overtime: nothing to change. */
+  setIntensity(_v: number): void {}
 
-  /** Muted: every element is muted and paused (nothing streams); unmuted: the wanted track resumes. */
+  /** Muted: the element is muted and paused (nothing streams); unmuted: the music resumes. */
   setMuted(muted: boolean): void {
     if (this.muted === muted) return;
     this.muted = muted;
-    for (const c of this.channels.values()) {
-      c.el.muted = muted;
-      if (muted) c.el.pause();
+    if (this.el) {
+      this.el.muted = muted;
+      if (muted) this.el.pause();
     }
-    if (!muted) this.resumeCurrent();
+    if (!muted) this.resume();
   }
 
   /** Page hidden: pause streaming (the context is suspended anyway); resume on return. */
   setHidden(hidden: boolean): void {
     this.hidden = hidden;
-    const c = this.current ? this.channels.get(this.current) : undefined;
-    if (!c) return;
-    if (hidden) c.el.pause();
-    else this.resumeCurrent();
+    if (hidden) this.el?.pause();
+    else this.resume();
   }
 
-  private resumeCurrent(): void {
-    const c = this.current ? this.channels.get(this.current) : undefined;
-    if (c && !this.hidden && !this.muted) void c.el.play().catch(() => {});
-  }
-
-  private apply(): void {
-    const next: Channel | null =
-      this.wanted === 'none' ? null : this.wanted === 'menu' ? 'menu' : this.overtime ? 'overtime' : 'battle';
-    if (next === this.current) return;
-    const now = this.ctx.currentTime;
-    const prev = this.current ? this.channels.get(this.current) : undefined;
-    const prevName = this.current;
-    this.current = next;
-    if (prev) {
-      prev.gain.gain.cancelScheduledValues(now);
-      prev.gain.gain.setValueAtTime(prev.gain.gain.value, now);
-      prev.gain.gain.linearRampToValueAtTime(0, now + FADE);
-      window.setTimeout(() => {
-        if (this.current !== prevName) prev.el.pause();
-      }, FADE * 1000 + 100);
-    }
-    if (!next) return;
-    const c = this.channel(next);
-    // the battle and overtime themes start from the top; the menu theme carries on where it was
-    if (next !== 'menu') c.el.currentTime = 0;
-    c.gain.gain.cancelScheduledValues(now);
-    c.gain.gain.setValueAtTime(c.gain.gain.value, now);
-    c.gain.gain.linearRampToValueAtTime(LEVEL[next], now + FADE);
-    this.resumeCurrent();
+  private resume(): void {
+    if (this.el && this.wanted !== 'none' && !this.hidden && !this.muted) void this.el.play().catch(() => {});
   }
 }

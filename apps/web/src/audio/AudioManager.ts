@@ -58,7 +58,7 @@ export class AudioManager {
       this.sfxBus = this.ctx.createGain();
       this.sfxBus.connect(this.master);
       this.applyVolumes();
-      this.music = new MusicPlayer(this.ctx, this.musicBus, `${import.meta.env.BASE_URL}assets/sfx/`);
+      this.music = new MusicPlayer(this.ctx, this.musicBus, `${import.meta.env.BASE_URL}assets/music/`);
       this.applyVolumes(); // the player must know about mute before its first play
       this.music.bless();
       // iOS: play a silent buffer inside the gesture to fully unlock output.
@@ -175,7 +175,7 @@ export class AudioManager {
     return this.ctx?.state ?? 'none';
   }
 
-  musicInfo(): { track: string | null; playing: boolean; time: number; muted: boolean } {
+  musicInfo(): { track: string | null; playing: boolean; time: number; muted: boolean; song?: string } {
     return this.music?.info() ?? { track: null, playing: false, time: 0, muted: false };
   }
 

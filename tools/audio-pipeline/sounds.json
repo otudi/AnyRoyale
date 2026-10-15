@@ -1,5 +1,5 @@
 {
- "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds). 'music' maps each music track (the menus play the battle theme muffled) to a whole source file (loudness-normalised, stereo).",
+ "comment": "Game sound -> source clips. Each variant is a list of layers mixed together; 'max' trims (seconds, with a short fade), 'gain' is in dB after peak-normalising every layer, 'at' delays a layer (seconds). 'music' is the background playlist (calm lofi, played in order across menus and battles): whole source files, silence-trimmed, loudness-normalised quietly, with soft fades, written to apps/web/public/assets/music/lofi-N.mp3.",
  "sounds": {
   "click": [
    [
@@ -423,8 +423,11 @@
    ]
   ]
  },
- "music": {
-  "battle": "m_battleA",
-  "overtime": "m_battleB"
- }
+ "music": [
+  "m_lofi_tea",
+  "m_lofi_florist",
+  "m_lofi_hiphop",
+  "m_lofi_cue",
+  "m_lofi_bartender"
+ ]
 }

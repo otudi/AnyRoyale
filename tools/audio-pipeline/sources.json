@@ -1,5 +1,5 @@
 {
-  "comment": "Sound packs used by AnyRoyale. All are CC0 1.0 (public domain). Kenney packs by Kenney Vleugels (kenney.nl); the OpenGameArt packs by 'rubberduck' (opengameart.org/users/rubberduck); music by cynicmusic (opengameart.org/users/cynicmusic), also CC0. Each pack ships its own licence text; SHA-256 of every downloaded zip is pinned.",
+  "comment": "Sound packs used by AnyRoyale. All are CC0 1.0 (public domain). Kenney packs by Kenney Vleugels (kenney.nl); the OpenGameArt packs by 'rubberduck' (opengameart.org/users/rubberduck); music: a calm lofi playlist by tad (opengameart.org/content/lofi-compilation) and omfgdude (opengameart.org/content/lofi-hip-hop), also CC0. Each pack ships its own licence text; SHA-256 of every downloaded zip is pinned.",
   "packs": {
     "k_impact": {
       "url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
@@ -73,19 +73,40 @@
       "license": "CC0-1.0",
       "sha256": "7cd39abb49d4362a37ba18dc0e454c7dc1d08029d4e5b683149046bc237b2eba"
     },
-    "m_battleA": {
-      "url": "https://opengameart.org/sites/default/files/battleThemeA.mp3",
-      "page": "https://opengameart.org/content/battle-theme-a",
+    "m_lofi_tea": {
+      "url": "https://opengameart.org/sites/default/files/A%20cup%20of%20tea.mp3",
+      "page": "https://opengameart.org/content/lofi-compilation",
       "license": "CC0-1.0",
       "single": true,
-      "sha256": "6042399782e581d753d616bc703e66483d5eccb5fb687a20c9a552d68c49e620"
+      "sha256": "03f8128bfa193e9fee5f0647f189baeb7adbf2a1f7b0fecf849ad57e6355091c"
     },
-    "m_battleB": {
-      "url": "https://opengameart.org/sites/default/files/battleThemeB.mp3",
-      "page": "https://opengameart.org/content/battle-theme-b-for-rpg",
+    "m_lofi_florist": {
+      "url": "https://opengameart.org/sites/default/files/Florist.mp3",
+      "page": "https://opengameart.org/content/lofi-compilation",
       "license": "CC0-1.0",
       "single": true,
-      "sha256": "8476ce29692d8d317a7d79628af967448ec09d9f66efe692a597336c5cea2629"
+      "sha256": "c68ac934076d05883376badb440d945738b9e075d493e03d4d00e05354945738"
+    },
+    "m_lofi_hiphop": {
+      "url": "https://opengameart.org/sites/default/files/lofihiphop.ogg",
+      "page": "https://opengameart.org/content/lofi-hip-hop",
+      "license": "CC0-1.0",
+      "single": true,
+      "sha256": "8641e8203d0e7dc06db0276b69fc15f59e9f45faf76d2d647bc076a3339c1ef1"
+    },
+    "m_lofi_cue": {
+      "url": "https://opengameart.org/sites/default/files/Cue.mp3",
+      "page": "https://opengameart.org/content/lofi-compilation",
+      "license": "CC0-1.0",
+      "single": true,
+      "sha256": "c97929e1a7b209d0ce24445d33396e3272b4675f50c3d72dbaa315c0152372a4"
+    },
+    "m_lofi_bartender": {
+      "url": "https://opengameart.org/sites/default/files/Bartender.mp3",
+      "page": "https://opengameart.org/content/lofi-compilation",
+      "license": "CC0-1.0",
+      "single": true,
+      "sha256": "5cbbbe5058ed31d5a9288529ac7b4c3e16a440aad5a4b603bb8bc90df54708d4"
     }
   }
 }
