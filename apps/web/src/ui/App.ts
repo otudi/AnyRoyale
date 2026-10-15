@@ -786,15 +786,23 @@ export class App {
     // Make sure every bundle this arena and deck can use is loaded before building the scene.
     // ...and the deck's own forged character models (a few hundred KB, loaded once per page).
     const forged = m.deck.map((id) => forgedFileFor(cards.get(id)?.unit?.name)).filter((f): f is string => !!f);
+    // The intro (opponent, arena, shared deck) goes up at once: the countdown is already running
+    // on the server, so it must not wait for the downloads below.
+    const intro = m.state !== 'RUNNING' && m.state !== 'ENDED';
+    if (intro) this.showIntro(m);
     await assets.loadAll([...new Set([...themeBundles(m.arena.id), ...EXTRA_BUNDLES, ...forged])]);
     if (this.cancelledMatches.has(m.matchId)) return; // cancelled while we were loading
     if (!ARENA_THEMES[m.arena.id]) console.warn('Unknown arena theme', m.arena.id);
     this.battle = new BattleSession(m, this.conn, this.r, this.hudRoot, this.art, this.stage);
     this.battle.onSurrender = () => this.confirmSurrender();
-    if (m.state === 'RUNNING' || m.state === 'ENDED') {
+    if (!intro) {
       this.hideScreens();
-    } else {
-      this.showIntro(m);
+    } else if (this.screen === 'intro') {
+      // portraits drawn before the deck's own models arrived: redraw them now
+      for (const img of this.screens.querySelectorAll<HTMLImageElement>('[data-intro-card] img')) {
+        const c = cards.get(img.parentElement!.dataset.introCard!);
+        if (c) img.src = this.art.get(c);
+      }
     }
     this.conn.send({ type: 'ready', matchId: m.matchId });
   }
@@ -812,7 +820,7 @@ export class App {
          <div class="mm-deck">${m.deck
            .map((id) => {
              const c = cards.get(id);
-             return c ? `<div class="mm-tile ${c.rarity.toLowerCase()}" title="${esc(cardName(c))}"><img class="art" src="${this.art.get(c)}" alt="" /><span class="mm-cost"><span>${c.cost}</span></span></div>` : '';
+             return c ? `<div class="mm-tile ${c.rarity.toLowerCase()}" data-intro-card="${c.id}" title="${esc(cardName(c))}"><img class="art" src="${this.art.get(c)}" alt="" /><span class="mm-cost"><span>${c.cost}</span></span></div>` : '';
            })
            .join('')}</div>
          <h2 class="mm-header" data-countdown style="margin:10px 0 0">${t('loading')}</h2>
