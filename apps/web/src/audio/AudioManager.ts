@@ -59,6 +59,7 @@ export class AudioManager {
       this.sfxBus.connect(this.master);
       this.applyVolumes();
       this.music = new MusicPlayer(this.ctx, this.musicBus, `${import.meta.env.BASE_URL}assets/sfx/`);
+      this.applyVolumes(); // the player must know about mute before its first play
       this.music.bless();
       // iOS: play a silent buffer inside the gesture to fully unlock output.
       const silent = this.ctx.createBuffer(1, 1, 22050);
@@ -116,8 +117,12 @@ export class AudioManager {
     if (!this.ctx) return;
     const s = getSettings();
     const on = s.muted ? 0 : 1;
-    this.musicBus.gain.value = s.music * 0.45 * on;
+    // the master gain silences everything routed through Web Audio; the music elements are
+    // muted on their own as well (iOS can play them outside the graph)
+    this.master.gain.value = on;
+    this.musicBus.gain.value = s.music * 0.38 * on;
     this.sfxBus.gain.value = s.sfx * on;
+    this.music?.setMuted(s.muted || s.music <= 0);
   }
 
   playMusic(track: Track): void {
@@ -170,8 +175,8 @@ export class AudioManager {
     return this.ctx?.state ?? 'none';
   }
 
-  musicInfo(): { track: string | null; playing: boolean; time: number } {
-    return this.music?.info() ?? { track: null, playing: false, time: 0 };
+  musicInfo(): { track: string | null; playing: boolean; time: number; muted: boolean } {
+    return this.music?.info() ?? { track: null, playing: false, time: 0, muted: false };
   }
 
   get sampleCount(): number {

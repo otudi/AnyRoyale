@@ -11,7 +11,7 @@ card art or logos. Everything you see or hear comes from one of these sources:
 | `public/assets/ui/menu-bg.webp` | Menu background (castle courtyard) — supplied by the project owner for AnyRoyale | owner-provided |
 | `apps/web/src/ui/brand.ts`, `public/favicon.svg`, `public/icon-*.png` | Crest logo, wordmark, menu backdrop and brand glyphs — original vector art made for AnyRoyale (see `docs/BRAND.md`) | project's own |
 | Kenney audio packs (impact, interface, RPG, sci-fi, UI, music jingles) and rubberduck's OpenGameArt packs (80 RPG SFX, 100 SFX, 100 SFX 2, sci-fi SFX, bang/firework SFX, water/splash SFX) | the recorded sound effects in `apps/web/public/assets/sfx` | CC0 1.0 |
-| "Battle Theme A" and "Battle Theme B" by cynicmusic (OpenGameArt) | menu/battle and overtime music (`apps/web/public/assets/sfx/music-*.mp3`) | CC0 1.0 |
+| "Peaceful Town" by aroachifoundonmypillow, "Medieval: Exploration" and "Medieval: The Old Tower Inn" by RandomMind (OpenGameArt: /content/peaceful-town, /content/medieval-exploration, /content/medieval-the-old-tower-inn) | calm menu, battle and overtime music (`apps/web/public/assets/sfx/music-menu.mp3`, `music-battle.mp3`, `music-overtime.mp3`) | CC0 1.0 |
 | Code in `apps/web/src/audio/` | fallback effects synthesised with Web Audio | this repository |
 
 None of these is the original artwork, and none is presented as identical to it. Unit names come
@@ -90,11 +90,13 @@ Rebuild: `cd tools/audio-pipeline && node build.mjs` (needs curl, unzip and ffmp
 At runtime `AudioManager` decodes the files after the first user gesture; until they are decoded,
 or if they cannot be fetched, the original synthesised effects in `sfx.ts` play instead.
 
-Music: two recorded CC0 tracks, loudness-normalised to −20 LUFS and encoded at 96 kbit/s stereo
-(≈1.9 MB in total) by the same pipeline. `music.ts` streams them with `<audio>` elements routed
-through Web Audio (so volume and mute work on iOS too). The menus and the battle share one theme:
-in the menus it plays softly through a low-pass filter, and when a battle starts the filter opens
-and the same music swells to full without restarting. Overtime crossfades to the second track. Effects are chosen by category (deploy, melee weapon type,
+Music: three calm recorded CC0 tracks (the owner asked for a relaxed, unhurried mood), trimmed,
+loudness-normalised to −21 LUFS with short fades at the loop points and encoded at 80 kbit/s stereo
+(≈4.3 MB in total; only the menu track is fetched up front). `music.ts` streams them with `<audio>`
+elements routed through Web Audio: a gentle town theme in the menus, a medieval exploration theme
+in battle and a slightly livelier inn theme in overtime, crossfaded on each change. Mute also mutes
+and pauses the elements themselves, because iOS can play a media element outside the Web Audio
+graph. Effects are chosen by category (deploy, melee weapon type,
 ranged projectile type, spell type, death, tower events, countdown, victory/defeat); there are
 **no per-card voice lines**.
 

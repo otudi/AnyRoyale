@@ -1,28 +1,29 @@
 /**
  * Background music: recorded CC0 tracks (public/assets/sfx/music-*.mp3, see docs/ASSETS.md),
- * streamed by <audio> elements routed through Web Audio so the music volume, mute and fades work
+ * streamed by <audio> elements routed through Web Audio so the music volume and fades work
  * everywhere (iOS ignores element.volume).
  *
- * The lobby and the battle share one theme so they feel connected: in the menus it plays softly
- * through a low-pass filter (as if heard from outside the arena), and when a battle starts the
- * filter opens and the same music, without restarting, swells to full. Overtime crossfades to a
- * second, more urgent battle track.
+ * Calm by design: a gentle town theme in the menus, an unhurried medieval theme in battle and a
+ * slightly livelier one in overtime, crossfaded when the mood changes.
+ *
+ * Mute does not rely on the Web Audio graph alone: on iOS a media element can end up playing
+ * outside the graph (interrupted context, routing lost), so muting also mutes and pauses the
+ * elements themselves.
  */
 export type Track = 'menu' | 'battle' | 'none';
-type Channel = 'battle' | 'overtime';
+type Channel = 'menu' | 'battle' | 'overtime';
 
-const FADE = 0.9;
-/** Low-pass cut-off in the menus (Hz) and when the battle opens it up. */
-const MENU_CUTOFF = 900;
-const OPEN_CUTOFF = 18000;
-const MENU_LEVEL = 0.7;
+const FADE = 1.4;
+/** Relative levels: the menu theme sits a little under the battle one. */
+const LEVEL: Record<Channel, number> = { menu: 0.8, battle: 1, overtime: 1 };
 
 export class MusicPlayer {
-  private channels = new Map<Channel, { el: HTMLAudioElement; gain: GainNode; filter: BiquadFilterNode }>();
+  private channels = new Map<Channel, { el: HTMLAudioElement; gain: GainNode }>();
   private current: Channel | null = null;
   private wanted: Track = 'none';
   private overtime = false;
   private hidden = false;
+  private muted = false;
 
   constructor(
     private readonly ctx: AudioContext,
@@ -30,28 +31,24 @@ export class MusicPlayer {
     private readonly base: string,
   ) {}
 
-  private channel(name: Channel): { el: HTMLAudioElement; gain: GainNode; filter: BiquadFilterNode } {
+  private channel(name: Channel): { el: HTMLAudioElement; gain: GainNode } {
     let c = this.channels.get(name);
     if (!c) {
       const el = new Audio();
       el.src = `${this.base}music-${name}.mp3`;
       el.loop = true;
-      el.preload = name === 'battle' ? 'auto' : 'metadata';
+      el.preload = name === 'menu' ? 'auto' : 'metadata';
+      el.muted = this.muted;
       el.setAttribute('playsinline', '');
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = OPEN_CUTOFF;
-      filter.Q.value = 0.5;
       const gain = this.ctx.createGain();
       gain.gain.value = 0;
       try {
-        this.ctx.createMediaElementSource(el).connect(filter);
-        filter.connect(gain);
+        this.ctx.createMediaElementSource(el).connect(gain);
         gain.connect(this.out);
       } catch {
-        // no MediaElementSource: the element plays at its own volume
+        // no MediaElementSource: the element plays at its own volume (mute still applies)
       }
-      c = { el, gain, filter };
+      c = { el, gain };
       this.channels.set(name, c);
     }
     return c;
@@ -62,21 +59,21 @@ export class MusicPlayer {
    * them play later without a gesture (each media element needs its own first play).
    */
   bless(): void {
-    for (const name of ['battle', 'overtime'] as Channel[]) {
+    for (const name of ['menu', 'battle', 'overtime'] as Channel[]) {
       const c = this.channel(name);
       c.el
         .play()
         .then(() => {
-          if (this.current !== name) c.el.pause();
+          if (this.current !== name || this.muted) c.el.pause();
         })
         .catch(() => {});
     }
   }
 
   /** For tests: which track is audible and whether its element is actually playing. */
-  info(): { track: string | null; playing: boolean; time: number } {
+  info(): { track: string | null; playing: boolean; time: number; muted: boolean } {
     const c = this.current ? this.channels.get(this.current) : undefined;
-    return { track: this.current, playing: !!c && !c.el.paused, time: c ? c.el.currentTime : 0 };
+    return { track: this.current, playing: !!c && !c.el.paused, time: c ? c.el.currentTime : 0, muted: this.muted };
   }
 
   play(track: Track): void {
@@ -90,25 +87,36 @@ export class MusicPlayer {
     this.apply();
   }
 
+  /** Muted: every element is muted and paused (nothing streams); unmuted: the wanted track resumes. */
+  setMuted(muted: boolean): void {
+    if (this.muted === muted) return;
+    this.muted = muted;
+    for (const c of this.channels.values()) {
+      c.el.muted = muted;
+      if (muted) c.el.pause();
+    }
+    if (!muted) this.resumeCurrent();
+  }
+
   /** Page hidden: pause streaming (the context is suspended anyway); resume on return. */
   setHidden(hidden: boolean): void {
     this.hidden = hidden;
     const c = this.current ? this.channels.get(this.current) : undefined;
     if (!c) return;
     if (hidden) c.el.pause();
-    else void c.el.play().catch(() => {});
+    else this.resumeCurrent();
+  }
+
+  private resumeCurrent(): void {
+    const c = this.current ? this.channels.get(this.current) : undefined;
+    if (c && !this.hidden && !this.muted) void c.el.play().catch(() => {});
   }
 
   private apply(): void {
-    const next: Channel | null = this.wanted === 'none' ? null : this.wanted === 'battle' && this.overtime ? 'overtime' : 'battle';
+    const next: Channel | null =
+      this.wanted === 'none' ? null : this.wanted === 'menu' ? 'menu' : this.overtime ? 'overtime' : 'battle';
+    if (next === this.current) return;
     const now = this.ctx.currentTime;
-    const menu = this.wanted === 'menu';
-    if (next && next === this.current) {
-      // same music, new mood: muffled and softer in the menus, open and full in battle
-      const c = this.channels.get(next)!;
-      this.shape(c, menu ? MENU_CUTOFF : OPEN_CUTOFF, menu ? MENU_LEVEL : 1, menu ? 1.2 : 2.2, now);
-      return;
-    }
     const prev = this.current ? this.channels.get(this.current) : undefined;
     const prevName = this.current;
     this.current = next;
@@ -122,21 +130,11 @@ export class MusicPlayer {
     }
     if (!next) return;
     const c = this.channel(next);
-    if (next === 'overtime') c.el.currentTime = 0;
-    c.filter.frequency.cancelScheduledValues(now);
-    c.filter.frequency.setValueAtTime(menu ? MENU_CUTOFF : OPEN_CUTOFF, now);
+    // the battle and overtime themes start from the top; the menu theme carries on where it was
+    if (next !== 'menu') c.el.currentTime = 0;
     c.gain.gain.cancelScheduledValues(now);
     c.gain.gain.setValueAtTime(c.gain.gain.value, now);
-    c.gain.gain.linearRampToValueAtTime(menu ? MENU_LEVEL : 1, now + FADE);
-    if (!this.hidden) void c.el.play().catch(() => {});
-  }
-
-  private shape(c: { gain: GainNode; filter: BiquadFilterNode }, cutoff: number, level: number, secs: number, now: number): void {
-    c.filter.frequency.cancelScheduledValues(now);
-    c.filter.frequency.setValueAtTime(Math.max(40, c.filter.frequency.value), now);
-    c.filter.frequency.exponentialRampToValueAtTime(cutoff, now + secs);
-    c.gain.gain.cancelScheduledValues(now);
-    c.gain.gain.setValueAtTime(c.gain.gain.value, now);
-    c.gain.gain.linearRampToValueAtTime(level, now + secs);
+    c.gain.gain.linearRampToValueAtTime(LEVEL[next], now + FADE);
+    this.resumeCurrent();
   }
 }

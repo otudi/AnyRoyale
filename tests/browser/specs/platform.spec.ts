@@ -14,6 +14,27 @@ test('audio starts after the first user gesture and the recorded effects decode'
   await p.ctx.close();
 });
 
+test('calm menu music plays; the mute button silences it completely; battles switch track', async ({ browser }) => {
+  const p = await openPlayer(browser);
+  const music = async () => (await state(p.page)).audio.music as { track: string | null; playing: boolean; muted: boolean };
+  await p.page.locator('[data-act="cards"]').click(); // first gesture unlocks audio
+  await p.page.locator('[data-act="back"]').click();
+  await expect.poll(async () => (await music()).track, { timeout: 10_000 }).toBe('menu');
+  await expect.poll(async () => (await music()).playing, { timeout: 10_000 }).toBe(true);
+  // mute: the music element itself stops (not only the Web Audio gain)
+  await p.page.locator('[data-act="mute"]').click();
+  await expect.poll(async () => (await music()).playing).toBe(false);
+  expect((await music()).muted).toBe(true);
+  // unmute: the same track resumes
+  await p.page.locator('[data-act="mute"]').click();
+  await expect.poll(async () => (await music()).playing, { timeout: 10_000 }).toBe(true);
+  // a battle switches to the battle theme
+  await p.page.locator('[data-act="bot"]').click();
+  await p.page.locator('[data-act="d_easy"]').click();
+  await expect.poll(async () => (await music()).track, { timeout: 40_000 }).toBe('battle');
+  await p.ctx.close();
+});
+
 test('every model in the asset index loads; arena themes match the server list', async ({ browser, request }) => {
   const p = await openPlayer(browser);
   expect((await state(p.page)).failedAssets).toEqual([]);
