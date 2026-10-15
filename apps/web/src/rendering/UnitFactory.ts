@@ -8,7 +8,7 @@ import type { CharSpec, PropSpec, VisualSpec } from './visualCatalog';
 export const TEAM_COLORS = { own: 0x3d8bff, enemy: 0xff4646 } as const;
 
 /** Units are drawn a little larger than their footprint so they read well on phones. */
-export const UNIT_SCALE = 1.35;
+export const UNIT_SCALE = 1.6;
 export type Side = 'own' | 'enemy';
 
 /** Files that must be loaded before battles (characters + shared animation library). */

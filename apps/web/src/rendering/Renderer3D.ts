@@ -14,8 +14,9 @@ import { setSilhouettesEnabled } from './outline';
  * rate stays under ~45 FPS (and raises it again when there is headroom).
  */
 /** Side-view camera: vertical field of view and downward tilt (degrees). */
-const SIDE_FOV = 22;
-const SIDE_TILT = 33;
+/** Portrait view: camera tilt above the ground and field of view (lower tilt = closer to the troops). */
+const VIEW_TILT = 42;
+const VIEW_FOV = 34;
 
 export class Renderer3D {
   readonly scene = new THREE.Scene();
@@ -138,13 +139,9 @@ export class Renderer3D {
   /** Fraction of the screen covered by the card tray (bottom) and top HUD; set by the HUD. */
   private trayFraction = 0.2;
   private topFraction = 0.075;
-  /** Fraction of the screen width covered on the left (the card size preview's side panel). */
-  private leftFraction = 0;
-
-  setInsets(trayFraction: number, topFraction: number, leftFraction = 0): void {
+  setInsets(trayFraction: number, topFraction: number): void {
     this.trayFraction = trayFraction;
     this.topFraction = topFraction;
-    this.leftFraction = leftFraction;
     this.layoutCamera();
   }
 
@@ -154,23 +151,15 @@ export class Renderer3D {
    * above the tray and the far edge just below the HUD, then backs off if the near corners would be
    * clipped horizontally (wide screens keep a little scenery at the sides).
    */
-  /** True when the screen is wider than tall: the arena is shown from its long side. */
-  landscape = false;
-
   private layoutCamera(): void {
     const w = Math.max(1, this.container.clientWidth);
     const h = Math.max(1, this.container.clientHeight);
-    this.landscape = w > h * 1.05;
-    // Battles are always shown from the side (own half left, enemy right). On a portrait screen
-    // the HUD asks the player to turn the device; the view stays correct meanwhile.
-    this.layoutSideView(w, h);
-    return;
     this.rim.position.set(3 * this.side, 7, -16 * this.side);
     const cam = this.camera;
     cam.aspect = w / h;
-    cam.fov = 32;
+    cam.fov = VIEW_FOV;
     cam.updateProjectionMatrix();
-    const tilt = THREE.MathUtils.degToRad(57);
+    const tilt = THREE.MathUtils.degToRad(VIEW_TILT);
     const near = -1 + 2 * (this.trayFraction + 0.005);
     const far = 1 - 2 * (this.topFraction + 0.11); // leave room above for the enemy king tower
     const v = new THREE.Vector3();
@@ -193,12 +182,14 @@ export class Renderer3D {
       const mid = (ndcY(16.4) + ndcY(-16.4)) / 2;
       tz += ((near + far) / 2 - mid) * d * 0.25;
     }
-    // Horizontal fit: the near corners must stay on screen.
+    // Horizontal fit, close to the troops: on the own first row (z 14.5) the screen edge falls a
+    // quarter tile outside the edge tiles' centres, so every tile stays visible and tappable while
+    // the curb and the banned back corners may run past the edges.
     for (let iter = 0; iter < 30; iter++) {
       place(d, tz);
-      const x = Math.abs(v.set(9.7, 0, 16.4).project(cam).x);
-      if (x <= 0.985) break;
-      d *= x / 0.985;
+      const x = Math.abs(v.set(8.75, 0, 14.5).project(cam).x);
+      if (x <= 0.995) break;
+      d *= x / 0.995;
       place(d, tz);
       // keep the near edge just above the tray
       const yn = ndcY(16.4);
@@ -213,75 +204,6 @@ export class Renderer3D {
   }
 
   cameraDistance = 40;
-
-  /**
-   * Landscape: the camera looks across the river from the arena's long side, own half on the left
-   * and the enemy's on the right (like a stadium broadcast). Solved like the portrait view: the
-   * near touchline sits just above the card tray, the far towers just below the top HUD, and the
-   * whole length fits the width.
-   */
-  private layoutSideView(w: number, h: number): void {
-    const cam = this.camera;
-    cam.aspect = w / h;
-    // Narrow field of view = mild perspective: the far lane's troops stay nearly as big as the
-    // near lane's. A lower tilt shows the sides of troops and towers (tuned from screenshots).
-    cam.fov = SIDE_FOV;
-    cam.updateProjectionMatrix();
-    const s = this.side; // blue: camera on +x, so +z (own half) is on the left
-    const tilt = THREE.MathUtils.degToRad(SIDE_TILT);
-    const bottom = -1 + 2 * (this.trayFraction + 0.01);
-    const top = 1 - 2 * (this.topFraction + 0.03);
-    const v = new THREE.Vector3();
-    // tz slides the view along the field (screen horizontal) when a side panel covers the left
-    let tz = 0;
-    const place = (d: number, tx: number) => {
-      cam.position.set(s * (tx + Math.cos(tilt) * d), Math.sin(tilt) * d, tz);
-      cam.lookAt(s * tx, 0, tz);
-      cam.updateMatrixWorld(true);
-    };
-    const left = -1 + 2 * this.leftFraction + (this.leftFraction > 0 ? 0.02 : 0.03);
-    const right = 0.97;
-    const nearY = () => Math.min(v.set(s * 9.9, 0, 16.6).project(cam).y, v.set(s * 9.9, 0, 0).project(cam).y);
-    // far touchline, and the far towers with their health bars
-    const farY = () =>
-      Math.max(v.set(-s * 9.9, 0.6, 0).project(cam).y, v.set(-s * 5.5, 3.6, 9.5).project(cam).y, v.set(-s * 5.5, 3.6, -9.5).project(cam).y);
-    let d = 38;
-    let tx = 0;
-    for (let iter = 0; iter < 40; iter++) {
-      place(d, tx);
-      const span = farY() - nearY();
-      d *= Math.pow(span / (top - bottom), 0.9);
-      place(d, tx);
-      const mid = (farY() + nearY()) / 2;
-      tx += ((bottom + top) / 2 - mid) * d * 0.25;
-    }
-    const xs = () => {
-      const a = v.set(s * 9.9, 0, 16.8).project(cam).x;
-      const b = v.set(s * 9.9, 0, -16.8).project(cam).x;
-      return [Math.min(a, b), Math.max(a, b)];
-    };
-    for (let iter = 0; iter < 30; iter++) {
-      place(d, tx);
-      const [x0, x1] = xs();
-      if (x0 >= left - 1e-3 && x1 <= right + 1e-3) break;
-      d *= Math.max(1, (x1 - x0) / (right - left));
-      place(d, tx);
-      // centre the near touchline between the side insets (numerical slope: sign-agnostic)
-      const [a0, a1] = xs();
-      tz += 0.5;
-      place(d, tx);
-      const [b0, b1] = xs();
-      const slope = ((b0 + b1) - (a0 + a1)) / 2 / 0.5;
-      tz -= 0.5;
-      if (Math.abs(slope) > 1e-6) tz += ((left + right) / 2 - (a0 + a1) / 2) / slope;
-      place(d, tx);
-      tx += (bottom - nearY()) * d * 0.25;
-    }
-    place(d, tx);
-    // back light from the far stand, like the portrait view's light from the far end
-    this.rim.position.set(-16 * s, 7, 3);
-    this.cameraDistance = d;
-  }
 
   resize(): void {
     const w = this.container.clientWidth;

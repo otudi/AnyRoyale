@@ -56,10 +56,11 @@ for (const lang of ['en', 'ar'] as const) {
     await page.locator('[data-act="bot"]').click();
     await page.locator('[data-act="d_easy"]').click();
     await expect(page.locator('[data-screen="intro"] .mm-tile')).toHaveCount(8);
-    // the intro is up before the battle session exists (it waits for the deck's models)
+    // read the intro at once (it closes when the battle starts); the battle session that holds
+    // the deck may only exist a moment later (it waits for the deck's models)
+    const titles = await page.locator('[data-screen="intro"] .mm-tile').evaluateAll((els) => els.map((el) => el.getAttribute('title')));
     await expect.poll(async () => (await state(page)).match?.deck?.length ?? 0).toBe(8);
     const deck = (await state(page)).match!.deck;
-    const titles = await page.locator('[data-screen="intro"] .mm-tile').evaluateAll((els) => els.map((el) => el.getAttribute('title')));
     expect(titles).toEqual(deck.map((id) => CARD_TEXTS[id][lang]));
     await waitRunning(page);
     await expect(page.locator('[data-slot][data-card], [data-next][data-card]')).toHaveCount(5);

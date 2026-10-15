@@ -4,7 +4,7 @@
   "description": "Real-time 1v1 lane battles in your browser. Same random deck for both players.",
   "start_url": "/",
   "display": "fullscreen",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "background_color": "#13203f",
   "theme_color": "#13203f",
   "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]

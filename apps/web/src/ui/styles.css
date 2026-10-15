@@ -990,121 +990,14 @@ html[dir='ltr'] .card-info {
   }
 }
 
-/* ------------------------------------------------------------------ landscape (stadium view)
-   Wider than tall (desktop, phone turned sideways): the arena is seen from its long side over the
-   whole screen, and the cards sit in a centred panel sized by the screen height. */
-@media (min-aspect-ratio: 21/20) {
-  :root {
-    --stage-w: 100vw;
-  }
-
-  #stage {
-    box-shadow: none;
-  }
-
-  #hud .tray {
-    left: 50%;
-    right: auto;
-    width: calc(min(580px, 70vw, calc(100dvh * 0.88)) * var(--card-scale, 0.72));
-    min-width: 230px;
-    transform: translateX(-50%);
-    padding: 6px 12px calc(8px + var(--safe-bottom));
-    border-radius: 20px 20px 0 0;
-    background: linear-gradient(180deg, rgba(18, 34, 80, 0.55) 0%, rgba(14, 28, 68, 0.92) 30%, #0f2256 100%);
-    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
-  }
-
-  #hud .top {
-    left: calc(12px + var(--safe-left));
-    right: calc(12px + var(--safe-right));
-  }
-
-  #hud .surrender {
-    left: calc(8px + var(--safe-left));
-  }
+/* ------------------------------------------------------------------ notches (phone held sideways) */
+#hud .top {
+  left: calc(12px + var(--safe-left));
+  right: calc(12px + var(--safe-right));
 }
 
-/* ------------------------------------------------------------------ rotate prompt
-   Battles are designed for landscape. While a match is on (intro included) and the screen is
-   upright, ask the player to turn the device; it disappears by itself when they do. A button
-   lets them continue upright (browsers cannot always lock the orientation). */
-.rotate-hint {
-  display: none;
-}
-
-@media (max-aspect-ratio: 1/1) {
-  html.in-match:not(.rotate-dismissed) .rotate-hint {
-    position: absolute;
-    inset: 0;
-    z-index: 60;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 24px;
-    text-align: center;
-    color: #fff;
-    background: rgba(10, 18, 40, 0.88);
-    font-family: 'Tajawal', system-ui, sans-serif;
-  }
-}
-
-.rotate-hint .phone {
-  width: 64px;
-  height: 104px;
-  border: 5px solid #fff;
-  border-radius: 14px;
-  position: relative;
-  animation: rotate-phone 1.8s ease-in-out infinite;
-}
-
-.rotate-hint .phone::after {
-  content: '';
-  position: absolute;
-  bottom: 6px;
-  left: 50%;
-  width: 14px;
-  height: 4px;
-  border-radius: 2px;
-  background: #fff;
-  transform: translateX(-50%);
-}
-
-@keyframes rotate-phone {
-  0%,
-  20% {
-    transform: rotate(0deg);
-  }
-  60%,
-  100% {
-    transform: rotate(-90deg);
-  }
-}
-
-.rotate-hint h2 {
-  margin: 8px 0 0;
-  font-size: 24px;
-  font-weight: 900;
-}
-
-.rotate-hint p {
-  margin: 0;
-  max-width: 300px;
-  font-size: 16px;
-  line-height: 1.45;
-  opacity: 0.9;
-}
-
-.rotate-hint button {
-  margin-top: 10px;
-  padding: 10px 18px;
-  border-radius: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  background: transparent;
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
+#hud .surrender {
+  left: calc(8px + var(--safe-left));
 }
 
 /* score at the top centre: own crowns (left, like the own half) | time | enemy crowns */
@@ -1162,14 +1055,12 @@ html[dir='ltr'] .card-info {
   padding: 4px 10px 3px;
 }
 
-/* card size in portrait (full-width tray): the hand and the elixir bar shrink, centred */
-@media (max-aspect-ratio: 21/20) {
-  #hud .tray .hand,
-  #hud .tray .elixir {
-    width: calc(100% * min(1, var(--card-scale, 0.72) + 0.28));
-    margin-left: auto;
-    margin-right: auto;
-  }
+/* card size: the hand and the elixir bar shrink inside the full-width tray, centred */
+#hud .tray .hand,
+#hud .tray .elixir {
+  width: calc(100% * min(1, var(--card-scale, 0.72) + 0.28));
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ------------------------------------------------------------------ card size preview */
@@ -1199,43 +1090,6 @@ html.previewing .game-canvas {
   color: #fff;
   font-family: 'Tajawal', system-ui, sans-serif;
   text-align: center;
-}
-
-/* Wide, short screens (phones turned sideways): the field is height-bound and the sides are free,
-   so the panel becomes a column at the side instead of eating height above the field. */
-@media (min-aspect-ratio: 17/9) {
-  .size-panel {
-    left: calc(8px + var(--safe-left));
-    top: 50%;
-    transform: translateY(-50%);
-    flex-direction: column;
-    width: 112px;
-    gap: 5px;
-    padding: 6px;
-  }
-
-  .size-panel button {
-    min-height: 28px;
-    padding: 3px 4px;
-    font-size: 12px;
-  }
-
-  .size-panel .size-title {
-    font-size: 12px;
-  }
-
-  .size-panel .size-steps,
-  .size-panel .size-actions {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    gap: 4px;
-  }
-
-  .size-panel .size-title {
-    text-align: center;
-    line-height: 1.2;
-  }
 }
 
 .size-panel .size-title {

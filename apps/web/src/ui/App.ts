@@ -779,36 +779,7 @@ export class App {
     if (['roomNotFound', 'serverFull'].includes(code) && this.screen === 'queue') this.showHome();
   }
 
-  /**
-   * Marks the page as "in a match" (intro + battle): on an upright screen the rotate prompt shows.
-   * Where the browser allows it (installed app / fullscreen) we also ask for landscape; elsewhere
-   * the prompt is the guidance.
-   */
-  private setInMatch(on: boolean): void {
-    const root = document.documentElement;
-    if (on && !root.classList.contains('in-match')) {
-      root.classList.remove('rotate-dismissed');
-      const hint = document.getElementById('rotate-hint');
-      if (hint) {
-        hint.innerHTML = `<div class="phone"></div><h2></h2><p></p><button type="button" data-rotate-anyway></button>`;
-        hint.querySelector('h2')!.textContent = t('rotateTitle');
-        hint.querySelector('p')!.textContent = t('rotateBody');
-        const btn = hint.querySelector<HTMLButtonElement>('[data-rotate-anyway]')!;
-        btn.textContent = t('rotateAnyway');
-        btn.addEventListener('click', () => root.classList.add('rotate-dismissed'));
-      }
-      const o = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> };
-      try {
-        void o?.lock?.('landscape').catch(() => {});
-      } catch {
-        // not supported: the prompt guides the player instead
-      }
-    }
-    root.classList.toggle('in-match', on);
-  }
-
   private async onMatchStart(m: MatchStart): Promise<void> {
-    this.setInMatch(true);
     if (this.battle && this.battle.matchId === m.matchId) {
       // Reconnected to the same match: resynchronise from fresh snapshots.
       this.battle.view.resync();
@@ -820,7 +791,6 @@ export class App {
     }
     this.searching = false;
     this.disposeBattle();
-    this.setInMatch(true); // after disposeBattle(), which clears it
     this.lastSeed = m.mode === 'bot' ? m.seed : null;
     this.roomCode = null;
     // Make sure every bundle this arena and deck can use is loaded before building the scene.
@@ -901,7 +871,6 @@ export class App {
   }
 
   private showResult(m: MatchEnd): void {
-    this.setInMatch(false);
     if (this.resultEnd !== m) return;
     const you = this.battle?.start.you ?? 'BLUE';
     const opp = you === 'BLUE' ? 'RED' : 'BLUE';
@@ -949,7 +918,6 @@ export class App {
   }
 
   private disposeBattle(): void {
-    this.setInMatch(false);
     if (this.battle) {
       this.battle.dispose();
       this.battle = null;

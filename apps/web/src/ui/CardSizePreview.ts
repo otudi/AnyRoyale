@@ -96,13 +96,8 @@ export class CardSizePreview {
   private fit(): void {
     const stage = this.hudRoot.parentElement!;
     // the size panel sits at the top for the preview only: keep the far towers below it
-    // (on wide phones it is a side column instead, and the field slides right of it)
-    const pr = this.panel.getBoundingClientRect();
-    const sr = stage.getBoundingClientRect();
-    const column = getComputedStyle(this.panel).flexDirection === 'column';
-    const above = column ? 0 : (pr.bottom - sr.top) / Math.max(1, sr.height);
-    const beside = column ? (pr.right - sr.left) / Math.max(1, sr.width) : 0;
-    this.r.setInsets(this.hud.tray.offsetHeight / Math.max(1, stage.clientHeight), Math.max(0.07, above), beside);
+    const top = (this.panel.getBoundingClientRect().bottom - stage.getBoundingClientRect().top) / Math.max(1, stage.clientHeight);
+    this.r.setInsets(this.hud.tray.offsetHeight / Math.max(1, stage.clientHeight), Math.max(0.07, top));
   }
 
   private close(save: boolean): void {
