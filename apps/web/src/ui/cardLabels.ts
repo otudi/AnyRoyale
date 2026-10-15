@@ -1,5 +1,5 @@
 import { CARD_TEXTS } from '../game/cardTexts';
-import { getLang, t } from '../i18n/strings';
+import { getLang, t, type Lang } from '../i18n/strings';
 import type { CardInfo } from '../network/protocol';
 
 /** "BabyDragon" -> "Baby Dragon" */
@@ -7,8 +7,8 @@ export function prettyName(name: string): string {
   return name.replace(/_/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').trim();
 }
 
-export function cardName(c: CardInfo): string {
-  return getLang() === 'ar' ? (CARD_TEXTS[c.id]?.ar ?? prettyName(c.name)) : prettyName(c.name);
+export function cardName(c: Pick<CardInfo, 'id' | 'name'>, lang: Lang = getLang()): string {
+  return CARD_TEXTS[c.id]?.[lang] ?? prettyName(c.name);
 }
 
 export function cardDesc(c: CardInfo): string {

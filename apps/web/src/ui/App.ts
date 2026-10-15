@@ -3,7 +3,6 @@ import { assets } from '../assets/AssetLoader';
 import { audio } from '../audio/AudioManager';
 import { BattleSession } from '../game/BattleSession';
 import { cards } from '../game/cards';
-import { CARD_TEXTS } from '../game/cardTexts';
 import { getLang, setLang, t, type Lang, type StringKey } from '../i18n/strings';
 import { Connection } from '../network/Connection';
 import { loadIdentity, provisionalName, saveIdentity } from '../network/identity';
@@ -13,7 +12,7 @@ import { CardArt } from '../rendering/CardArt';
 import { forgedFileFor } from '../rendering/visualCatalog';
 import { Renderer3D } from '../rendering/Renderer3D';
 import { CORE_MODEL_FILES, resetClipCache } from '../rendering/UnitFactory';
-import { attacks, cardName, kindLabel, prettyName, targetsLabel } from './cardLabels';
+import { attacks, cardDesc, cardName, kindLabel, targetsLabel } from './cardLabels';
 import { getSettings, updateSettings, type Quality } from './settings';
 import { isDark } from './theme';
 
@@ -516,7 +515,6 @@ export class App {
 
   private showCardDetail(c: CardInfo): void {
     const ar = getLang() === 'ar';
-    const tx = CARD_TEXTS[c.id];
     const r1 = (n: number) => String(Math.round(n * 10) / 10);
     const stats: [string, string][] = [[t('statCost'), String(c.cost)]];
     const u = c.unit;
@@ -540,11 +538,11 @@ export class App {
     }
     const modal = this.sheet(
       `<div class="mm-detail-head"><img src="${this.art.get(c)}" alt="" />
-         <div><div class="nm">${esc(cardName(c))}</div>${ar ? `<div class="en">${esc(prettyName(c.name))}</div>` : ''}
+         <div><div class="nm">${esc(cardName(c))}</div>${ar ? `<div class="en" lang="en" dir="ltr">${esc(cardName(c, 'en'))}</div>` : ''}
            <div class="mm-badges"><span class="mm-badge cost">${ic('water_drop', '')} ${c.cost}</span>
              <span class="mm-badge">${t(`type1${c.type}` as 'type1TROOP')}</span>
              <span class="mm-badge">${t(`rarity${c.rarity}` as 'rarityCOMMON')}</span></div></div></div>
-       <p class="mm-desc">${esc(tx ? (ar ? tx.da : tx.de) : prettyName(c.name))}</p>
+       <p class="mm-desc">${esc(cardDesc(c))}</p>
        <div class="mm-stats">${stats.map(([k, v]) => `<div class="mm-stat"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
        <div style="margin-top:16px">${this.btn('close', 'close', t('close'), { cls: 'center' })}</div>`,
     );
