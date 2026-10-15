@@ -148,6 +148,10 @@ export class ArenaBuilder {
   private readonly px: number;
   /** Soft contact shadows under scenery [x, z, radius] (phones have no shadow map). */
   private shadows: [number, number, number][] = [];
+  /** Stadium crowd (instanced) and its idle bounce. */
+  private crowd: { meshes: THREE.InstancedMesh[]; base: Float32Array; phase: Float32Array } | null = null;
+  private fires: THREE.Object3D[] = [];
+  private banners: THREE.Mesh[] = [];
 
   constructor(
     private readonly theme: ArenaTheme,
@@ -164,6 +168,7 @@ export class ArenaBuilder {
     this.buildBridges();
     this.buildWalls();
     this.buildOuter();
+    this.buildStadium();
     this.buildNature();
     this.scatterProps();
     this.buildExtras();
@@ -637,7 +642,8 @@ export class ArenaBuilder {
   private height(x: number, z: number): number {
     const d = this.outside(x, z);
     const n = noise2(x, z);
-    return smoothstep(1.2, 11, d) * (0.6 + n * 2.6) + Math.max(0, d - 26) * 0.35;
+    // flat inside the stadium (stands reach ~7 units out), rolling hills beyond
+    return smoothstep(7.5, 16, d) * (0.6 + n * 2.6) + Math.max(0, d - 26) * 0.35;
   }
 
   private buildOuter(): void {
@@ -708,6 +714,255 @@ export class ArenaBuilder {
     const skirt = new THREE.Mesh(this.track(new THREE.BoxGeometry(18.6, 0.6, 32.6)), this.track(new THREE.MeshLambertMaterial({ color: shade(look.stone, 0.5) })));
     skirt.position.y = -1.0;
     this.root.add(skirt);
+  }
+
+  // ------------------------------------------------------------------ stadium
+
+  /**
+   * A stone stadium around the field: tiered stands on all four sides full of fans in team colours,
+   * a crenellated back wall with big team banners and burning braziers, round towers at the corners
+   * and a ring of mountains on the horizon. Low enough never to hide the field from either camera.
+   */
+  private buildStadium(): void {
+    const rand = seededRandom('stadium' + this.theme.id);
+    const block = new THREE.BoxGeometry(1, 1, 1);
+    const stone = (k = 1) => shade(this.look.stone, k);
+    const own = 0x2f7fe8;
+    const enemy = 0xe23b3b;
+    const teamAt = (z: number) => (z * this.ownSide >= 0 ? own : enemy);
+    const TIERS = 4;
+    const STEP_D = 1.1;
+    const STEP_H = 0.5;
+    const seats: [number, number, number, number][] = []; // x, y, z, facing angle
+    // A run of stands: from the inner edge (distance `inner` from centre along the normal) outwards.
+    const stand = (axis: 'x' | 'z', sign: number, inner: number, from: number, to: number) => {
+      const len = to - from;
+      const mid = (from + to) / 2;
+      for (let t = 0; t < TIERS; t++) {
+        const depth = STEP_D;
+        const top = STEP_H * (t + 1);
+        const c = inner + depth * (t + 0.5);
+        const geo = colored(block, (_x, y) => (y > 0.45 ? stone(0.98 + t * 0.03) : stone(0.78)));
+        const m = this.add(geo, axis === 'x' ? sign * c : mid, (top - 1) / 2, axis === 'x' ? mid : sign * c);
+        m.scale.set(axis === 'x' ? depth : len, top + 1, axis === 'x' ? len : depth);
+        m.castShadow = false;
+        // seats along the tier
+        for (let p = from + 0.4; p < to - 0.3; p += 0.62 + rand() * 0.2) {
+          const off = c + (rand() - 0.5) * 0.3;
+          const face = axis === 'x' ? (sign > 0 ? -Math.PI / 2 : Math.PI / 2) : sign > 0 ? Math.PI : 0;
+          seats.push(axis === 'x' ? [sign * off, top, p, face] : [p, top, sign * off, face]);
+        }
+      }
+      // back wall with battlements
+      const wallC = inner + STEP_D * TIERS + 0.4;
+      const wallH = STEP_H * TIERS + 1.4;
+      const wall = this.add(colored(block, (_x, y) => (y > 0.4 ? stone(1.0) : stone(0.82))), axis === 'x' ? sign * wallC : mid, (wallH - 1) / 2, axis === 'x' ? mid : sign * wallC);
+      wall.scale.set(axis === 'x' ? 0.8 : len + 1.6, wallH + 1, axis === 'x' ? len + 1.6 : 0.8);
+      for (let p = from - 0.4; p <= to + 0.4; p += 1.2) {
+        const m = this.add(colored(block, () => stone(1.08)), axis === 'x' ? sign * wallC : p, wallH + 0.25, axis === 'x' ? p : sign * wallC);
+        m.scale.set(axis === 'x' ? 0.8 : 0.6, 0.5, axis === 'x' ? 0.6 : 0.8);
+        m.castShadow = false;
+      }
+      return { wallC, wallH };
+    };
+    const XI = 11.6; // inner edge of the side stands
+    const ZI = 18.8; // inner edge of the end stands
+    const sideRun = stand('x', 1, XI, -ZI + 0.2, ZI - 0.2);
+    stand('x', -1, XI, -ZI + 0.2, ZI - 0.2);
+    stand('z', 1, ZI, -XI + 0.2, XI - 0.2);
+    stand('z', -1, ZI, -XI + 0.2, XI - 0.2);
+    const outerX = XI + STEP_D * TIERS + 0.8;
+    const outerZ = ZI + STEP_D * TIERS + 0.8;
+    // round towers at the corners, roofs in the colour of the half they stand on
+    const tower = new THREE.CylinderGeometry(1.5, 1.7, 1, 10);
+    const roof = new THREE.ConeGeometry(1.9, 2.2, 10);
+    for (const sx of [-1, 1]) {
+      for (const sz of [-1, 1]) {
+        const h = sideRun.wallH + 2.6;
+        const t = this.add(colored(tower, (_x, y) => (y > 0.45 ? stone(1.05) : stone(0.85))), sx * outerX, h / 2 - 0.5, sz * outerZ, rand());
+        t.scale.y = h + 1;
+        this.add(colored(roof, (_x, y) => (this.look.snow && y > 0.2 ? 0xf4f8fc : teamAt(sz))), sx * outerX, h + 0.6, sz * outerZ, 0);
+      }
+    }
+    // the crowd: two instanced meshes (bodies and heads), coloured per fan
+    const body = new THREE.CylinderGeometry(0.15, 0.2, 0.42, 6);
+    body.translate(0, 0.21, 0);
+    const head = new THREE.IcosahedronGeometry(0.13, 0);
+    head.translate(0, 0.56, 0);
+    const count = Math.min(seats.length, this.quality === 'high' ? 1400 : 700);
+    const bodyMat = this.track(new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    const headMat = this.track(new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const bodies = new THREE.InstancedMesh(this.track(body), bodyMat, count);
+    const heads = new THREE.InstancedMesh(this.track(colored(head, (_x, y) => (y > 0.62 ? 0x4a3020 : 0xf2c8a0))), headMat, count);
+    const base = new Float32Array(count * 4);
+    const phase = new Float32Array(count);
+    const tmp = new THREE.Object3D();
+    const col = new THREE.Color();
+    const pick = seats.slice().sort(() => rand() - 0.5).slice(0, count);
+    pick.forEach(([x, y, z, face], i) => {
+      tmp.position.set(x, y, z);
+      tmp.rotation.set(0, face + (rand() - 0.5) * 0.6, 0);
+      tmp.updateMatrix();
+      bodies.setMatrixAt(i, tmp.matrix);
+      heads.setMatrixAt(i, tmp.matrix);
+      base[i * 4] = x;
+      base[i * 4 + 1] = y;
+      base[i * 4 + 2] = z;
+      base[i * 4 + 3] = tmp.rotation.y;
+      phase[i] = rand() * Math.PI * 2;
+      const r = rand();
+      const team = teamAt(z === 0 ? 1 : z);
+      col.setHex(r < 0.72 ? team : r < 0.84 ? 0xffffff : r < 0.92 ? 0xffd24a : shade(team, 0.6));
+      bodies.setColorAt(i, col);
+    });
+    for (const m of [bodies, heads]) {
+      m.userData.dynamic = true;
+      m.castShadow = false;
+      m.receiveShadow = false;
+      m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      this.root.add(m);
+    }
+    this.crowd = { meshes: [bodies, heads], base, phase };
+    // banners on the back walls (crest texture per team) and braziers between them
+    const crest = (color: number) => {
+      const c = document.createElement('canvas');
+      c.width = 128;
+      c.height = 256;
+      const g = c.getContext('2d')!;
+      g.fillStyle = hex(color);
+      g.fillRect(0, 0, 128, 256);
+      g.fillStyle = hex(shade(color, 0.7));
+      g.fillRect(0, 0, 128, 18);
+      g.fillStyle = '#ffd24a';
+      g.fillRect(0, 18, 128, 6);
+      // swallow-tail bottom
+      g.globalCompositeOperation = 'destination-out';
+      g.beginPath();
+      g.moveTo(0, 256);
+      g.lineTo(64, 214);
+      g.lineTo(128, 256);
+      g.fill();
+      g.globalCompositeOperation = 'source-over';
+      // shield crest with a crown
+      g.fillStyle = '#ffffff';
+      g.beginPath();
+      g.moveTo(34, 70);
+      g.lineTo(94, 70);
+      g.lineTo(94, 120);
+      g.quadraticCurveTo(94, 160, 64, 176);
+      g.quadraticCurveTo(34, 160, 34, 120);
+      g.closePath();
+      g.fill();
+      g.fillStyle = hex(shade(color, 0.85));
+      g.beginPath();
+      g.moveTo(44, 80);
+      g.lineTo(84, 80);
+      g.lineTo(84, 118);
+      g.quadraticCurveTo(84, 148, 64, 162);
+      g.quadraticCurveTo(44, 148, 44, 118);
+      g.closePath();
+      g.fill();
+      g.fillStyle = '#ffd24a';
+      g.beginPath();
+      g.moveTo(48, 64);
+      g.lineTo(48, 46);
+      g.lineTo(56, 56);
+      g.lineTo(64, 40);
+      g.lineTo(72, 56);
+      g.lineTo(80, 46);
+      g.lineTo(80, 64);
+      g.closePath();
+      g.fill();
+      const t = this.track(new THREE.CanvasTexture(c));
+      t.colorSpace = THREE.SRGBColorSpace;
+      return this.track(new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide, transparent: true, alphaTest: 0.5 }));
+    };
+    const ownMat = crest(own);
+    const enemyMat = crest(enemy);
+    const bannerGeo = this.track(new THREE.PlaneGeometry(1.5, 3));
+    const bowl = new THREE.CylinderGeometry(0.42, 0.25, 0.45, 8);
+    const flameTex = this.flameTexture();
+    const flameMat = this.track(new THREE.SpriteMaterial({ map: flameTex, depthWrite: false, transparent: true }));
+    const wallTop = sideRun.wallH;
+    const place = (x: number, z: number, nx: number, nz: number, i: number) => {
+      const isBanner = i % 2 === 0;
+      if (isBanner) {
+        const b = new THREE.Mesh(bannerGeo, teamAt(z) === own ? ownMat : enemyMat);
+        // flown from a pole above the battlements, facing the field
+        const pole = this.add(colored(new THREE.CylinderGeometry(0.06, 0.06, 1, 5), () => 0x5a3a20), x, wallTop + 2.3, z, 0);
+        pole.scale.y = 4.6;
+        pole.castShadow = false;
+        b.position.set(x - nx * 0.12, wallTop + 2.6, z - nz * 0.12);
+        b.rotation.y = Math.atan2(-nx, -nz);
+        b.userData.dynamic = true;
+        b.userData.phase = rand() * 6;
+        this.root.add(b);
+        this.banners.push(b);
+      } else {
+        this.add(colored(bowl, () => 0x3a3236), x, wallTop + 0.75, z, 0).castShadow = false;
+        const f = new THREE.Sprite(flameMat);
+        f.position.set(x, wallTop + 1.6, z);
+        f.scale.set(1.3, 1.9, 1);
+        f.userData.dynamic = true;
+        f.userData.phase = rand() * 6;
+        this.root.add(f);
+        this.fires.push(f);
+      }
+    };
+    const wallX = XI + STEP_D * TIERS + 0.4;
+    const wallZ = ZI + STEP_D * TIERS + 0.4;
+    let i = 0;
+    for (let z = -ZI + 1.5; z <= ZI - 1.5; z += 3.4) {
+      place(wallX, z, 1, 0, i);
+      place(-wallX, z, -1, 0, i + 1);
+      i++;
+    }
+    i = 0;
+    for (let x = -XI + 1.5; x <= XI - 1.5; x += 3.4) {
+      place(x, wallZ, 0, 1, i);
+      place(x, -wallZ, 0, -1, i + 1);
+      i++;
+    }
+    this.buildMountains(rand);
+  }
+
+  private flameTexture(): THREE.CanvasTexture {
+    const c = document.createElement('canvas');
+    c.width = 64;
+    c.height = 96;
+    const g = c.getContext('2d')!;
+    const grad = g.createRadialGradient(32, 66, 2, 32, 58, 34);
+    grad.addColorStop(0, 'rgba(255,250,200,1)');
+    grad.addColorStop(0.35, 'rgba(255,190,60,0.95)');
+    grad.addColorStop(0.7, 'rgba(255,90,20,0.55)');
+    grad.addColorStop(1, 'rgba(255,40,0,0)');
+    g.fillStyle = grad;
+    g.beginPath();
+    g.moveTo(32, 2);
+    g.bezierCurveTo(52, 40, 62, 60, 50, 84);
+    g.quadraticCurveTo(32, 98, 14, 84);
+    g.bezierCurveTo(2, 60, 12, 40, 32, 2);
+    g.fill();
+    const t = this.track(new THREE.CanvasTexture(c));
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+
+  /** A ring of low-poly mountains far behind the stadium (fades into the fog). */
+  private buildMountains(rand: () => number): void {
+    const cone = new THREE.ConeGeometry(1, 1, 7);
+    const rock = this.look.snow ? 0x8a9aae : shade(mix(this.look.stone, this.look.ground[1], 0.5), 0.75);
+    for (let i = 0; i < 26; i++) {
+      const a = (i / 26) * Math.PI * 2 + rand() * 0.2;
+      const r = 72 + rand() * 22;
+      const h = 14 + rand() * 18;
+      const w = 12 + rand() * 10;
+      const snowLine = 0.5 - (this.look.snow ? 0.25 : 0);
+      const m = this.add(colored(cone, (_x, y) => (y > snowLine - 0.5 + 0.18 ? 0xf2f6fa : shade(rock, 0.85 + (y + 0.5) * 0.3))), Math.cos(a) * r, h / 2 - 1, Math.sin(a) * r * 1.2, rand() * 3);
+      m.scale.set(w, h, w * (0.8 + rand() * 0.4));
+      m.castShadow = false;
+      m.receiveShadow = false;
+    }
   }
 
   /** Trees, rocks and bushes all around the field (procedural, vertex coloured, merged). */
@@ -789,9 +1044,8 @@ export class ArenaBuilder {
       const x = (rand() - 0.5) * 70;
       const z = (rand() - 0.5) * 96;
       const d = this.outside(x, z);
-      if (d < 1.3 || d > 30) continue;
-      if (rand() > 1.15 - d / 30) continue; // denser close by
-      if (nearCamera(x, z)) continue;
+      if (d < 8 || d > 32) continue;
+      if (rand() > 1.25 - d / 32) continue; // denser close by
       const s = 0.9 + rand() * 0.8 + d * 0.02;
       if (spots.some(([sx, sz, ss]) => Math.hypot(sx - x, sz - z) < (ss + s) * 0.55)) continue;
       spots.push([x, z, s]);
@@ -804,7 +1058,7 @@ export class ArenaBuilder {
       const x = (rand() - 0.5) * 60;
       const z = (rand() - 0.5) * 80;
       const d = this.outside(x, z);
-      if (d < 0.9 || nearCamera(x, z)) continue;
+      if (d < 7.6) continue;
       const s = 0.3 + rand() * 0.6;
       const m = this.add(colored(ico, (_x, y, _z, ny) => this.stoneColor(rand, y > 0.2 && ny > 0.4)), x, this.height(x, z) + s * 0.25, z, rand() * 3);
       m.scale.set(s * (1 + rand() * 0.6), s * 0.7, s);
@@ -816,7 +1070,7 @@ export class ArenaBuilder {
       const along = (rand() - 0.5) * 2;
       const x = side < 2 ? (side ? 1 : -1) * (10.25 + rand() * 0.8) : along * 10.5;
       const z = side < 2 ? along * 17 : (side === 2 ? 1 : -1) * (17.25 + rand() * 0.6);
-      if (nearCamera(x, z) && rand() < 0.6) continue;
+      if (nearCamera(x, z) && rand() < 0.5) continue;
       const s = 0.3 + rand() * 0.35;
       const base = leaf(rand());
       const m = this.add(colored(ico, (_x, y, _z, ny) => snowCap(y, ny, shade(base, 0.85 + (y + 1) * 0.12))), x, this.height(x, z) + s * 0.45, z, rand() * 3);
@@ -873,7 +1127,7 @@ export class ArenaBuilder {
       const x = (rand() - 0.5) * 50;
       const z = (rand() - 0.5) * 66;
       const edge = this.outside(x, z);
-      if (edge < (ref.far ? 9 : 2.2)) continue;
+      if (edge < (ref.far ? 12 : 8.5)) continue;
       if (z * this.ownSide > 16.4 && Math.abs(x) < 12.5) continue;
       const pos = new THREE.Vector3(x, this.height(x, z) - 0.05, z);
       if (placed.some((p) => p.distanceTo(pos) < (ref.far ? 6 : 2.4))) continue;
@@ -951,7 +1205,32 @@ export class ArenaBuilder {
   /** Per-frame animation of water and ambient particles. */
   update(dt: number): void {
     this.extrasTime += dt;
-    if (this.water) this.water.uniforms.uTime.value = this.extrasTime;
+    const t = this.extrasTime;
+    if (this.water) this.water.uniforms.uTime.value = t;
+    for (const f of this.fires) {
+      const k = 1 + Math.sin(t * 13 + f.userData.phase) * 0.08 + Math.sin(t * 7.3 + f.userData.phase * 2) * 0.06;
+      f.scale.set(1.3 * k, 1.9 * (2 - k), 1);
+    }
+    for (const b of this.banners) b.rotation.z = Math.sin(t * 1.6 + b.userData.phase) * 0.035;
+    if (this.crowd && Math.floor(t * 30) % 2 === 0) {
+      // the fans bob and turn a little: the stands feel alive
+      const { meshes, base, phase } = this.crowd;
+      const mesh = meshes[0];
+      const m = new THREE.Matrix4();
+      const q = new THREE.Quaternion();
+      const e = new THREE.Euler();
+      const p = new THREE.Vector3();
+      const sc = new THREE.Vector3(1, 1, 1);
+      for (let i = 0; i < mesh.count; i++) {
+        const ph = phase[i];
+        const jump = Math.max(0, Math.sin(t * 5 + ph)) * 0.09;
+        p.set(base[i * 4], base[i * 4 + 1] + jump, base[i * 4 + 2]);
+        q.setFromEuler(e.set(0, base[i * 4 + 3] + Math.sin(t * 0.7 + ph) * 0.25, 0));
+        m.compose(p, q, sc);
+        for (const im of meshes) im.setMatrixAt(i, m);
+      }
+      for (const im of meshes) im.instanceMatrix.needsUpdate = true;
+    }
     for (const p of this.particles) {
       const kind = p.userData.kind as string;
       const pos = p.geometry.attributes.position as THREE.BufferAttribute;

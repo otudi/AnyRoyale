@@ -25,7 +25,10 @@ layout and only looks different.
 - **Guest identity:** a name like `Royal_4821`, editable and kept in `localStorage`, plus a
   server-signed guest token.
 - **3D client:** three.js with animated CC0 characters, procedural creatures, particles, shadows,
-  health bars and a fixed camera fitted to any screen. Drag-and-drop or tap-to-deploy works on
+  health bars and a fixed camera fitted to any screen: portrait screens look down the arena
+  from your own end; landscape screens (desktop, phone turned sideways) show it from the long
+  side like a stadium broadcast, your half on the left. The arena sits in a stone stadium with
+  stands full of fans in team colours, banners, braziers and mountains on the horizon. Drag-and-drop or tap-to-deploy works on
   touch and mouse. Arabic/English UI (RTL).
 - **Audio:** recorded CC0 sound effects (synthesised fallback) and recorded CC0 music. Audio
   unlocks on the first tap, which Safari requires, and plays even with the iPhone on silent.

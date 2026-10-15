@@ -138,9 +138,18 @@ export class Renderer3D {
    * above the tray and the far edge just below the HUD, then backs off if the near corners would be
    * clipped horizontally (wide screens keep a little scenery at the sides).
    */
+  /** True when the screen is wider than tall: the arena is shown from its long side. */
+  landscape = false;
+
   private layoutCamera(): void {
     const w = Math.max(1, this.container.clientWidth);
     const h = Math.max(1, this.container.clientHeight);
+    this.landscape = w > h * 1.05;
+    if (this.landscape) {
+      this.layoutSideView(w, h);
+      return;
+    }
+    this.rim.position.set(3 * this.side, 7, -16 * this.side);
     const cam = this.camera;
     cam.aspect = w / h;
     cam.fov = 32;
@@ -189,6 +198,55 @@ export class Renderer3D {
 
   cameraDistance = 40;
 
+  /**
+   * Landscape: the camera looks across the river from the arena's long side, own half on the left
+   * and the enemy's on the right (like a stadium broadcast). Solved like the portrait view: the
+   * near touchline sits just above the card tray, the far towers just below the top HUD, and the
+   * whole length fits the width.
+   */
+  private layoutSideView(w: number, h: number): void {
+    const cam = this.camera;
+    cam.aspect = w / h;
+    cam.fov = 30;
+    cam.updateProjectionMatrix();
+    const s = this.side; // blue: camera on +x, so +z (own half) is on the left
+    const tilt = THREE.MathUtils.degToRad(47);
+    const bottom = -1 + 2 * (this.trayFraction + 0.01);
+    const top = 1 - 2 * (this.topFraction + 0.03);
+    const v = new THREE.Vector3();
+    const place = (d: number, tx: number) => {
+      cam.position.set(s * (tx + Math.cos(tilt) * d), Math.sin(tilt) * d, 0);
+      cam.lookAt(s * tx, 0, 0);
+      cam.updateMatrixWorld(true);
+    };
+    const nearY = () => Math.min(v.set(s * 9.9, 0, 16.6).project(cam).y, v.set(s * 9.9, 0, 0).project(cam).y);
+    // far touchline, and the far towers with their health bars
+    const farY = () =>
+      Math.max(v.set(-s * 9.9, 0.6, 0).project(cam).y, v.set(-s * 5.5, 4.6, 9.5).project(cam).y, v.set(-s * 5.5, 4.6, -9.5).project(cam).y);
+    let d = 38;
+    let tx = 0;
+    for (let iter = 0; iter < 40; iter++) {
+      place(d, tx);
+      const span = farY() - nearY();
+      d *= Math.pow(span / (top - bottom), 0.9);
+      place(d, tx);
+      const mid = (farY() + nearY()) / 2;
+      tx += ((bottom + top) / 2 - mid) * d * 0.25;
+    }
+    for (let iter = 0; iter < 30; iter++) {
+      place(d, tx);
+      const x = Math.max(Math.abs(v.set(s * 9.9, 0, 16.8).project(cam).x), Math.abs(v.set(s * 9.9, 0, -16.8).project(cam).x));
+      if (x <= 0.97) break;
+      d *= x / 0.97;
+      place(d, tx);
+      tx += (bottom - nearY()) * d * 0.25;
+    }
+    place(d, tx);
+    // back light from the far stand, like the portrait view's light from the far end
+    this.rim.position.set(-16 * s, 7, 3);
+    this.cameraDistance = d;
+  }
+
   resize(): void {
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
@@ -232,11 +290,12 @@ export class Renderer3D {
   }
 
   private applyShake(dt: number): void {
+    // shake the rig, not the camera: the camera's own position is the solved layout
     if (this.shake <= 0.001) {
-      if (this.camera.position.x !== 0) this.camera.position.x = 0;
+      if (this.cameraRig.position.x !== 0) this.cameraRig.position.set(0, 0, 0);
       return;
     }
-    this.camera.position.x = (Math.random() - 0.5) * this.shake;
+    this.cameraRig.position.set((Math.random() - 0.5) * this.shake, 0, (Math.random() - 0.5) * this.shake * 0.5);
     this.shake = Math.max(0, this.shake - dt * 1.8);
   }
 

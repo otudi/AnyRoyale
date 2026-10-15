@@ -987,3 +987,32 @@ html[dir='ltr'] .card-info {
     opacity: 0;
   }
 }
+
+/* ------------------------------------------------------------------ landscape (stadium view)
+   Wider than tall (desktop, phone turned sideways): the arena is seen from its long side over the
+   whole screen, and the cards sit in a centred panel sized by the screen height. */
+@media (min-aspect-ratio: 21/20) {
+  :root {
+    --stage-w: 100vw;
+  }
+
+  #stage {
+    box-shadow: none;
+  }
+
+  #hud .tray {
+    left: 50%;
+    right: auto;
+    width: min(580px, 70vw, calc(100dvh * 0.88));
+    transform: translateX(-50%);
+    padding: 6px 12px calc(8px + var(--safe-bottom));
+    border-radius: 20px 20px 0 0;
+    background: linear-gradient(180deg, rgba(18, 34, 80, 0.55) 0%, rgba(14, 28, 68, 0.92) 30%, #0f2256 100%);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.35);
+  }
+
+  #hud .top {
+    left: 12px;
+    right: 12px;
+  }
+}

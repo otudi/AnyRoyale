@@ -76,7 +76,7 @@ export function mergeStatic(root: THREE.Object3D): number {
   // Drop now-empty groups left behind by the removed meshes.
   const empty: THREE.Object3D[] = [];
   root.traverse((o) => {
-    if (o !== root && !(o as THREE.Mesh).isMesh && o.children.length === 0 && !(o as THREE.Points).isPoints) empty.push(o);
+    if (o !== root && !(o as THREE.Mesh).isMesh && o.children.length === 0 && !(o as THREE.Points).isPoints && !(o as THREE.Sprite).isSprite) empty.push(o);
   });
   for (const e of empty) e.removeFromParent();
   return merged;
