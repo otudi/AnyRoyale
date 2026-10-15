@@ -14,6 +14,8 @@ export type Track = 'menu' | 'battle' | 'none';
 type Channel = 'menu' | 'battle' | 'overtime';
 
 const FADE = 1.4;
+/** Cache-busting version of the music files (2: the calm tracks). */
+const MUSIC_VERSION = 2;
 /** Relative levels: the menu theme sits a little under the battle one. */
 const LEVEL: Record<Channel, number> = { menu: 0.8, battle: 1, overtime: 1 };
 
@@ -35,7 +37,8 @@ export class MusicPlayer {
     let c = this.channels.get(name);
     if (!c) {
       const el = new Audio();
-      el.src = `${this.base}music-${name}.mp3`;
+      // /assets is cached for a year: bump MUSIC_VERSION whenever a track file changes
+      el.src = `${this.base}music-${name}.mp3?v=${MUSIC_VERSION}`;
       el.loop = true;
       el.preload = name === 'menu' ? 'auto' : 'metadata';
       el.muted = this.muted;
